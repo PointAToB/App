@@ -2,13 +2,12 @@ import {
   StatusBar,
   StyleSheet,
   useColorScheme,
-  Text,
-	TextInput,
 	View
 } from 'react-native';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Logo from "./Components/logo.tsx";
-import Login from "./Components/login.tsx";
+import LoadingScreen from "./Components/loadingScreen.tsx";
+
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -22,7 +21,7 @@ function App() {
       />
 
 			<View>
-				<Login/>
+				<LoadingScreen/>
 			</View>
     </SafeAreaView>
   );
