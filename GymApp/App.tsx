@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CreateAccount from "./Components/createAccount.tsx";
+import Login from "./Components/login.tsx";
 
 
 function App() {
@@ -21,7 +21,7 @@ function App() {
       />
 
 			<View>
-				<CreateAccount/>
+				<Login/>
 			</View>
     </SafeAreaView>
   );

@@ -2,6 +2,8 @@ import { StyleSheet, View, Text, TextInput, Pressable, Linking, Dimensions} from
 import LineWithText from "./lineWithText.tsx";
 import LinearGradient from "react-native-linear-gradient";
 import Logo from "./logo.tsx";
+import Agreement from "./agreement.tsx";
+import Button from "./button.tsx";
 
 const Login = () => {
 	const windowHeight: number = Dimensions.get('window').height;
@@ -17,29 +19,13 @@ const Login = () => {
 			<TextInput style={[styles.textBase, styles.textInput]} placeholder='Email'></TextInput>
 			<TextInput style={[styles.textBase, styles.textInput]} placeholder='Password'></TextInput>
 
-			<Pressable style={[styles.textBase, {overflow: 'hidden'}]}>
-				<LinearGradient
-					style={styles.button}
-					colors={["#DD00FF", "#7650FF"]}
-					start={{ x: 0, y: 0.5 }}
-        	end={{ x: 1, y: 0.5 }}
-				>
-					<Text style={[styles.text, {color: '#FFFFFF'}]}>Continue</Text>
-				</LinearGradient>
-			</Pressable>
+			<Button primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Create an account' fontSize={15}/>
 
-			<Text style={styles.agreement}>
-				<Text>By clicking continue, you agree to our </Text>
-				<Text style={{fontWeight: 'bold', fontSize: 12}} >Terms of Service</Text>
-				<Text> and </Text>
-				<Text style={{fontWeight: 'bold', fontSize: 12}} >Privacy Policy</Text>
-			</Text>
+			<Agreement/>
 
 			<LineWithText text='or'/>
 
-			<Pressable style={[styles.textBase, styles.button, {backgroundColor: '#000000', width: 200, alignSelf: 'center'}]}>
-				<Text style={[styles.text, {color: '#FFFFFF'}]}>Create an account</Text>
-			</Pressable>
+			<Button primaryColor='#000000' textColor='#FFFFFF' text='Create an account' fontSize={15} width={200}/>
 
 			<View style={{paddingTop: windowHeight / 5}}/>
 		</View>
