@@ -1,11 +1,11 @@
-import { StyleSheet, View, Text, TextInput, Pressable, Linking, Dimensions} from "react-native";
+import { StyleSheet, View, Text, TextInput, Dimensions} from "react-native";
 import LineWithText from "./lineWithText.tsx";
-import LinearGradient from "react-native-linear-gradient";
 import Logo from "./logo.tsx";
 import Agreement from "./agreement.tsx";
 import Button from "./button.tsx";
+import {StackNavigationProp} from "@react-navigation/stack";
 
-const Login = () => {
+const Login = (props: {navigation: StackNavigationProp<any>}) => {
 	const windowHeight: number = Dimensions.get('window').height;
 	return (
 		<View style={styles.main}>
@@ -19,13 +19,13 @@ const Login = () => {
 			<TextInput style={[styles.textBase, styles.textInput]} placeholder='Email'></TextInput>
 			<TextInput style={[styles.textBase, styles.textInput]} placeholder='Password'></TextInput>
 
-			<Button primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Create an account' fontSize={15}/>
+			<Button onPress={()=>{props.navigation.push('Home')}} primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Login' fontSize={15}/>
 
 			<Agreement/>
 
 			<LineWithText text='or'/>
 
-			<Button primaryColor='#000000' textColor='#FFFFFF' text='Create an account' fontSize={15} width={200}/>
+			<Button onPress={()=>{props.navigation.push('Create Account')}} primaryColor='#000000' textColor='#FFFFFF' text='Create an account' fontSize={15} width={200}/>
 
 			<View style={{paddingTop: windowHeight / 5}}/>
 		</View>

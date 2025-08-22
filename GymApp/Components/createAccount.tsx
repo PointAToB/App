@@ -1,10 +1,12 @@
 import { StyleSheet, View, Text, TextInput, Dimensions} from "react-native";
-import Logo from "./logo.tsx";
+import {StackNavigationProp} from "@react-navigation/stack";
 
+import Logo from "./logo.tsx";
 import Button from "./button.tsx";
 import Agreement from "./agreement.tsx";
+import PasswordInput from "./PasswordInput.tsx";
 
-const Login = () => {
+const Login = (props: {navigation: StackNavigationProp<any>}) => {
 	const windowHeight: number = Dimensions.get('window').height;
 	return (
 		<View style={styles.main}>
@@ -16,13 +18,11 @@ const Login = () => {
 				<Text style={[styles.text, {fontWeight: 'thin'}]} >You are one step closer to greatness</Text>
 			</View>
 
-			<TextInput style={styles.textInput} placeholder='First Name'></TextInput>
-			<TextInput style={styles.textInput} placeholder='Last Name'></TextInput>
-			<TextInput style={styles.textInput} placeholder='Email'></TextInput>
-			<TextInput style={styles.textInput} placeholder='Password'></TextInput>
-			<TextInput style={styles.textInput} placeholder='Re-enter Password'></TextInput>
-
-			<Button primaryColor="#DD00FF" secondaryColor="#7650FF" textColor="#FFFFFF" text="Continue" fontSize={15}/>
+			<TextInput style={styles.textInput} placeholder='First Name'/>
+			<TextInput style={styles.textInput} placeholder='Last Name'/>
+			<TextInput style={styles.textInput} placeholder='Email'/>
+			<PasswordInput submit={false}/>
+			<Button onPress={()=>{props.navigation.push('Home')}} primaryColor="#DD00FF" secondaryColor="#7650FF" textColor="#FFFFFF" text="Continue" fontSize={15}/>
 
 			<Agreement/>
 

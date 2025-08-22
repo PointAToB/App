@@ -2,42 +2,45 @@ import {
   StatusBar,
   StyleSheet,
   useColorScheme,
-	View
+  Text
 } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import {NavigationContainer} from "@react-navigation/native";
+
 import Login from "./Components/login.tsx";
+import CreateAccount from "./Components/createAccount.tsx";
+import Home from "./Components/home.tsx";
+import Navigation from "./Components/navigation.tsx";
 
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
+  const Stack = createNativeStackNavigator();
 
   return (
-    <SafeAreaView style={styles.container}>
+		<NavigationContainer>
+    <SafeAreaView>
       <StatusBar
         translucent={true}
         hidden={false}
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
       />
+			</SafeAreaView>
+				<Stack.Navigator initialRouteName='Login'>
+					<Stack.Screen options={{headerShown: false}} name='Login' component={Login}/>
+					<Stack.Screen name='Create Account' component={CreateAccount}/>
+					<Stack.Screen options={{headerShown: true}} name='Home' component={Home}/>
+				</Stack.Navigator>
 
-			<View>
-				<Login/>
-			</View>
-    </SafeAreaView>
+
+
+
+			</NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-		justifyContent: 'center'
-  },
-	input: {
-		borderStyle: "solid",
-		borderColor: "#828282",
-		borderRadius: 5
-	}
-});
+
 
 export default App;

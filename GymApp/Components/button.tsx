@@ -1,10 +1,10 @@
 import {Pressable, Text, StyleSheet} from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
-const Button = (props: {primaryColor: string, secondaryColor?: string, textColor: string, text: string, fontSize: number, width?: number}) => {
+const Button = (props: {primaryColor: string, secondaryColor?: string, textColor: string, text: string, fontSize: number, width?: number, onPress: ()=>void}) => {
 	const secondaryColor:string = !props.secondaryColor ? props.primaryColor : props.secondaryColor;
 	return (
-		<Pressable style={[styles.container, (props.width === undefined ? null : {width: props.width, alignSelf: 'center'})]}>
+		<Pressable onPress={props.onPress} style={[styles.container, (props.width === undefined ? null : {width: props.width, alignSelf: 'center'})]}>
 				<LinearGradient
 					style={styles.button}
 					colors={[props.primaryColor, secondaryColor]}
