@@ -1,8 +1,8 @@
 import { StyleSheet, View, Text, TextInput, Dimensions} from "react-native";
-import LineWithText from "./lineWithText.tsx";
-import Logo from "./logo.tsx";
-import Agreement from "./agreement.tsx";
-import Button from "./button.tsx";
+import LineWithText from "../Components/lineWithText.tsx";
+import Logo from "../Components/logo.tsx";
+import Agreement from "../Components/agreement.tsx";
+import Button from "../Components/button.tsx";
 import {StackNavigationProp} from "@react-navigation/stack";
 
 const Login = (props: {navigation: StackNavigationProp<any>}) => {
@@ -57,12 +57,6 @@ const styles = StyleSheet.create({
 	},
 	button: {
 		padding: 10
-	},
-	agreement: {
-		fontSize: 10,
-		marginTop: 15,
-		marginLeft: -5,
-		marginRight: -5
 	}
 });
 

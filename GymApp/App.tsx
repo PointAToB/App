@@ -9,9 +9,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import {NavigationContainer} from "@react-navigation/native";
 
-import Login from "./Components/login.tsx";
-import CreateAccount from "./Components/createAccount.tsx";
-import Home from "./Components/home.tsx";
+import Login from "./Pages/login.tsx";
+import CreateAccount from "./Pages/createAccount.tsx";
+import Home from "./Pages/home.tsx";
 import Navigation from "./Components/navigation.tsx";
 
 

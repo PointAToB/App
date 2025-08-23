@@ -1,5 +1,5 @@
 import LinearGradient from "react-native-linear-gradient";
-import Logo from "./logo.tsx";
+import Logo from "../Components/logo.tsx";
 import { Dimensions } from "react-native";
 
 const LoadingScreen = () => {
