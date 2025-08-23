@@ -11,13 +11,12 @@ const schema = yup.object({
   	.matches(/\d+/, 'Password must contain at least one number.')
 });
 
-const PasswordInput = (props: {submit: boolean}) => {
-	const [password, setPassword] = useState('');
+const PasswordInput = (props: {submit: boolean, password: string, setPassword: (text: string)=>void}) => {
 	const [errors, setErrors] = useState([]);
 	const [reEnter, setReEnter] = useState('');
 
 	const verifyPassword = async (text: string) => {
-		setPassword(text);
+		props.setPassword(text);
 		try {
 			await schema.validate({ password: text }, { abortEarly: false });
 			setErrors([]);
@@ -31,8 +30,8 @@ const PasswordInput = (props: {submit: boolean}) => {
 
 	return (
 		<View>
-			<TextInput value={password} onChangeText={verifyPassword} secureTextEntry={false} style={styles.textInput} placeholder='Password'/>
-			<TextInput value={reEnter} onChangeText={setReEnter} style={styles.textInput} placeholder='Re-enter Password'/>
+			<TextInput value={props.password} onChangeText={verifyPassword} secureTextEntry={true} style={[styles.textInput, (props.password.length === 0 && props.submit ? styles.EmptyInput : null)]} placeholder='Password'/>
+			<TextInput value={reEnter} onChangeText={setReEnter} secureTextEntry={true} style={[styles.textInput, (reEnter.length === 0 && props.submit ? styles.EmptyInput : null)]} placeholder='Re-enter Password'/>
 			{ props.submit && errors.length > 0 &&
 				<View>
 					{ errors.map(error => (
@@ -40,7 +39,7 @@ const PasswordInput = (props: {submit: boolean}) => {
 					))}
 				</View>
 			}
-			{ compare(password, reEnter) && props.submit &&
+			{ compare(props.password, reEnter) && props.submit &&
 					<View>
 						<Text style={styles.badInput}>Passwords do not match</Text>
 					</View>
@@ -65,6 +64,9 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		fontWeight: 'bold',
 		marginTop: 10
+	},
+	EmptyInput: {
+		borderColor: 'red'
 	}
 });
 
