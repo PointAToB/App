@@ -39,8 +39,8 @@ const Login = (props: {navigation: StackNavigationProp<any>}) => {
 			</View>
 
 			<TextInput value={firstName} onChangeText={setFirstName} placeholder='First Name' submitted={submitted}/>
-			<TextInput value={firstName} onChangeText={setLastName} placeholder='Last Name' submitted={submitted}/>
-			<TextInput value={firstName} onChangeText={setEmail} placeholder='Email' submitted={submitted}/>
+			<TextInput value={lastName} onChangeText={setLastName} placeholder='Last Name' submitted={submitted}/>
+			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submitted={submitted}/>
 			<PasswordInput password={password} setPassword={setPassword} submitted={submitted}/>
 
 			<Button onPress={handleSubmit} primaryColor="#DD00FF" secondaryColor="#7650FF" textColor="#FFFFFF" text="Continue" fontSize={15}/>

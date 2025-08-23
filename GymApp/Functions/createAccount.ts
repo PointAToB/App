@@ -1,18 +1,12 @@
 import {api_root_url} from "../Settings/constants";
-/*
-interface Props {
-	firstName: string,
-	lastName: string,
-	email: string,
-	password: string
-}
-*/
+
+
 // Returns true if successful
 const CreateAccount = (firstName: string, lastName: string, email: string, password: string) => {
 	const endpoint:string = api_root_url + "user/create";
 
 	// If any param is '' then return false.
-	if (firstName === '' || lastName === '' || email === '' || password === '') { return false }
+	if (firstName === '' || lastName === '' || email === '' || password === '') { return false; }
 
 	const Post = async () => {
 		try {
@@ -23,7 +17,7 @@ const CreateAccount = (firstName: string, lastName: string, email: string, passw
 					firstName: firstName,
 					lastName: lastName,
 					email: email,
-					password: password
+					passwordHash: password
 				})
 			});
 
@@ -32,7 +26,6 @@ const CreateAccount = (firstName: string, lastName: string, email: string, passw
 
 		} catch (e) {
 			console.error(e);
-			return false;
 		}
 	}
 
