@@ -6,11 +6,16 @@ function isEmpty(field: string) {
 }
 
 // Function used for error handling
-function setError(errors: string[], setErrors: (errors: string[] | []) => void, errorOccurred: boolean, errorString: string):void {
+function setError(errors: string[], setErrors: (errors: string[] | []) => void, isError: boolean, errorString: string):void {
 	// Add Error
-	if (errorOccurred && !errors.includes(errorString))  setErrors([errors]);
+	if (isError && !errors.includes(errorString))  {
+		setErrors([...errors, errorString]);
+	}
 	// Remove Error
-	else if (!errorOccurred && errors.includes(errorString)) {}
+	else if (!isError && errors.includes(errorString)) {
+		const tmpErrorList: string[] = errors.filter(error => error !== errorString);
+		setErrors(tmpErrorList);
+	}
 }
 
 
@@ -21,17 +26,27 @@ export function verifyCreateAccountFields(
   email: string,
   password: string,
   passwordReEntry: string,
-  setErrors: (errors: string[] | []) => void,
-	errors: string[]
+	errors: string[] | [],
+  setErrors: (errors: string[]) => void
 ): boolean {
 
+	let isError: boolean;
+	let errorStr: string;
+	/*
 	// If any of the fields are blank assign the error: 'Fields cannot be left blank'
-  if (isEmpty(firstName) || isEmpty(lastName) || isEmpty(email) || isEmpty(password)) errors(['Fields cannot be left blank']);
-  else errors([]);
-
+  isError = (isEmpty(firstName) || isEmpty(lastName) || isEmpty(email) || isEmpty(password) || isEmpty(passwordReEntry));
+	errorStr = 'Fields cannot be left blank';
+	setError(errors, setErrors, isError, errorStr);
+	*/
 	// Checks that both password entries are the same
-	if(!compare(password, passwordReEntry)) errors()
+	isError = (!compare(password, passwordReEntry));
+	errorStr = 'Passwords do not match';
+	//setError(errors, setErrors, isError, errorStr);
 
+	// Validate password is well-formed
+	verifyPassword(password, errors, setErrors);
 
-	return true;
+	errors.forEach(value => console.log("Error: " + value));
+
+	return errors.length === 0;
 }

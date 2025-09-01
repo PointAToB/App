@@ -1,44 +1,66 @@
-import { Text, StyleSheet, Pressable, View } from "react-native";
-import AgreementContract from "./agreementContract.tsx";
-import {useState} from "react";
+import { Pressable, View, Text, StyleSheet, Modal } from "react-native";
 
-const Agreement = () => {
-	const [content, setPopupContent] = useState('close');
+const Agreement = (props: {setPopupContent: (content: string)=>void, content: string}) => {
 	return(
-		<View style={styles.agreement} >
-				<Text style={styles.text} >By clicking continue, you agree to our </Text>
-				<Pressable onPress={()=>{setPopupContent('terms')}}>
-					<Text style={styles.bold} >Terms of Service</Text>
-				</Pressable >
-				<Text style={styles.text} > and </Text>
-				<Pressable onPress={()=>{setPopupContent('privacy')}}>
-					<Text style={styles.bold} >Privacy Policy</Text>
+		<Modal visible={!(props.content === 'close')} animationType={'slide'}>
+			<View style={styles.toggle}>
+				<Pressable style={[styles.button, (props.content === 'terms' ? styles.select : null)]} onPress={()=>{props.setPopupContent('terms');}}>
+					<Text style={styles.text}>Terms Of Service</Text>
 				</Pressable>
-
-			<AgreementContract setPopupContent={setPopupContent} content={content}/>
-
+				<Pressable style={[styles.button, (props.content === 'privacy' ? styles.select : null)]} onPress={()=>{props.setPopupContent('privacy');}}>
+					<Text style={styles.text}>Privacy Policy</Text>
+				</Pressable>
+				<Pressable style={styles.button} onPress={()=>{props.setPopupContent('close');}}>
+					<Text style={styles.text}>Close</Text>
+				</Pressable>
 			</View>
+			<View style={styles.toggle}>
+				<Text style={[styles.textBody, (props.content === 'terms') ? null : styles.hidden]}>
+					These are the Terms
+				</Text>
+				<Text style={[styles.textBody, (props.content === 'privacy') ? null : styles.hidden]}>
+					This is the privacy policy
+				</Text>
+			</View>
+		</Modal>
 	);
 }
 
 const styles = StyleSheet.create({
-	agreement: {
-		display: 'flex',
+	toggle: {
+		flex: 1,
 		flexDirection: 'row',
-		alignItems: 'center',
-		marginTop: 5,
-		marginLeft: -5,
-		marginRight: -5,
+		flexWrap: 'nowrap',
+		justifyContent: 'center'
+	},
+	button: {
+		backgroundColor: '#FFFFFF',
+		padding: 10,
+		margin: 10,
+		height: 40,
+		borderStyle: 'solid',
+		borderColor: '#828282',
+		borderWidth: 1,
+		borderRadius: 15,
+	},
+	select: {
+		backgroundColor: "#7650FF",
+		color: '#FFFFFF'
+	},
+	hidden: {
+		display: 'none'
 	},
 	text: {
-		fontSize: 10,
-	},
-	bold: {
+		fontSize: 15,
 		fontWeight: 'bold',
-		fontSize: 12,
-		lineHeight: 12,
-		overflow: 'scroll'
-	}
+		color: '#000000'
+	},
+	textBody: {
+		fontSize: 15,
+		fontWeight: 'thin',
+		color: '#000000'
+	},
 });
+
 
 export default Agreement;

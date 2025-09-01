@@ -4,31 +4,36 @@ import { useState } from "react";
 
 import Logo from "../Components/logo.tsx";
 import Button from "../Components/button.tsx";
-import Agreement from "../Components/agreement.tsx";
-import PasswordInput from "../Components/PasswordInput.tsx";
-import TextInput from "../Components/TextInput.tsx";
+import Notice from "../Components/notice.tsx";
+import TextInput from "../Components/textInput.tsx";
+import ErrorMessage from "../Components/errorMessage.tsx";
 
-import CreateAccount from "../Functions/createAccount.ts";
+import {verifyCreateAccountFields} from "../Functions/verifyCreateAccountFields.ts";
+import createAccount  from "../Functions/createAccount.ts";
 
-const Login = (props: {navigation: StackNavigationProp<any>}) => {
+const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 	const windowHeight: number = Dimensions.get('window').height;
-
+	// User
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+
 	const [passwordReEntry, setPasswordReEntry] = useState('');
 	const [submitted, setSubmitted] = useState(false);
-
-
+	const [errors, setErrors] = useState<string[] | []>([]);
 
 	const handleSubmit = async () => {
 		setSubmitted(true);
 
+		// Verify fields are well-formed else set error list for error message component and does not submit.
+		const isWellFormed: boolean = verifyCreateAccountFields(firstName, lastName, email, password, passwordReEntry, errors, setErrors);
+		console.log("Well-formed: " + isWellFormed)
+		if (!isWellFormed) return;
 
-		// If any of the fields are '' then create account will not occur
-		if (!CreateAccount(firstName, lastName, email, password)) return;
+		setErrors([]);
 
+		//await createAccount(firstName, lastName, email, password);
 
 		props.navigation.push('Home')
 
@@ -50,11 +55,14 @@ const Login = (props: {navigation: StackNavigationProp<any>}) => {
 			<TextInput value={firstName} onChangeText={setFirstName} placeholder='First Name' submitted={submitted}/>
 			<TextInput value={lastName} onChangeText={setLastName} placeholder='Last Name' submitted={submitted}/>
 			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submitted={submitted}/>
-			<PasswordInput password={password} setPassword={setPassword} passwordReEntry={passwordReEntry} setPasswordReEntry={setPasswordReEntry} submitted={submitted}/>
+			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submitted={submitted} hideText={true}/>
+			<TextInput value={passwordReEntry} onChangeText={setPasswordReEntry} placeholder='Re-enter Password' submitted={submitted} hideText={true}/>
+
+			<ErrorMessage errors={errors} display={submitted}/>
 
 			<Button onPress={handleSubmit} primaryColor="#DD00FF" secondaryColor="#7650FF" textColor="#FFFFFF" text="Continue" fontSize={15}/>
 
-			<Agreement/>
+			<Notice/>
 			<View style={{paddingTop: windowHeight / 5}}/>
 		</View>
 	);
@@ -74,4 +82,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default Login
+export default CreateAccount

@@ -1,9 +1,8 @@
 import * as yup from "yup";
 
-// Used for password comparison, returns false if either entry is an empty string.
-export function compare (password1: string, password2: string):boolean {
-		if (password1 === '' || password2 === '') return false;
-		return (password1 === password2);
+// Used for password comparison
+export function compare (password: string, passwordReEntry: string):boolean {
+		return (password === passwordReEntry);
 	}
 
 // Schema for well-formed password
@@ -15,9 +14,10 @@ const schema = yup.object({
   	.matches(/\d+/, 'Password must contain at least one number.')
 });
 
-export async function verifyPassword(password: string, setErrors: (errors: [])=>void) {
-		try {
+// Validates schema against users password
+export async function verifyPassword(password: string, errors: string[] | [], setErrors: (errors: string[] | [])=>void) {
+	try {
 			await schema.validate({ password: password }, { abortEarly: false });
 			setErrors([]);
-		} catch (e: any) { setErrors(e.errors); }
+		} catch (e: any) { setErrors(e.errors) }
 	}

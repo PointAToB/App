@@ -1,12 +1,12 @@
 import { TextInput as Ti, StyleSheet } from "react-native";
 
-const TextInput = (props: {value: string, onChangeText: (text: string)=>void, placeholder: string, submitted: boolean}) => {
+const TextInput = (props: {value: string, onChangeText: (text: string)=>void, placeholder: string, submitted: boolean, hideText?: boolean}) => {
 	const style = (condition: string) => {
 		return [styles.textInput, (condition.length === 0 && props.submitted ? styles.EmptyInput : null)]
 	}
 
 	return (
-		<Ti value={props.value} onChangeText={props.onChangeText} placeholder={props.placeholder} style={style(props.value)}/>
+		<Ti secureTextEntry={props.hideText} value={props.value} onChangeText={props.onChangeText} placeholder={props.placeholder} style={style(props.value)}/>
 	);
 }
 

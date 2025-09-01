@@ -1,12 +1,19 @@
-import { StyleSheet, View, Text, TextInput, Dimensions} from "react-native";
+import { StyleSheet, View, Text, Dimensions} from "react-native";
 import LineWithText from "../Components/lineWithText.tsx";
 import Logo from "../Components/logo.tsx";
-import Agreement from "../Components/agreement.tsx";
+import Notice from "../Components/notice.tsx";
 import Button from "../Components/button.tsx";
 import {StackNavigationProp} from "@react-navigation/stack";
+import TextInput from "../Components/textInput.tsx";
+import {useState} from "react";
 
 const Login = (props: {navigation: StackNavigationProp<any>}) => {
 	const windowHeight: number = Dimensions.get('window').height;
+
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [submitted, isSubmitted] = useState(false);
+
 	return (
 		<View style={styles.main}>
 			<Logo primaryColor={"#DD00FF"} secondaryColor={"#7650FF"}/>
@@ -16,12 +23,13 @@ const Login = (props: {navigation: StackNavigationProp<any>}) => {
 				<Text style={[styles.text, {fontWeight: 'bold'}]} >Login</Text>
 				<Text style={[styles.text, {fontWeight: 'thin'}]} >Enter your credentials to stay on track</Text>
 			</View>
-			<TextInput style={[styles.textBase, styles.textInput]} placeholder='Email'></TextInput>
-			<TextInput style={[styles.textBase, styles.textInput]} placeholder='Password'></TextInput>
+
+			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submitted={submitted}/>
+			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submitted={submitted} hideText={true}/>
 
 			<Button onPress={()=>{props.navigation.push('Home')}} primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Login' fontSize={15}/>
 
-			<Agreement/>
+			<Notice/>
 
 			<LineWithText text='or'/>
 
