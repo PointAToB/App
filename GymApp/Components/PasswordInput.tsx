@@ -1,32 +1,10 @@
-import * as yup from 'yup';
-import { useState } from "react";
 import { TextInput, View, StyleSheet, Text } from "react-native";
 
-
-const schema = yup.object({
-  password: yup.string()
-    .min(8, 'Password must be at least 8 characters long.')
-  	.matches(/[a-z]+/, 'Password must contain at least one lowercase letter.')
- 		.matches(/[A-Z]+/, 'Password must contain at least one uppercase letter.')
-  	.matches(/\d+/, 'Password must contain at least one number.')
-});
-
-const PasswordInput = (props: {submitted: boolean, password: string, setPassword: (text: string)=>void}) => {
-	const [errors, setErrors] = useState([]);
-	const [reEnter, setReEnter] = useState('');
-
-	const verifyPassword = async (text: string) => {
-		props.setPassword(text);
-		try {
-			await schema.validate({ password: text }, { abortEarly: false });
-			setErrors([]);
-		} catch (e: any) { setErrors(e.errors); }
-	}
-
-	const compare = (password1: string, password2: string): boolean => {
-		if (password1 === '' || password2 === '') return false;
-		return !(password1 === password2);
-	}
+const PasswordInput = (props: {
+	submitted: boolean,
+	password: string, setPassword: (text: string)=>void,
+	passwordReEntry: string, setPasswordReEntry: (text: string)=>void
+}) => {
 
 	// Used for dynamic styling of passwordInput
 	const style = (condition: string) => {
@@ -35,8 +13,8 @@ const PasswordInput = (props: {submitted: boolean, password: string, setPassword
 
 	return (
 		<View>
-			<TextInput value={props.password} onChangeText={verifyPassword} secureTextEntry={true} style={style(props.password)} placeholder='Password'/>
-			<TextInput value={reEnter} onChangeText={setReEnter} secureTextEntry={true} style={style(reEnter)} placeholder='Re-enter Password'/>
+			<TextInput value={props.password} onChangeText={props.setPassword} secureTextEntry={true} style={style(props.password)} placeholder='Password'/>
+			<TextInput value={props.passwordReEntry} onChangeText={props.setPasswordReEntry} secureTextEntry={true} style={style(props.passwordReEntry)} placeholder='Re-enter Password'/>
 			{ props.submitted && errors.length > 0 &&
 				<View>
 					{ errors.map((error, index) => (
@@ -44,11 +22,13 @@ const PasswordInput = (props: {submitted: boolean, password: string, setPassword
 					))}
 				</View>
 			}
-			{ compare(props.password, reEnter) && props.submitted &&
+			{/*	Display only if the form was submitted and the password fields are not equal */}
+			{ props.submitted && !compare(props.password, reEnter) &&
 					<View>
 						<Text style={styles.badInput}>Passwords do not match</Text>
 					</View>
 			}
+			<Text>{props.password}  {reEnter}  valid { props.valid ? 'true' : 'false'}</Text>
 		</View>
 	);
 }

@@ -17,12 +17,19 @@ const Login = (props: {navigation: StackNavigationProp<any>}) => {
 	const [lastName, setLastName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [passwordReEntry, setPasswordReEntry] = useState('');
 	const [submitted, setSubmitted] = useState(false);
+
+
 
 	const handleSubmit = async () => {
 		setSubmitted(true);
 
+
+		// If any of the fields are '' then create account will not occur
 		if (!CreateAccount(firstName, lastName, email, password)) return;
+
+
 		props.navigation.push('Home')
 
 		setSubmitted(false);
@@ -34,19 +41,20 @@ const Login = (props: {navigation: StackNavigationProp<any>}) => {
 			<View style={{paddingTop: windowHeight / 10}}/>
 
 			<View style={styles.header}>
+				{/* eslint-disable-next-line react-native/no-inline-styles */}
 				<Text style={[styles.text, {fontWeight: 'bold'}]} >Create an Account</Text>
+				{/* eslint-disable-next-line react-native/no-inline-styles */}
 				<Text style={[styles.text, {fontWeight: 'thin'}]} >You are one step closer to greatness</Text>
 			</View>
 
 			<TextInput value={firstName} onChangeText={setFirstName} placeholder='First Name' submitted={submitted}/>
 			<TextInput value={lastName} onChangeText={setLastName} placeholder='Last Name' submitted={submitted}/>
 			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submitted={submitted}/>
-			<PasswordInput password={password} setPassword={setPassword} submitted={submitted}/>
+			<PasswordInput password={password} setPassword={setPassword} passwordReEntry={passwordReEntry} setPasswordReEntry={setPasswordReEntry} submitted={submitted}/>
 
 			<Button onPress={handleSubmit} primaryColor="#DD00FF" secondaryColor="#7650FF" textColor="#FFFFFF" text="Continue" fontSize={15}/>
 
 			<Agreement/>
-
 			<View style={{paddingTop: windowHeight / 5}}/>
 		</View>
 	);
