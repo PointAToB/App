@@ -8,7 +8,7 @@ export async function setToken (tokenStr: string, tokenName: string)  {
 	} catch (e) { console.error(e); }
 }
 
-export async function getToken (tokenStr: string, tokenName: string){
+export async function getToken (tokenName: string){
 	const token = await keychain.getGenericPassword({ service: tokenName });
 	return token ? token.password : null;
 }

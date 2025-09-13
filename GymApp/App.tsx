@@ -1,9 +1,4 @@
-import {
-  StatusBar,
-  StyleSheet,
-  useColorScheme,
-  Text
-} from 'react-native';
+import {StatusBar, useColorScheme} from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -12,7 +7,7 @@ import {NavigationContainer} from "@react-navigation/native";
 import Login from "./Pages/login.tsx";
 import CreateAccount from "./Pages/createAccount.tsx";
 import Home from "./Pages/home.tsx";
-import Navigation from "./Components/navigation.tsx";
+//import Navigation from "./Components/navigation.tsx";
 
 
 function App() {
@@ -31,7 +26,7 @@ function App() {
 				<Stack.Navigator initialRouteName='Login'>
 					<Stack.Screen options={{headerShown: false}} name='Login' component={Login}/>
 					<Stack.Screen name='Create Account' component={CreateAccount}/>
-					<Stack.Screen options={{headerShown: true}} name='Home' component={Home}/>
+					<Stack.Screen options={{headerShown: false}} name='Home' component={Home}/>
 				</Stack.Navigator>
 
 

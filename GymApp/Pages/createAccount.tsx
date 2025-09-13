@@ -1,18 +1,19 @@
-import { StyleSheet, View, Text, Dimensions} from "react-native";
+import { StyleSheet, View} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Logo from "../Components/logo.tsx";
 import Button from "../Components/button.tsx";
 import Notice from "../Components/notice.tsx";
 import TextInput from "../Components/textInput.tsx";
 import ErrorMessage from "../Components/errorMessage.tsx";
+import SectionHeader from "../Components/sectionHeader.tsx";
 
-import {verifyCreateAccountFields} from "../Functions/verifyCreateAccountFields.ts";
-import createAccount  from "../Functions/createAccount.ts";
+import verifyFields from "../Functions/verifyCreateAccountFields.ts";
+import createAccount from "../Functions/createAccount.ts";
+import {bool} from "yup";
 
 const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
-	const windowHeight: number = Dimensions.get('window').height;
 	// User
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
@@ -20,37 +21,48 @@ const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 	const [password, setPassword] = useState('');
 
 	const [passwordReEntry, setPasswordReEntry] = useState('');
-	const [submitted, setSubmitted] = useState(false);
-	const [errors, setErrors] = useState<string[] | []>([]);
+	const [errors, setErrors] = useState<string[]>([]);
+	const [submitted, isSubmitted] = useState(false);
+	const [success, isSuccess] = useState(false);
 
-	const handleSubmit = async () => {
-		setSubmitted(true);
 
-		// Verify fields are well-formed else set error list for error message component and does not submit.
-		const isWellFormed: boolean = verifyCreateAccountFields(firstName, lastName, email, password, passwordReEntry, errors, setErrors);
-		console.log("Well-formed: " + isWellFormed)
-		if (!isWellFormed) return;
-
+	const handleSubmit = () => {
 		setErrors([]);
+		isSubmitted(true);
 
-		//await createAccount(firstName, lastName, email, password);
 
-		props.navigation.push('Home')
+		// Verify fields are well-formed
+		setErrors(verifyFields(firstName, lastName, email, password, passwordReEntry));
 
-		setSubmitted(false);
+		// If error array is not empty fields are not well-formed
+		if(errors.length !== 0) return;
+
+		// If create account fails, account already exists
+		createAccount(firstName, lastName, email, password).then(
+			(promise: boolean | undefined)=> {
+				isSuccess(promise !== undefined)
+			},
+			()=> {
+				isSuccess(false)
+			}
+		);
+
+		if(!success) {
+			setErrors(['Account with this email already exists']);
+			return;
+		}
+
+		else {
+			props.navigation.push('Home');
+			isSubmitted(false);
+		}
 	}
 
 	return (
 		<View style={styles.main}>
 			<Logo primaryColor={"#DD00FF"} secondaryColor={"#7650FF"}/>
-			<View style={{paddingTop: windowHeight / 10}}/>
 
-			<View style={styles.header}>
-				{/* eslint-disable-next-line react-native/no-inline-styles */}
-				<Text style={[styles.text, {fontWeight: 'bold'}]} >Create an Account</Text>
-				{/* eslint-disable-next-line react-native/no-inline-styles */}
-				<Text style={[styles.text, {fontWeight: 'thin'}]} >You are one step closer to greatness</Text>
-			</View>
+			<SectionHeader header='Create an Account' subHeader='You are one step closer to greatness' style={styles.header}/>
 
 			<TextInput value={firstName} onChangeText={setFirstName} placeholder='First Name' submitted={submitted}/>
 			<TextInput value={lastName} onChangeText={setLastName} placeholder='Last Name' submitted={submitted}/>
@@ -63,22 +75,19 @@ const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 			<Button onPress={handleSubmit} primaryColor="#DD00FF" secondaryColor="#7650FF" textColor="#FFFFFF" text="Continue" fontSize={15}/>
 
 			<Notice/>
-			<View style={{paddingTop: windowHeight / 5}}/>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	main: {
-		margin: 25,
+		marginTop: 100,
+		marginLeft: 25,
+		marginRight: 25
 	},
 	header: {
-		marginBottom: 15
-	},
-	text: {
-		fontSize: 15,
-		textAlign: 'center',
-		color: '#000000'
+		marginBottom: 15,
+		marginTop: 15
 	}
 });
 
