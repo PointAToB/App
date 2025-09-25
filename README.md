@@ -4,16 +4,11 @@ Frontend of our mobile application
 Setup and run:
 run npm i to install dependencies 
 
-The README in the main project folder contains all steps on how to run
-for iOS and Android. 
+You should be able to run with npx expo start. This should generate a QR code for you
+to scan with your device. 
 
-Install CocoaPods if needed: gem install cocoapods 
+Make sure you have Expo Go installed on the device you choose to use if you are doing the QR
+code route.
 
-Install Xcode for iOS simulation and Android Studio for Android simulation. 
-Xcode is available on the App Store on Macs. 
-
-For any troubleshooting or setup issues, please refer to the README in the main project 
-folder or the official react native documentation. 
-
-For CocoaPods, refer to the official CocoaPods documentation for installation and 
-running. 
+Scanning the QR code will open the application in Expo Go on the device. You are able to 
+run and test things there. 
