@@ -1,11 +1,11 @@
 import { View, Text } from "react-native";
 
-const Home = () => {
+const Nutrition = () => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home Screen</Text>
+      <Text>Nutrition Screen</Text>
     </View>
   );
 };
 
-export default Home;
+export default Nutrition;

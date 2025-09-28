@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text, ScrollView, Dimensions } from "react-native";
-import Logo from "../Components/logo.tsx";
-import LineWithText from "../Components/lineWithText.tsx";
-import Button from "../Components/button.tsx";
+import Logo from "../Components/logo";
+import LineWithText from "../Components/lineWithText";
+import Button from "../Components/button";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 // Starting with this as a baseline, I think we will add more
