@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Modal } from 'react-native';
 import { useState } from "react";
 
 import Toggle from "./toggle";
@@ -20,7 +20,7 @@ const options: React.ComponentType<{cameraType: CameraType}>[] = [Video, Photo]
 
 
 
-export default function Camera() {
+export default function Camera(props: {setPopupContent: (cmd: string)=>void}) {
 	const [cameraType, setCameraType] = useState<CameraType>('front');
 	const [selection, setSelection] = useState(1);
 
@@ -30,7 +30,7 @@ export default function Camera() {
 			return <Component cameraType={cameraType}/>
 		}
   return (
-		<View style={styles.main}>
+		<Modal style={styles.main} animationType='slide' visible={true}>
 			<View style={styles.camera}>
 				<CameraView/>
 			</View>
@@ -39,7 +39,7 @@ export default function Camera() {
 				<Toggle size={36} cameraType={cameraType} setCameraType={setCameraType} color='white' style={{position: 'absolute', right: 0}}/>
  				<Close size={36} cameraType={cameraType} setDisplay={()=>{console.log()}} color='white' style={{position: 'absolute', left: 0}}/>
 			</View>
-		</View>
+		</Modal>
   );
 }
 
