@@ -10,7 +10,7 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 	displayCamera: boolean, isCameraDisplayed: (displayCamera: boolean)=>void}) {
 
   useEffect(() => {
-		if (!props.permissionGranted && props.display) {
+		if (!props.permissionGranted && props.displayCamera) {
 			Alert.alert(
 				"Camera Access",
 				"We need your permission to enable camera access",
@@ -24,7 +24,7 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 				{cancelable: true}
 			);
 		}
-	}, []);
+	}, [props.displayCamera]);
 	console.log('Permissions: ' + props.permissionGranted + " " + props.displayCamera)
 	return null;
 }
