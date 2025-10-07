@@ -14,7 +14,6 @@ import { CameraType } from "expo-camera";
 import Permission,  { getRuntimeEngine } from "./permission";
 
 // TODO: Remove Expo Go condition after app is finalized and add Coach component to options list
-
 // Selector Options
 const options: React.ComponentType<{cameraType: CameraType}>[] = [Video, Photo]
 if( getRuntimeEngine() === 'reactNative' ) options.push(Coach)
