@@ -1,5 +1,19 @@
-import { Alert } from "react-native";
+import {Alert, Platform} from "react-native";
 import { useEffect } from "react";
+import { request, PERMISSIONS, RESULTS, Permission as Perm} from "react-native-permissions";
+
+// React native permission request function
+async function requestNativeCameraPermissions() {
+	let permission: Perm;
+
+	if (Platform.OS === 'ios') permission = PERMISSIONS.IOS.CAMERA;
+	else if (Platform.OS === 'android') permission = PERMISSIONS.ANDROID.CAMERA;
+	else { console.warn('Unsupported platform'); return; }
+
+	const result = await request(permission)
+
+	return result === RESULTS.GRANTED;
+}
 
 // TODO: Remove imports when app is finalized
 import Constants, { ExecutionEnvironment } from "expo-constants";
@@ -16,16 +30,12 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 				"We need your permission to enable camera access",
 				[
 					{text: "Cancel", onPress: ()=>props.isCameraDisplayed(false), style: "cancel"},
-					{text: "OK", onPress: ()=>{
-							//setShowAlert(false)
-							void permissionHandler(props.setPermissionGranted)
-						}},
+					{text: "OK", onPress: ()=>{ void permissionHandler(props.setPermissionGranted) }},
 				],
 				{cancelable: true}
 			);
 		}
-	}, [props.displayCamera]);
-	console.log('Permissions: ' + props.permissionGranted + " " + props.displayCamera)
+	}, [props.permissionGranted, props.displayCamera]);
 	return null;
 }
 
@@ -36,6 +46,11 @@ async function permissionHandler(setPermissionGranted: (permissionGranted: boole
 	if(getRuntimeEngine() === 'expoGo') {
 		 await Camera.requestCameraPermissionsAsync();
 		 setPermissionGranted(true)
+	}
+
+	else if(getRuntimeEngine() === 'reactNative') {
+		 const success = await requestNativeCameraPermissions();
+		 if(success) setPermissionGranted(true)
 	}
 
 }
