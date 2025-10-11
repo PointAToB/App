@@ -41,7 +41,7 @@ export default function Camera(props: {visible: boolean, setVisible: (display: b
 				<View style={styles.menu}>
 					<Selector options={options} setSelection={setSelection}/>
 					<Toggle size={36} cameraType={cameraType} setCameraType={setCameraType} color={'white'} style={{position: 'absolute', right: 0}}/>
-					<Close size={36} onPress={()=>{props.isCameraDisplayed(false)}} color={'white'} style={{position: 'absolute', left: 0}}/>
+					<Close size={36} onPress={()=>{props.setVisible(false)}} color={'white'} style={{position: 'absolute', left: 0}}/>
 				</View>
 			</Modal>
 				: null

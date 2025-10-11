@@ -24,8 +24,8 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 				{cancelable: true}
 			);
 		}
-	}, [props.permissionGranted, props.displayCamera]);
-
+	}, [props.displayCamera]);
+	console.log('Permissions: ' + props.permissionGranted + " " + props.displayCamera)
 	return null;
 }
 
