@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 // TODO: Remove imports when app is finalized
 import Constants, { ExecutionEnvironment } from "expo-constants";
@@ -10,7 +10,7 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 	displayCamera: boolean, isCameraDisplayed: (displayCamera: boolean)=>void}) {
 
   useEffect(() => {
-		if (!props.permissionGranted && props.display) {
+		if (!props.permissionGranted && props.displayCamera) {
 			Alert.alert(
 				"Camera Access",
 				"We need your permission to enable camera access",
@@ -18,14 +18,14 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 					{text: "Cancel", onPress: ()=>props.isCameraDisplayed(false), style: "cancel"},
 					{text: "OK", onPress: ()=>{
 							//setShowAlert(false)
-							permissionHandler(props.setPermissionGranted)
+							void permissionHandler(props.setPermissionGranted)
 						}},
 				],
 				{cancelable: true}
 			);
 		}
-	}, []);
-	console.log('Permissions: ' + props.permissionGranted + " " + props.displayCamera)
+	}, [props.permissionGranted, props.displayCamera]);
+
 	return null;
 }
 
