@@ -1,5 +1,5 @@
-import {api_root_url} from "../Settings/constants";
-import {setToken} from "./keychain.ts";
+import { api_root_url } from "../Settings/constants";
+import { setToken } from "./keyStore";
 
 export default async function Login(email: string, password: string): Promise<boolean> {
 	const endpoint:string = api_root_url + 'token/pair';
@@ -19,8 +19,8 @@ export default async function Login(email: string, password: string): Promise<bo
 
 		// Saves access/refresh tokens necessary for authorization
 		const json: {access: string, refresh: string} = JSON.parse(await response.json())
-		await setToken(json.access, 'access')
-		await setToken(json.refresh, 'refresh')
+		await setToken({token: 'access'}, json.access)
+		await setToken({token: 'refresh'}, json.refresh)
 
     } catch (e) { console.error(e); return false; }
 
