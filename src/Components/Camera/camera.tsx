@@ -1,6 +1,5 @@
-import React from 'react';
 import { View, StyleSheet, Modal } from 'react-native';
-import { useState } from "react";
+import { useState, ComponentType, useRef } from "react";
 
 import Toggle from "./toggle";
 import Close from "./close";
@@ -13,30 +12,29 @@ import Coach from "./coach";
 import { CameraType } from "expo-camera";
 import Permission,  { getRuntimeEngine } from "./permission";
 
-// TODO: Remove Expo Go condition after app is finalized and add Coach component to options list
+// TODO: Remove this when app is finalized, optionsList of useState should be [Video, Photo, Coach] without condition of engine type checking.
+const options: ComponentType<{cameraType: CameraType}>[] = [Video, Photo]
+if(getRuntimeEngine() === 'reactNative') options.push(Coach)
 
-// Selector Options
-const options: React.ComponentType<{cameraType: CameraType}>[] = [Video, Photo]
-if( getRuntimeEngine() === 'reactNative' ) options.push(Coach)
+function CameraView(props: {Component: ComponentType<{cameraType: CameraType, ref: any}>, CameraType: CameraType, ref: any}) {
+	const Component = props.Component
+	return <Component cameraType={props.CameraType} ref={props.ref}/>
+}
 
-export default function Camera(props: {visible: boolean, setVisible: (display: boolean)=>void}) {
+export default function Camera(props: {visible: boolean, setVisible: (visible: boolean)=>void}) {
 	const [cameraType, setCameraType] = useState<CameraType>('front');
 	const [selection, setSelection] = useState(1);
 	const [permissionGranted, setPermissionGranted] = useState(false);
 
-	// Dynamically render camera functionality based on selector
-		const CameraView = () => {
-			const Component = options[selection]
-			return <Component cameraType={cameraType}/>
-		}
+	const ref = useRef(null)
+
   return (
 		<View>
 			<Permission setPermissionGranted={setPermissionGranted} permissionGranted={permissionGranted} displayCamera={props.visible} isCameraDisplayed={props.setVisible}/>
-
 			{permissionGranted ?
 			<Modal style={styles.main} animationType='slide' visible={props.visible}>
 				<View style={styles.camera}>
-					<CameraView/>
+					<CameraView CameraType={cameraType} Component={options[selection]}/>
 				</View>
 				<View style={styles.menu}>
 					<Selector options={options} setSelection={setSelection}/>

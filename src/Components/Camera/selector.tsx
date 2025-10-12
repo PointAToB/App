@@ -21,6 +21,7 @@ export default function Selector(props: {options: ComponentType<{cameraType: Cam
 	return (
 		<View>
 			<FlatList
+				maxToRenderPerBatch={1}
 				style={styles.selector}
 				data={optionsStr}
 				horizontal
