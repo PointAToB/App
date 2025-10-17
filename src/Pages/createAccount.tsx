@@ -1,14 +1,12 @@
 import { StyleSheet, View} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import Logo from "../Components/logo";
 import Button from "../Components/button";
 import Notice from "../Components/notice";
 import TextInput from "../Components/textInput";
 import ErrorMessage from "../Components/errorMessage";
 import SectionHeader from "../Components/sectionHeader";
-
 import verifyFields from "../Functions/verifyCreateAccountFields";
 import createAccount from "../Functions/createAccount";
 

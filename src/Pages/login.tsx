@@ -1,14 +1,14 @@
 import { StyleSheet, View} from "react-native";
-import LineWithText from "../Components/lineWithText.tsx";
-import Logo from "../Components/logo.tsx";
-import Notice from "../Components/notice.tsx";
-import Button from "../Components/button.tsx";
-import {StackNavigationProp} from "@react-navigation/stack";
-import TextInput from "../Components/textInput.tsx";
+import LineWithText from "../Components/lineWithText";
+import Logo from "../Components/logo";
+import Notice from "../Components/notice";
+import Button from "../Components/button";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import TextInput from "../Components/textInput";
 import {useState} from "react";
-import SectionHeader from "../Components/sectionHeader.tsx";
+import SectionHeader from "../Components/sectionHeader";
 
-const Login = (props: {navigation: StackNavigationProp<any>}) => {
+const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [submitted, isSubmitted] = useState(false);

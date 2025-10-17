@@ -1,17 +1,12 @@
-import Icon from '@expo/vector-icons/FontAwesome';
 import { View, Pressable, StyleSheet } from "react-native";
-import React from "react";
+import React, { ComponentType } from "react";
+import {CameraComponent} from "./types";
 
 
-const Capture = (props: {type: string, size: number, onPress?: ()=>{}}) => {
-	// Based on type (photo, video, coach)
-	let innerColor = 'white'
-	if(props.type === 'Video') innerColor = '#DD1C1A'
-	if(props.type === 'Coach') innerColor = '#003D5B'
-
+const Capture = (props: {component: CameraComponent, size: number, onPress?: ()=>{}}) => {
 	return (
 		<Pressable onPress={props.onPress} style={{width: props.size, height: props.size, borderRadius: (props.size/2), alignItems: 'center', marginTop: 10, backgroundColor: 'white'}}>
-			<View style={[styles.innerCircle, {backgroundColor: innerColor, width: (props.size - 4), height: (props.size - 4), borderRadius: (props.size - 4)/2, borderWidth: 2, borderStyle: 'solid', borderColor: 'black'}]}/>
+			<View style={[styles.innerCircle, {backgroundColor: props.component.captureColor, width: (props.size - 4), height: (props.size - 4), borderRadius: (props.size - 4)/2, borderWidth: 2, borderStyle: 'solid', borderColor: 'black'}]}/>
 		</Pressable>
 	);
 }
