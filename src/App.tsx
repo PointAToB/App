@@ -8,6 +8,7 @@ import Login from "./Pages/login";
 import CreateAccount from "./Pages/createAccount";
 import Home from "./Pages/home";
 import Navigation from "./Components/navigation";
+import WorkoutDetailScreen from "./Pages/WorkoutDetailScreen";
 
 
 function App() {
@@ -27,6 +28,11 @@ function App() {
 					<Stack.Screen options={{headerShown: false}} name='Login' component={Login}/>
 					<Stack.Screen name='Create Account' component={CreateAccount}/>
           <Stack.Screen options={{ headerShown: false }} name='Home' component={Navigation} />
+          <Stack.Screen 
+            options={{ headerShown: false }} 
+            name='WorkoutDetail' 
+            component={WorkoutDetailScreen} 
+          />
 				</Stack.Navigator>
 			</NavigationContainer>
   );
