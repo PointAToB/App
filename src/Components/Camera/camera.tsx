@@ -1,32 +1,25 @@
 import { View, StyleSheet, Modal } from 'react-native';
-import { useState, ComponentType, useRef } from "react";
-
+import { useState, useRef } from "react";
 import Toggle from "./toggle";
 import Close from "./close";
 import Selector from "./selector";
-
 import Photo from "./photo";
 import Video from "./video";
 import Coach from "./coach";
-
+import CameraView from "./CameraView";
 import { CameraType } from "expo-camera";
 import Permission,  { getRuntimeEngine } from "./permission";
+import { CameraComponent, CameraFunctions } from "./types";
 
 // TODO: Remove this when app is finalized, optionsList of useState should be [Video, Photo, Coach] without condition of engine type checking.
-const options: ComponentType<{cameraType: CameraType}>[] = [Video, Photo]
-if(getRuntimeEngine() === 'reactNative') options.push(Coach)
-
-function CameraView(props: {Component: ComponentType<{cameraType: CameraType, ref: any}>, CameraType: CameraType, ref: any}) {
-	const Component = props.Component
-	return <Component cameraType={props.CameraType} ref={props.ref}/>
-}
+const options: CameraComponent[] = [Video, Photo]
+//if(getRuntimeEngine() === 'reactNative') options.push(Coach)
 
 export default function Camera(props: {visible: boolean, setVisible: (visible: boolean)=>void}) {
 	const [cameraType, setCameraType] = useState<CameraType>('front');
 	const [selection, setSelection] = useState(1);
 	const [permissionGranted, setPermissionGranted] = useState(false);
-
-	const ref = useRef(null)
+	const ref = useRef<CameraFunctions>(null)
 
   return (
 		<View>
@@ -34,7 +27,7 @@ export default function Camera(props: {visible: boolean, setVisible: (visible: b
 			{permissionGranted ?
 			<Modal style={styles.main} animationType='slide' visible={props.visible}>
 				<View style={styles.camera}>
-					<CameraView CameraType={cameraType} Component={options[selection]}/>
+					<CameraView ref={ref} cameraType={cameraType} Component={options[selection]}/>
 				</View>
 				<View style={styles.menu}>
 					<Selector options={options} setSelection={setSelection}/>

@@ -2,6 +2,7 @@ import { Alert, Platform } from "react-native";
 import { useEffect } from "react";
 import { request, PERMISSIONS, RESULTS, Permission as Perm} from "react-native-permissions";
 import { Camera as rnCamera} from "react-native-vision-camera";
+
 // React native permission request function
 async function requestNativeCameraPermissions() {
 	// Short-handed type Permission as Perm to prevent naming issues with Permission component.
@@ -17,6 +18,7 @@ async function requestNativeCameraPermissions() {
 // TODO: Remove imports when app is finalized
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import {Camera as expoCamera, PermissionResponse} from "expo-camera";
+
 
 export default function Permission(props: {setPermissionGranted: (permissionGranted: boolean)=>void, permissionGranted: boolean,
 	displayCamera: boolean, isCameraDisplayed: (displayCamera: boolean)=>void}) {
@@ -47,7 +49,7 @@ async function permissionHandler(setPermissionGranted: (permissionGranted: boole
 
 	else if(getRuntimeEngine() === 'reactNative') {
 		 const res = await rnCamera.requestCameraPermission()
-		 if(res === 'granted') setPermissionGranted(true)
+		 if(res) setPermissionGranted(true)
 	}
 }
 

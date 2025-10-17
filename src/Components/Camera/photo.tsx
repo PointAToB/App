@@ -1,22 +1,24 @@
-import { CameraView, CameraType } from "expo-camera";
-import { RefObject, forwardRef, useImperativeHandle, useRef } from "react";
+import { CameraView } from "expo-camera";
+import {CameraComponent } from "./types";
+import {useImperativeHandle, useRef } from "react";
 
-const Photo = forwardRef((props: {cameraType: CameraType}, ref) => {
-	const internalState = useRef(null);
+const Photo: CameraComponent = (props) => {
+	const { cameraType, ref } = props;
+  const innerRef = useRef<CameraView>(null);
 
-	useImperativeHandle(ref, ()=> ({
-		capture: capture(ref),
+	useImperativeHandle(ref, () => ({
+		capture: async () => {
+			const photo = await innerRef.current?.takePictureAsync()
+
+		}
 	}));
 
 	return (
-		<CameraView mode='picture' style={{flex: 1}} facing={props.cameraType}/>
+		<CameraView ref={innerRef} mode='picture' style={{flex: 1}} facing={cameraType}/>
 	);
-});
+};
 
 Photo.displayName = 'Photo'
+Photo.captureColor = '#FFFFFF'
 
 export default Photo
-
-async function capture(ref: any) {
-	ref.current?.takePictureAsync();
-}
