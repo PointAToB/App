@@ -6,7 +6,6 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import Login from "./Pages/login";
 import CreateAccount from "./Pages/createAccount";
-import Home from "./Pages/home";
 import Navigation from "./Components/navigation";
 
 

@@ -52,7 +52,6 @@ const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submit={submit}/>
 			<TextInput value={password} onChangeText={setPassword} placeholder='Password' hideText submit={submit}/>
 			<TextInput value={passwordReEntry} onChangeText={setPasswordReEntry} placeholder='Re-enter Password' hideText submit={submit}/>
-
 			<ErrorMessage errors={errors}/>
 
 			<Button onPress={handleSubmit} primaryColor="#DD00FF" secondaryColor="#7650FF" textColor="#FFFFFF" text="Continue" fontSize={15}/>

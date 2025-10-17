@@ -1,6 +1,6 @@
 //import {verifyPassword} from "./verifyPassword.ts";
 
-function isEmpty(str: string): boolean {
+export function isEmpty(str: string): boolean {
 	return str === ''
 }
 
