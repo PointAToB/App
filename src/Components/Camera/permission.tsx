@@ -1,5 +1,5 @@
 import { Alert, Platform } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { request, PERMISSIONS, RESULTS, Permission as Perm} from "react-native-permissions";
 
 // React native permission request function
@@ -16,7 +16,8 @@ async function requestNativeCameraPermissions() {
 
 // TODO: Remove imports when app is finalized
 import Constants, { ExecutionEnvironment } from "expo-constants";
-import {Camera, PermissionResponse} from "expo-camera";
+import {Camera as expoCamera, PermissionResponse} from "expo-camera";
+
 
 export default function Permission(props: {setPermissionGranted: (permissionGranted: boolean)=>void, permissionGranted: boolean,
 	displayCamera: boolean, isCameraDisplayed: (displayCamera: boolean)=>void}) {
@@ -33,6 +34,7 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 				{cancelable: true}
 			);
 		}
+		console.log(props.permissionGranted, props.displayCamera)
 	}, [props.permissionGranted, props.displayCamera]);
 	return null;
 }
@@ -40,14 +42,15 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 // TODO: This method handles the permissions of camera between the runtimes of expo go and react native.
 // TODO: When app is finalized simplify permissionHandler function to use react native permissions exclusively.
 async function permissionHandler(setPermissionGranted: (permissionGranted: boolean)=>void) {
-	if(getRuntimeEngine() === 'expoGo') {
-		 const res: PermissionResponse = await Camera.requestCameraPermissionsAsync();
+	const runtime = useMemo(getRuntimeEngine, [])
+	if(runtime === 'expoGo') {
+		 const res: PermissionResponse = await expoCamera.requestCameraPermissionsAsync();
 		 if(res.status && res.granted) setPermissionGranted(true);
 	}
 
-	else if(getRuntimeEngine() === 'reactNative') {
-		 const success = await requestNativeCameraPermissions();
-		 if(success) setPermissionGranted(true)
+	else if(runtime === 'reactNative') {
+		 const res = await requestNativeCameraPermissions();
+		 if(res) setPermissionGranted(true)
 	}
 }
 

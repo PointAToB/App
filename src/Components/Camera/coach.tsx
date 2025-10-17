@@ -1,12 +1,23 @@
-import { CameraView, CameraType } from "expo-camera";
-import { ViewStyle} from "react-native";
+import { CameraType } from "expo-camera";
+import { Camera, useCameraDevice } from "react-native-vision-camera";
+import { StyleSheet } from "react-native";
+import {  useRef } from "react";
+import {CameraComponent} from "./types";
 
-const Coach = (props: {cameraType: CameraType}) => {
+
+const Coach: CameraComponent = (props: {cameraType: CameraType}) => {
+	const device = useCameraDevice(props.cameraType);
+	if(!device) return;
+
+	const innerRef = useRef<Camera>(null)
+
 	return (
-		<CameraView mode='video' style={{flex: 1}} facing={props.cameraType}/>
+		<Camera ref={innerRef} isActive={true} device={device} style={StyleSheet.absoluteFill}/>
 	);
 }
 
+
 Coach.displayName = 'Coach'
+Coach.captureColor = '#003D5B'
 
 export default Coach
