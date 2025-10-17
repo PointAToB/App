@@ -1,17 +1,14 @@
 import { StyleSheet, View} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useState, useEffect } from "react";
-
-import Logo from "../Components/logo.tsx";
-import Button from "../Components/button.tsx";
-import Notice from "../Components/notice.tsx";
-import TextInput from "../Components/textInput.tsx";
-import ErrorMessage from "../Components/errorMessage.tsx";
-import SectionHeader from "../Components/sectionHeader.tsx";
-
-import verifyFields from "../Functions/verifyCreateAccountFields.ts";
-import createAccount from "../Functions/createAccount.ts";
-import {bool} from "yup";
+import Logo from "../Components/logo";
+import Button from "../Components/button";
+import Notice from "../Components/notice";
+import TextInput from "../Components/textInput";
+import ErrorMessage from "../Components/errorMessage";
+import SectionHeader from "../Components/sectionHeader";
+import verifyFields from "../Functions/verifyCreateAccountFields";
+import createAccount from "../Functions/createAccount";
 
 const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 	// User
@@ -22,40 +19,26 @@ const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 
 	const [passwordReEntry, setPasswordReEntry] = useState('');
 	const [errors, setErrors] = useState<string[]>([]);
-	const [submitted, isSubmitted] = useState(false);
-	const [success, isSuccess] = useState(false);
+	const [submit, isSubmitted] = useState(false);
 
-
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		setErrors([]);
 		isSubmitted(true);
 
-
 		// Verify fields are well-formed
 		setErrors(verifyFields(firstName, lastName, email, password, passwordReEntry));
-
 		// If error array is not empty fields are not well-formed
 		if(errors.length !== 0) return;
 
-		// If create account fails, account already exists
-		createAccount(firstName, lastName, email, password).then(
-			(promise: boolean | undefined)=> {
-				isSuccess(promise !== undefined)
-			},
-			()=> {
-				isSuccess(false)
-			}
-		);
+		// If create account fails, account already exists, fetch error(network issue), or Bad request
+		const res = await createAccount(firstName, lastName, email, password)
 
-		if(!success) {
-			setErrors(['Account with this email already exists']);
+		if(!res?.success) {
+			setErrors([res!.msg]);
 			return;
 		}
 
-		else {
-			props.navigation.push('Home');
-			isSubmitted(false);
-		}
+		props.navigation.push('Home');
 	}
 
 	return (
@@ -64,16 +47,14 @@ const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 
 			<SectionHeader header='Create an Account' subHeader='You are one step closer to greatness' style={styles.header}/>
 
-			<TextInput value={firstName} onChangeText={setFirstName} placeholder='First Name' submitted={submitted}/>
-			<TextInput value={lastName} onChangeText={setLastName} placeholder='Last Name' submitted={submitted}/>
-			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submitted={submitted}/>
-			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submitted={submitted} hideText={true}/>
-			<TextInput value={passwordReEntry} onChangeText={setPasswordReEntry} placeholder='Re-enter Password' submitted={submitted} hideText={true}/>
-
-			<ErrorMessage errors={errors} display={submitted}/>
+			<TextInput value={firstName} onChangeText={setFirstName} placeholder='First Name' submit={submit}/>
+			<TextInput value={lastName} onChangeText={setLastName} placeholder='Last Name' submit={submit}/>
+			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submit={submit}/>
+			<TextInput value={password} onChangeText={setPassword} placeholder='Password' hideText submit={submit}/>
+			<TextInput value={passwordReEntry} onChangeText={setPasswordReEntry} placeholder='Re-enter Password' hideText submit={submit}/>
+			<ErrorMessage errors={errors}/>
 
 			<Button onPress={handleSubmit} primaryColor="#DD00FF" secondaryColor="#7650FF" textColor="#FFFFFF" text="Continue" fontSize={15}/>
-
 			<Notice/>
 		</View>
 	);

@@ -1,44 +1,42 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useState } from "react";
-
+import { View, StyleSheet, Modal } from 'react-native';
+import { useState, useRef } from "react";
 import Toggle from "./toggle";
 import Close from "./close";
 import Selector from "./selector";
-
 import Photo from "./photo";
 import Video from "./video";
-
+import Coach from "./coach";
+import CameraView from "./cameraView";
 import { CameraType } from "expo-camera";
+import Permission,  { getRuntimeEngine } from "./permission";
+import { CameraComponent, CameraFunctions } from "./types";
 
-// Selector Options
-const options: React.ComponentType<{cameraType: CameraType}>[] = [Video, Photo]
+// TODO: Remove this when app is finalized, optionsList of useState should be [Video, Photo, Coach] without condition of engine type checking.
+const options: CameraComponent[] = [Video, Photo]
+if(getRuntimeEngine() === 'reactNative') options.push(Coach)
 
-// TODO: Remove Expo Go condition after app is finalized and add Coach component to options list
-
-
-
-
-
-export default function Camera() {
+export default function Camera(props: {visible: boolean, setVisible: (visible: boolean)=>void}) {
 	const [cameraType, setCameraType] = useState<CameraType>('front');
 	const [selection, setSelection] = useState(1);
+	const [permissionGranted, setPermissionGranted] = useState(false);
+	const ref = useRef<CameraFunctions>(null)
 
-	// Dynamically render camera functionality based on selector
-		const CameraView = () => {
-			const Component = options[selection]
-			return <Component cameraType={cameraType}/>
-		}
   return (
-		<View style={styles.main}>
-			<View style={styles.camera}>
-				<CameraView/>
-			</View>
-			<View style={styles.menu}>
-				<Selector options={options} setSelection={setSelection}/>
-				<Toggle size={36} cameraType={cameraType} setCameraType={setCameraType} color='white' style={{position: 'absolute', right: 0}}/>
- 				<Close size={36} cameraType={cameraType} setDisplay={()=>{console.log()}} color='white' style={{position: 'absolute', left: 0}}/>
-			</View>
+		<View>
+			<Permission setPermissionGranted={setPermissionGranted} permissionGranted={permissionGranted} displayCamera={props.visible} isCameraDisplayed={props.setVisible}/>
+			{permissionGranted ?
+			<Modal style={styles.main} animationType='slide' visible={props.visible}>
+				<View style={styles.camera}>
+					<CameraView ref={ref} cameraType={cameraType} Component={options[selection]}/>
+				</View>
+				<View style={styles.menu}>
+					<Selector options={options} setSelection={setSelection}/>
+					<Toggle size={36} cameraType={cameraType} setCameraType={setCameraType} color={'white'} style={{position: 'absolute', right: 0}}/>
+					<Close size={36} onPress={()=>{props.setVisible(false)}} color={'white'} style={{position: 'absolute', left: 0}}/>
+				</View>
+			</Modal>
+				: null
+			}
 		</View>
   );
 }
