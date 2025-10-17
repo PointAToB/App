@@ -1,5 +1,5 @@
 import { Alert, Platform } from "react-native";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { request, PERMISSIONS, RESULTS, Permission as Perm} from "react-native-permissions";
 
 // React native permission request function
@@ -34,7 +34,6 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 				{cancelable: true}
 			);
 		}
-		console.log(props.permissionGranted, props.displayCamera)
 	}, [props.permissionGranted, props.displayCamera]);
 	return null;
 }
@@ -42,7 +41,7 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 // TODO: This method handles the permissions of camera between the runtimes of expo go and react native.
 // TODO: When app is finalized simplify permissionHandler function to use react native permissions exclusively.
 async function permissionHandler(setPermissionGranted: (permissionGranted: boolean)=>void) {
-	const runtime = useMemo(getRuntimeEngine, [])
+	const runtime = getRuntimeEngine()
 	if(runtime === 'expoGo') {
 		 const res: PermissionResponse = await expoCamera.requestCameraPermissionsAsync();
 		 if(res.status && res.granted) setPermissionGranted(true);

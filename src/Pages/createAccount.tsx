@@ -1,17 +1,14 @@
 import { StyleSheet, View} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useState, useEffect } from "react";
-
-import Logo from "../Components/logo.tsx";
-import Button from "../Components/button.tsx";
-import Notice from "../Components/notice.tsx";
-import TextInput from "../Components/textInput.tsx";
-import ErrorMessage from "../Components/errorMessage.tsx";
-import SectionHeader from "../Components/sectionHeader.tsx";
-
-import verifyFields from "../Functions/verifyCreateAccountFields.ts";
-import createAccount from "../Functions/createAccount.ts";
-import {bool} from "yup";
+import Logo from "../Components/logo";
+import Button from "../Components/button";
+import Notice from "../Components/notice";
+import TextInput from "../Components/textInput";
+import ErrorMessage from "../Components/errorMessage";
+import SectionHeader from "../Components/sectionHeader";
+import verifyFields from "../Functions/verifyCreateAccountFields";
+import createAccount from "../Functions/createAccount";
 
 const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 	// User

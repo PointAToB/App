@@ -9,7 +9,6 @@ const Photo: CameraComponent = (props) => {
 	useImperativeHandle(ref, () => ({
 		capture: async () => {
 			const photo = await innerRef.current?.takePictureAsync()
-
 		}
 	}));
 
