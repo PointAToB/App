@@ -29,13 +29,13 @@ const WorkoutCard: React.FC<WorkoutCardProps> = ({ title, duration, difficulty, 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Beginner':
-        return '#00C896';
+        return '#DD00FF';
       case 'Intermediate':
-        return '#FFD700';
+        return '#7650FF';
       case 'Advanced':
         return '#FF6B6B';
       default:
-        return '#00C896';
+        return '#DD00FF';
     }
   };
 

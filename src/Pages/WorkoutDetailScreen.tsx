@@ -21,13 +21,13 @@ const WorkoutDetailScreen: React.FC = () => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Beginner':
-        return '#00C896';
+        return '#DD00FF';
       case 'Intermediate':
-        return '#FFD700';
+        return '#7650FF';
       case 'Advanced':
         return '#FF6B6B';
       default:
-        return '#00C896';
+        return '#DD00FF';
     }
   };
 
@@ -99,8 +99,10 @@ const WorkoutDetailScreen: React.FC = () => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.startButton} onPress={handleStartWorkout}>
             <LinearGradient
-              colors={['#00C896', '#00A67E']}
+              colors={['#DD00FF', '#7650FF']}
               style={styles.buttonGradient}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
             >
               <Ionicons name="play" size={24} color="#FFFFFF" />
               <Text style={styles.buttonText}>Start Workout</Text>
@@ -252,7 +254,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#00C896',
+    backgroundColor: '#DD00FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -273,7 +275,12 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   startButton: {
-    borderRadius: 16,
+    borderStyle: 'solid',
+    borderColor: '#828282',
+    borderWidth: 1,
+    borderRadius: 20,
+    marginTop: 10,
+    overflow: 'hidden',
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: {
@@ -287,15 +294,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '600',
     marginLeft: 8,
+    textAlign: 'center',
   },
 });
 
