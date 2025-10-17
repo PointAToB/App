@@ -15,17 +15,18 @@ export default async function login(email: string, password: string):
 			})
         });
 
-		console.log(await response.json())
+		const json = await response.json()
+		console.log(json)
 		// If user is unauthorized
 		if(response.status === 401) 
 			return {success: false, msg: 'The email or password entered is incorrect'}
 
 		// Saves access/refresh tokens necessary for authorization
-		const json: {access: string, refresh: string} = JSON.parse(await response.json())
+
 		await setToken({token: 'access'}, json.access)
 		await setToken({token: 'refresh'}, json.refresh)
 
-    } catch (e) { return {success: false, msg: 'Try again later'} }
+    } catch (e) { console.log("Error: " + e); return {success: false, msg: 'Try again later'} }
 
 		return {success: true, msg: 'success'}
 }
