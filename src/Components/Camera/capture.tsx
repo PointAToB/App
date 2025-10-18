@@ -3,7 +3,7 @@ import React, { ComponentType } from "react";
 import {CameraComponent} from "./types";
 
 
-const Capture = (props: {component: CameraComponent, size: number, onPress?: ()=>{}}) => {
+const Capture = (props: {component: CameraComponent, size: number, onPress?: ()=>void}) => {
 	return (
 		<Pressable onPress={props.onPress} style={{width: props.size, height: props.size, borderRadius: (props.size/2), alignItems: 'center', marginTop: 10, backgroundColor: 'white'}}>
 			<View style={[styles.innerCircle, {backgroundColor: props.component.captureColor, width: (props.size - 4), height: (props.size - 4), borderRadius: (props.size - 4)/2, borderWidth: 2, borderStyle: 'solid', borderColor: 'black'}]}/>

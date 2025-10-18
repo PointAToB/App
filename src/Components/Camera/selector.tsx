@@ -7,13 +7,16 @@ const ITEM_WIDTH = 100; // Width of each item
 const MARGIN = 36;
 const SPACING = (screenWidth - ITEM_WIDTH) / 2 - MARGIN;
 
-export default function Selector(props: {options: CameraComponent[], setSelection: (index: number)=>void}) {
-	const optionsStr: string[] = props.options.map((element) => element.displayName!)
+type Props = {options: CameraComponent[], selected: number, setSelect: (index: number)=>void, onPress: ()=>void}
+
+export default function Selector(props: Props) {
+	const {options, selected, setSelect, onPress} = props;
+	const optionsStr: string[] = options.map((element) => element.displayName!)
 
 	const handleSelection = (event: any) => {
 		const offset: number = event.nativeEvent.contentOffset.x
 		const index: number = Math.round(offset / ITEM_WIDTH)
-		props.setSelection(index)
+		setSelect(index)
 	}
 	return (
 		<View>
@@ -35,7 +38,7 @@ export default function Selector(props: {options: CameraComponent[], setSelectio
 				renderItem={({ item, index }) => (
 					<View style={[styles.item, { width: ITEM_WIDTH }]}>
 						<Text style={styles.text}>{item}</Text>
-						<Capture component={props.options[index]} size={48}/>
+						<Capture component={props.options[index]} size={48} onPress={()=>(index === selected) ? onPress() : null}/>
 					</View>
 				)}
 				keyExtractor={(index) => index.toString()}

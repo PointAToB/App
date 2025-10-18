@@ -17,7 +17,8 @@ if(getRuntimeEngine() === 'reactNative') options.push(Coach)
 
 export default function Camera(props: {visible: boolean, setVisible: (visible: boolean)=>void}) {
 	const [cameraType, setCameraType] = useState<CameraType>('front');
-	const [selection, setSelection] = useState(1);
+	const [selected, setSelect] = useState(1)
+
 	const [permissionGranted, setPermissionGranted] = useState(false);
 	const ref = useRef<CameraFunctions>(null)
 
@@ -27,10 +28,10 @@ export default function Camera(props: {visible: boolean, setVisible: (visible: b
 			{permissionGranted ?
 			<Modal style={styles.main} animationType='slide' visible={props.visible}>
 				<View style={styles.camera}>
-					<CameraView ref={ref} cameraType={cameraType} Component={options[selection]}/>
+					<CameraView ref={ref} cameraType={cameraType} Component={options[selected]}/>
 				</View>
 				<View style={styles.menu}>
-					<Selector options={options} setSelection={setSelection}/>
+					<Selector options={options} selected={selected} setSelect={setSelect} onPress={async () => await ref.current!.capture()}/>
 					<Toggle size={36} cameraType={cameraType} setCameraType={setCameraType} color={'white'} style={{position: 'absolute', right: 0}}/>
 					<Close size={36} onPress={()=>{props.setVisible(false)}} color={'white'} style={{position: 'absolute', left: 0}}/>
 				</View>

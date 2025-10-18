@@ -11,8 +11,8 @@ import login from "../Functions/login";
 import ErrorMessage from "../Components/errorMessage";
 
 const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
+	const [email, setEmail] = useState('t@g.com');
+	const [password, setPassword] = useState('Watermelon12');
 	const [errors, setErrors] = useState<string[]>([]);
 	const [submitted, isSubmitted] = useState(false);
 
