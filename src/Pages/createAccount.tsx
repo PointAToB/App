@@ -30,7 +30,7 @@ const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 			setErrors([res!.msg]);
 			return;
 		}
-		props.navigation.push('Home');
+		props.navigation.replace('Main');
 	}
 
 	return (

@@ -43,8 +43,8 @@ export default function Navigation() {
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Profile" component={Profile} />
       <Tab.Screen name="Classes" component={Classes} />
-	  <Tab.Screen name="Nutrition" component={Nutrition} />
-	  <Tab.Screen name="FAQ" component={FAQ} />
+			<Tab.Screen name="Nutrition" component={Nutrition} />
+			<Tab.Screen name="FAQ" component={FAQ} />
 
     </Tab.Navigator>
   );

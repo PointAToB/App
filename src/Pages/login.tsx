@@ -26,7 +26,7 @@ const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
 			setErrors([res!.msg]);
 			return;
 		}
-		props.navigation.push('Home');
+		props.navigation.replace('Main');
 	}
 	return (
 		<View style={styles.main}>
