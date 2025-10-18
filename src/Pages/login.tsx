@@ -5,9 +5,8 @@ import Notice from "../Components/notice";
 import Button from "../Components/button";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import TextInput from "../Components/textInput";
-import {useState} from "react";
+import { useState } from "react";
 import SectionHeader from "../Components/sectionHeader";
-import { isEmpty } from "../Functions/verifyCreateAccountFields";
 import login from "../Functions/login";
 import ErrorMessage from "../Components/errorMessage";
 
@@ -20,12 +19,6 @@ const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
 	const handleSubmit = async () => {
 		setErrors([]);
 		isSubmitted(true)
-
-		// Verify fields
-		if(isEmpty(email) || isEmpty(password)) {
-			setErrors(['Fields cannot be left blank']);
-			return;
-		}
 		
 		const res = await login(email, password)
 
@@ -33,7 +26,6 @@ const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
 			setErrors([res!.msg]);
 			return;
 		}
-
 		props.navigation.push('Home');
 	}
 	return (

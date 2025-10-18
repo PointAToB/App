@@ -7,7 +7,6 @@ import Notice from "../Components/notice";
 import TextInput from "../Components/textInput";
 import ErrorMessage from "../Components/errorMessage";
 import SectionHeader from "../Components/sectionHeader";
-import verifyFields from "../Functions/verifyCreateAccountFields";
 import createAccount from "../Functions/createAccount";
 
 const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
@@ -25,19 +24,12 @@ const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 		setErrors([]);
 		isSubmitted(true);
 
-		// Verify fields are well-formed
-		setErrors(verifyFields(firstName, lastName, email, password, passwordReEntry));
-		// If error array is not empty fields are not well-formed
-		if(errors.length !== 0) return;
-
-		// If create account fails, account already exists, fetch error(network issue), or Bad request
-		const res = await createAccount(firstName, lastName, email, password)
+		const res = await createAccount(firstName, lastName, email, password, passwordReEntry)
 
 		if(!res?.success) {
 			setErrors([res!.msg]);
 			return;
 		}
-
 		props.navigation.push('Home');
 	}
 
