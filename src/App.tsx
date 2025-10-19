@@ -6,7 +6,6 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import Login from "./Pages/login";
 import CreateAccount from "./Pages/createAccount";
-import Home from "./Pages/home";
 import Navigation from "./Components/navigation";
 
 
@@ -26,7 +25,7 @@ function App() {
 				<Stack.Navigator initialRouteName='Login'>
 					<Stack.Screen options={{headerShown: false}} name='Login' component={Login}/>
 					<Stack.Screen name='Create Account' component={CreateAccount}/>
-          <Stack.Screen options={{ headerShown: false }} name='Home' component={Navigation} />
+          <Stack.Screen options={{ headerShown: false }} name='Main' component={Navigation} />
 				</Stack.Navigator>
 			</NavigationContainer>
   );

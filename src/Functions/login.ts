@@ -1,8 +1,14 @@
 import { api_root_url } from "../Settings/constants";
 import { setToken } from "./keyStore";
+import { isEmpty } from "./verifyFields";
 
-export default async function Login(email: string, password: string): Promise<boolean> {
-	const endpoint:string = api_root_url + 'token/pair';
+export default async function login(email: string, password: string): 
+	Promise<{success: boolean, msg: string} | undefined> {
+	const endpoint: string = api_root_url + 'login';
+
+	// Verify fields are well-formed (Non-Empty)
+	if (isEmpty(email, password))
+		return {success: false, msg: 'Fields cannot be left blank'}
 
 	try {
 		const response: Response = await fetch(endpoint, {
@@ -12,17 +18,23 @@ export default async function Login(email: string, password: string): Promise<bo
 				email: email,
 				password: password
 			})
-        });
+		});
 
-		// If user is unauthorized
-		if(response.status === 401) return false;
+		const json = await response.json()
+		switch (response.status) {
+			case 200:
+				await setToken({token: 'access'}, json.access);
+				await setToken({token: 'refresh'}, json.refresh);
+				return {success: true, msg: 'success'}
 
-		// Saves access/refresh tokens necessary for authorization
-		const json: {access: string, refresh: string} = JSON.parse(await response.json())
-		await setToken({token: 'access'}, json.access)
-		await setToken({token: 'refresh'}, json.refresh)
+			case 400:
+				return {success: false, msg: 'The password entered is incorrect'}
 
-    } catch (e) { console.error(e); return false; }
+			case 404:
+				return {success: false, msg: 'An account with this email does not exist'}
 
-		return true;
+			case 422:
+				return {success: false, msg: 'The email entered is invalid'}
+			}
+		} catch (e) { return {success: false, msg: 'Try again later'} }
 }
