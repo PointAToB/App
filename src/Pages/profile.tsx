@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, ScrollView, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Logo from '../Components/logo';
 import LineWithText from '../Components/lineWithText';
 import Button from '../Components/button';
+import { getToken } from '../Functions/keyStore';
+import { api_root_url } from '../Settings/constants';
 
 const Profile = () => {
     type UserType = {
@@ -16,7 +17,87 @@ const Profile = () => {
     };
 
 	const windowHeight: number = Dimensions.get('window').height;
-	const navigation = useNavigation();
+
+	const updateUser = async () => {
+    	const token = await getToken({ token: 'access' });
+    	if (!token) {
+        	console.warn('No token found. User is not authenticated.');
+        	return false;
+    	}
+
+    	const endpoint: string = api_root_url + userId; // <-- You need user ID here
+    	try {
+        	const response = await fetch(endpoint, {
+            	method: 'PUT',
+            	headers: {
+                	'Content-Type': 'application/json',
+                	'Authorization': `Bearer ${token}`
+            	},
+
+            	body: JSON.stringify({
+					// Only send fields that were edited or needed
+					firstName: editedUser.firstName,
+					lastName: editedUser.lastName,
+					email: editedUser.email,
+					weight: editedUser.weight,
+					height: editedUser.height,
+					birthDate: editedUser.birthDate?.toISOString().split('T')[0], // format to YYYY-MM-DD
+				}),
+       	 	});
+
+        	if (response.ok) {
+            	console.log('User updated successfully');
+            	return true;
+        	} 
+			else {
+            	const errorData = await response.json();
+            	console.error('Failed to update user:', errorData);
+            	return false;
+        	}
+
+    	} catch (error) {
+    		console.error('Error updating user:', error);
+        	return false;
+    	}
+	};
+
+	const fetchUserProfile = async () => {
+		setIsLoading(true); // <--- start loading
+
+		const token = await getToken({ token: 'access' });
+
+		if (!token) {
+			console.warn('No token found');
+			setIsLoading(false); // <--- stop loading even on failure
+			return;
+		}
+
+		try {
+			const response = await fetch('https://your-api.com/user', {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'application/json',
+				},
+			});
+
+			if (!response.ok) {
+				console.error('Failed to fetch user profile');
+				setIsLoading(false);
+				return;
+			}
+
+			const userData = await response.json();
+
+			setUser(userData);
+			setEditedUser(userData);
+			setUserId(userData.id);
+		} catch (error) {
+			console.error('Error fetching user profile:', error);
+		} finally {
+			setIsLoading(false); // <-- stop loading once done
+		}
+	};
 
 	const [user, setUser] = useState<UserType>({
         firstName: '',
@@ -30,17 +111,28 @@ const Profile = () => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedUser, setEditedUser] = useState(user);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+	const [userId, setUserId] = useState<number | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
 
-    const handleSave = () => {
-        if (validateInputs()) {
-            setUser(editedUser);
-            setIsEditing(false);
-            setErrors({});
-        } else {
-            // You could also show an alert or notification here
-            console.log('Validation failed', errors);
-        }     
-    };
+	useEffect(() => {
+		fetchUserProfile();
+	}, []);
+
+	const handleSave = async () => {
+    	if (validateInputs()) {
+        	const success = await updateUser();
+        	if (success) {
+            	setUser(editedUser);
+            	setIsEditing(false);
+        	} 
+			else {
+            	console.error("Failed to update user on backend.");
+        	}
+    	} 
+		else {
+        	console.log('Validation failed', errors);
+    	}
+	};
 
     const validateInputs = (): boolean => {
         const newErrors: Record<string, string> = {};
@@ -97,7 +189,17 @@ const Profile = () => {
         
         return Object.keys(newErrors).length === 0; 
     }
+	
+	if (isLoading) {
 	return (
+		<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+			<Text>Loading profile...</Text>
+		</View>
+	);
+
+	}
+	return (
+		
 		<ScrollView style={styles.main}>
 			<Logo primaryColor="#DD00FF" secondaryColor="#7650FF" />
 
@@ -131,7 +233,7 @@ const Profile = () => {
             <View style={styles.profileField}>
 				<Text style={styles.label}>Last Name:</Text>
 
-                {errors.firstName && (
+                {errors.lastName && (
                     <Text style={styles.error}>{errors.lastName}</Text>
                 )}
 
@@ -149,7 +251,7 @@ const Profile = () => {
 			<View style={styles.profileField}>
 				<Text style={styles.label}>Email:</Text>
 
-                {errors.firstName && (
+                {errors.email && (
                     <Text style={styles.error}>{errors.email}</Text>
                 )}
 
@@ -167,7 +269,7 @@ const Profile = () => {
             <View style={styles.profileField}>
 				<Text style={styles.label}>Weight:</Text>
 
-                {errors.firstName && (
+                {errors.weight && (
                     <Text style={styles.error}>{errors.weight}</Text>
                 )}
 
@@ -188,7 +290,7 @@ const Profile = () => {
             <View style={styles.profileField}>
 				<Text style={styles.label}>Height:</Text>
 
-                {errors.firstName && (
+                {errors.height && (
                     <Text style={styles.error}>{errors.height}</Text>
                 )}
 
@@ -209,7 +311,7 @@ const Profile = () => {
             <View style={styles.profileField}>
 				<Text style={styles.label}>Date of Birth:</Text>
 
-                {errors.firstName && (
+                {errors.birthDate && (
                     <Text style={styles.error}>{errors.birthDate}</Text>
                 )}
 
