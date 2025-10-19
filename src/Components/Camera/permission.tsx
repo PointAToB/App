@@ -2,17 +2,27 @@ import { Alert, Platform } from "react-native";
 import { useEffect } from "react";
 import { request, PERMISSIONS, RESULTS, Permission as Perm} from "react-native-permissions";
 
-// React native permission request function
-async function requestNativeCameraPermissions() {
-	// Short-handed type Permission as Perm to prevent naming issues with Permission component.
-	let permission: Perm;
+// React native permission request for audio / video
+async function requestNativePermissions() {
+	let videoPermission: Perm;
 
-	if (Platform.OS === 'ios') permission = PERMISSIONS.IOS.CAMERA;
-	else if (Platform.OS === 'android') permission = PERMISSIONS.ANDROID.CAMERA;
+	if (Platform.OS === 'ios') videoPermission = PERMISSIONS.IOS.CAMERA;
+	else if (Platform.OS === 'android') videoPermission = PERMISSIONS.ANDROID.CAMERA;
 	else { console.warn('Unsupported platform'); return; }
 
-	return  RESULTS.GRANTED === await request(permission)
+	const videoGranted =  RESULTS.GRANTED === await request(videoPermission)
+
+	let audioPermission: Perm;
+
+	if (Platform.OS === 'ios') audioPermission = PERMISSIONS.IOS.MICROPHONE;
+	else if (Platform.OS === 'android') audioPermission = PERMISSIONS.ANDROID.RECORD_AUDIO;
+	else { console.warn('Unsupported platform'); return; }
+
+	const audioGranted =  RESULTS.GRANTED === await request(audioPermission)
+
+	return audioGranted && videoGranted
 }
+
 
 // TODO: Remove imports when app is finalized
 import Constants, { ExecutionEnvironment } from "expo-constants";
@@ -43,12 +53,13 @@ export default function Permission(props: {setPermissionGranted: (permissionGran
 async function permissionHandler(setPermissionGranted: (permissionGranted: boolean)=>void) {
 	const runtime = getRuntimeEngine()
 	if(runtime === 'expoGo') {
-		 const res: PermissionResponse = await expoCamera.requestCameraPermissionsAsync();
-		 if(res.status && res.granted) setPermissionGranted(true);
+		 const videoPermission: PermissionResponse = await expoCamera.requestCameraPermissionsAsync();
+		 const audioPermission: PermissionResponse = await expoCamera.requestMicrophonePermissionsAsync();
+		 if(videoPermission.granted && audioPermission.granted) setPermissionGranted(true);
 	}
 
 	else if(runtime === 'reactNative') {
-		 const res = await requestNativeCameraPermissions();
+		 const res = await requestNativePermissions();
 		 if(res) setPermissionGranted(true)
 	}
 }
