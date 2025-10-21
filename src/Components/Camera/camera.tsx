@@ -5,15 +5,12 @@ import Close from "./close";
 import Selector from "./selector";
 import Photo from "./photo";
 import Video from "./video";
-import Coach from "./coach";
 import CameraView from "./cameraView";
 import { CameraType } from "expo-camera";
-import Permission,  { getRuntimeEngine } from "./permission";
+import Permission from "./permission";
 import { CameraComponent, CameraFunctions } from "./types";
 
-// TODO: Remove this when app is finalized, optionsList of useState should be [Video, Photo, Coach] without condition of engine type checking.
 const options: CameraComponent[] = [Video, Photo]
-if(getRuntimeEngine() === 'reactNative') options.push(Coach)
 
 export default function Camera(props: {visible: boolean, setVisible: (visible: boolean)=>void}) {
 	const [cameraType, setCameraType] = useState<CameraType>('front');
