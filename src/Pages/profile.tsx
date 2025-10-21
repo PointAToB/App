@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TextInput, ScrollView, Dimensions, Platform } from 'react-native';
 import Logo from '../Components/logo';
 import LineWithText from '../Components/lineWithText';
 import Button from '../Components/button';
 import { getToken } from '../Functions/keyStore';
 import { api_root_url } from '../Settings/constants';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const Profile = () => {
     type UserType = {
@@ -25,9 +26,8 @@ const Profile = () => {
         	return false;
     	}
 
-    	const endpoint: string = api_root_url + userId; // <-- You need user ID here
     	try {
-        	const response = await fetch(endpoint, {
+        	const response = await fetch(`${api_root_url}user`, {
             	method: 'PUT',
             	headers: {
                 	'Content-Type': 'application/json',
@@ -50,8 +50,8 @@ const Profile = () => {
             	return true;
         	} 
 			else {
-            	const errorData = await response.json();
-            	console.error('Failed to update user:', errorData);
+				const text = await response.text();
+				console.error('Failed to update user:', response.status, text);
             	return false;
         	}
 
@@ -73,7 +73,7 @@ const Profile = () => {
 		}
 
 		try {
-			const response = await fetch('https://your-api.com/user', {
+			const response = await fetch(`${api_root_url}user`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${token}`,
@@ -87,11 +87,20 @@ const Profile = () => {
 				return;
 			}
 
-			const userData = await response.json();
+			const rawUserData = await response.json();
+
+			const userData: UserType = {
+				firstName: rawUserData.firstName,
+				lastName: rawUserData.lastName,
+				email: rawUserData.email,
+				weight: rawUserData.weight,
+				height: rawUserData.height,
+				birthDate: rawUserData.birthDate ? new Date(rawUserData.birth_date) : null,
+			};
 
 			setUser(userData);
 			setEditedUser(userData);
-			setUserId(userData.id);
+			setUserId(rawUserData.id);
 		} catch (error) {
 			console.error('Error fetching user profile:', error);
 		} finally {
@@ -113,6 +122,14 @@ const Profile = () => {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [userId, setUserId] = useState<number | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [showDatePicker, setShowDatePicker] = useState(false);
+
+	const onChangeDate = (event: any, selectedDate?: Date) => {
+  		setShowDatePicker(Platform.OS === 'ios');  // keep open on iOS until user closes
+  		if (selectedDate) {
+    		setEditedUser({ ...editedUser, birthDate: selectedDate });
+  		}
+	};
 
 	useEffect(() => {
 		fetchUserProfile();
@@ -308,24 +325,29 @@ const Profile = () => {
 				)}
 			</View>
 
-            <View style={styles.profileField}>
-				<Text style={styles.label}>Date of Birth:</Text>
+			<View style={styles.profileField}>
+  				<Text style={styles.label}>Date of Birth:</Text>
+  
+  				{errors.birthDate && (
+    				<Text style={styles.error}>{errors.birthDate}</Text>
+  				)}
 
-                {errors.birthDate && (
-                    <Text style={styles.error}>{errors.birthDate}</Text>
-                )}
-
-				{isEditing ? (
-					<TextInput
-						style={styles.input}
-						value={editedUser.birthDate ? editedUser.birthDate.toISOString().substring(0, 10) : ''}
-						onChangeText={(text) => {
-                            const date = new Date(text);
-                            setEditedUser({ ...editedUser, birthDate: isNaN(date.getTime()) ? null : date })
-                        }}
-					/>
+  				{isEditing ? (
+  					<>
+    				{showDatePicker && (
+      					<DateTimePicker
+        				value={editedUser.birthDate || new Date(2000, 0, 1)}
+        				mode="date"
+        				display="default" // modal popup, no inline rendering
+        				onChange={onChangeDate}
+       					maximumDate={new Date()}
+      					/>
+    				)}
+  					</>
 				) : (
-					<Text style={styles.value}>{user.birthDate ? user.birthDate.toLocaleDateString() : ''}</Text>
+  				<Text style={styles.value}>
+    					{user.birthDate ? user.birthDate.toLocaleDateString() : ''}
+  					</Text>
 				)}
 			</View>
 
