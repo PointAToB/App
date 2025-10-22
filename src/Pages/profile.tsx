@@ -17,6 +17,31 @@ const Profile = () => {
         birthDate: Date | null;  // Date object or null
     };
 
+	function parseDateString(dateString: string): Date | null {
+  		if (!dateString || typeof dateString !== 'string') return null;
+
+  		try {
+    		// Handle known format like "1982-07-07T00:00:00"
+    		const [datePart] = dateString.split('T'); // Get '1982-07-07'
+    		const [year, month, day] = datePart.split('-').map(Number);
+
+    		if (
+      			isNaN(year) || isNaN(month) || isNaN(day) ||
+      			month < 1 || month > 12 ||
+      			day < 1 || day > 31
+    		) {
+      			console.warn('Invalid date values:', { year, month, day });
+      			return null;
+    		}
+
+    		const parsedDate = new Date(year, month - 1, day); // month is 0-based
+    		return parsedDate;
+  		} catch (e) {
+    		console.warn('Failed to parse birth date:', dateString, e);
+    		return null;
+  		}
+	}
+
 	const windowHeight: number = Dimensions.get('window').height;
 
 	const updateUser = async () => {
@@ -89,14 +114,19 @@ const Profile = () => {
 
 			const rawUserData = await response.json();
 
+			console.log(rawUserData.birthDate)
+
 			const userData: UserType = {
 				firstName: rawUserData.firstName,
 				lastName: rawUserData.lastName,
 				email: rawUserData.email,
 				weight: rawUserData.weight,
 				height: rawUserData.height,
-				birthDate: rawUserData.birthDate ? new Date(rawUserData.birth_date) : null,
+				birthDate: rawUserData.birthDate ? parseDateString(rawUserData.birthDate) : null,			
 			};
+
+			console.log('Parsed birthDate:', userData.birthDate);
+
 
 			setUser(userData);
 			setEditedUser(userData);
@@ -122,7 +152,7 @@ const Profile = () => {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [userId, setUserId] = useState<number | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
-	const [showDatePicker, setShowDatePicker] = useState(false);
+	const [showDatePicker, setShowDatePicker] = useState(true);
 
 	const onChangeDate = (event: any, selectedDate?: Date) => {
   		setShowDatePicker(Platform.OS === 'ios');  // keep open on iOS until user closes
@@ -186,21 +216,33 @@ const Profile = () => {
             newErrors.height = 'Height must be an integer';
         }
 
-        // Validate birthDate (YYYY-MM-DD)
-        if (
-            editedUser.birthDate &&
-            !/^\d{4}-\d{2}-\d{2}$/.test(
-            typeof editedUser.birthDate === 'string'
-            ? editedUser.birthDate
-            : editedUser.birthDate.toISOString().split('T')[0] )
-        ) {
-            newErrors.birthDate = 'Date of birth must be in YYYY-MM-DD format';
-        } else if (editedUser.birthDate) {
-            const date = new Date(editedUser.birthDate);
-            if (isNaN(date.getTime())) {
-                newErrors.birthDate = 'Invalid date';
-            }
-        }
+		if (editedUser.birthDate) {
+  			let date: Date;
+
+  			if (typeof editedUser.birthDate === 'string') {
+    			// Optional format check (if you care)
+    			const isValidFormat = /^\d{4}-\d{2}-\d{2}$/.test(editedUser.birthDate);
+    			if (!isValidFormat) {
+      				newErrors.birthDate = 'Date must be in YYYY-MM-DD format';
+    			}
+
+    			const parsed = parseDateString(editedUser.birthDate);
+    			if (!parsed || isNaN(parsed.getTime())) {
+      				newErrors.birthDate = 'Invalid date';
+    			}
+
+  			} 
+		
+			else if (editedUser.birthDate instanceof Date) {
+    			if (isNaN(editedUser.birthDate.getTime())) {
+      				newErrors.birthDate = 'Invalid date';
+    			}
+  			} 
+
+			else {
+    			newErrors.birthDate = 'Date is not valid';
+  			}
+		}
 
         setErrors(newErrors); 
         
@@ -300,7 +342,7 @@ const Profile = () => {
                         }}
 					/>
 				) : (
-					<Text style={styles.value}>{user.weight}</Text>
+					<Text style={styles.value}>{user.weight} lbs</Text>
 				)}
 			</View>
 
@@ -327,28 +369,27 @@ const Profile = () => {
 
 			<View style={styles.profileField}>
   				<Text style={styles.label}>Date of Birth:</Text>
-  
-  				{errors.birthDate && (
-    				<Text style={styles.error}>{errors.birthDate}</Text>
-  				)}
+
+  				{errors.birthDate && <Text style={styles.error}>{errors.birthDate}</Text>}
 
   				{isEditing ? (
-  					<>
-    				{showDatePicker && (
-      					<DateTimePicker
-        				value={editedUser.birthDate || new Date(2000, 0, 1)}
-        				mode="date"
-        				display="default" // modal popup, no inline rendering
-        				onChange={onChangeDate}
-       					maximumDate={new Date()}
-      					/>
-    				)}
-  					</>
-				) : (
-  				<Text style={styles.value}>
-    					{user.birthDate ? user.birthDate.toLocaleDateString() : ''}
-  					</Text>
-				)}
+    				<>
+        				{showDatePicker && (
+          					<DateTimePicker
+            					value={editedUser.birthDate || new Date(2000, 0, 1)}
+            					mode="date"
+           		 				display="default"
+            					onChange={onChangeDate}
+            					maximumDate={new Date()}
+            					style={{ flex: 1 }} // optional, but usually modal pickers ignore style
+          					/>
+        				)}
+    			</>
+  				) : (
+    			<Text style={styles.value}>
+      				{user.birthDate ? user.birthDate.toLocaleDateString() : ''}
+    			</Text>
+  				)}
 			</View>
 
 			<View style={{ paddingTop: 30 }} />
