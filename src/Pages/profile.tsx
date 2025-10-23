@@ -42,6 +42,20 @@ const Profile = () => {
   		}
 	}
 
+	const inchesToFeetInches = (inches: number | null) => {
+  		if (inches == null || isNaN(inches)) return { feet: '', inches: '' };
+  		const feet = Math.floor(inches / 12);
+  		const remainder = inches % 12;
+  		return { feet: feet.toString(), inches: remainder.toString() };
+	};
+
+	const feetInchesToInches = (feet: string | '', inches: string | '') => {
+  		const f = parseInt(feet, 10) || 0;
+  		const i = parseInt(inches, 10) || 0;
+  		if (isNaN(f) && isNaN(i)) return null;
+  		return (isNaN(f) ? 0 : f) * 12 + (isNaN(i) ? 0 : i);
+	};
+
 	const windowHeight: number = Dimensions.get('window').height;
 
 	const updateUser = async () => {
@@ -153,6 +167,15 @@ const Profile = () => {
 	const [userId, setUserId] = useState<number | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [showDatePicker, setShowDatePicker] = useState(true);
+	const [heightFeet, setHeightFeet] = useState('');
+	const [heightInches, setHeightInches] = useState('');
+
+
+	useEffect(() => {
+  		const { feet, inches } = inchesToFeetInches(editedUser.height);
+  		setHeightFeet(feet);
+  		setHeightInches(inches);
+	}, [editedUser.height]);
 
 	const onChangeDate = (event: any, selectedDate?: Date) => {
   		setShowDatePicker(Platform.OS === 'ios');  // keep open on iOS until user closes
@@ -271,8 +294,8 @@ const Profile = () => {
 
 			<LineWithText text="about you" />
 
-			<View style={styles.profileField}>
-				<Text style={styles.label}>First Name:</Text>
+			<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+				<Text style={styles.label}>First Name: </Text>
 
                 {errors.firstName && (
                     <Text style={styles.error}>{errors.firstName}</Text>
@@ -289,8 +312,8 @@ const Profile = () => {
 				)}
 			</View>
 
-            <View style={styles.profileField}>
-				<Text style={styles.label}>Last Name:</Text>
+            <View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+				<Text style={styles.label}>Last Name: </Text>
 
                 {errors.lastName && (
                     <Text style={styles.error}>{errors.lastName}</Text>
@@ -307,8 +330,8 @@ const Profile = () => {
 				)}
 			</View>
 
-			<View style={styles.profileField}>
-				<Text style={styles.label}>Email:</Text>
+			<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+				<Text style={styles.label}>Email: </Text>
 
                 {errors.email && (
                     <Text style={styles.error}>{errors.email}</Text>
@@ -325,8 +348,8 @@ const Profile = () => {
 				)}
 			</View>
 
-            <View style={styles.profileField}>
-				<Text style={styles.label}>Weight:</Text>
+            <View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+				<Text style={styles.label}>Weight: </Text>
 
                 {errors.weight && (
                     <Text style={styles.error}>{errors.weight}</Text>
@@ -346,29 +369,53 @@ const Profile = () => {
 				)}
 			</View>
 
-            <View style={styles.profileField}>
+			<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
 				<Text style={styles.label}>Height:</Text>
 
-                {errors.height && (
-                    <Text style={styles.error}>{errors.height}</Text>
-                )}
+				{errors.height && <Text style={styles.error}>{errors.height}</Text>}
 
 				{isEditing ? (
+				// Editing mode → two small inputs for feet and inches
+					<>
 					<TextInput
-						style={styles.input}
-						value={editedUser.height !== null ? editedUser.height.toString() : ''}
+						style={[styles.input, { width: 50, marginLeft: 10 }]}
+						value={inchesToFeetInches(editedUser.height).feet.toString()}
+						keyboardType="numeric"
 						onChangeText={(text) => {
-                            const num = parseInt(text, 10);
-                            setEditedUser({ ...editedUser, height: isNaN(num) ? null : num })
-                        }}
+						const { inches } = inchesToFeetInches(editedUser.height);
+						const newFeet = parseInt(text, 10) || 0;
+						const total = feetInchesToInches(newFeet.toString(), inches);
+						setEditedUser({ ...editedUser, height: total });
+					}}
+					placeholder="ft"
 					/>
+					<Text style={{ marginHorizontal: 4 }}>′</Text>
+					<TextInput
+						style={[styles.input, { width: 50 }]}
+						value={inchesToFeetInches(editedUser.height).inches.toString()}
+						keyboardType="numeric"
+						onChangeText={(text) => {
+						const { feet } = inchesToFeetInches(editedUser.height);
+						const newInches = parseInt(text, 10) || 0;
+						const total = feetInchesToInches(feet, newInches.toString());
+						setEditedUser({ ...editedUser, height: total });
+						}}
+						placeholder="in"
+					/>
+					<Text style={{ marginLeft: 4 }}>″</Text>
+				</>
 				) : (
-					<Text style={styles.value}>{user.height}</Text>
+				// Display mode → convert inches to formatted string
+				<Text style={[styles.value, { marginLeft: 10 }]}>
+					{user.height != null
+					? `${Math.floor(user.height / 12)}′ ${user.height % 12}″`
+						: ''}
+				</Text>
 				)}
 			</View>
 
-			<View style={styles.profileField}>
-  				<Text style={styles.label}>Date of Birth:</Text>
+			<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+  				<Text style={styles.label}>Date of Birth: </Text>
 
   				{errors.birthDate && <Text style={styles.error}>{errors.birthDate}</Text>}
 
@@ -381,7 +428,7 @@ const Profile = () => {
            		 				display="default"
             					onChange={onChangeDate}
             					maximumDate={new Date()}
-            					style={{ flex: 1 }} // optional, but usually modal pickers ignore style
+            					// style={{ flex: 1 }} // optional, but usually modal pickers ignore style
           					/>
         				)}
     			</>
@@ -393,40 +440,41 @@ const Profile = () => {
 			</View>
 
 			<View style={{ paddingTop: 30 }} />
-			{isEditing ? (
-				<Button
-					onPress={handleSave}
-					text="Save"
-					primaryColor="#00C851"
-					textColor="#FFFFFF"
-					width={150}
-					fontSize={15}
-				/>
-			) : (
-				<Button
-					onPress={() => setIsEditing(true)}
-					text="Edit"
-					primaryColor="#DD00FF"
-					textColor="#FFFFFF"
-					width={150}
-					fontSize={15}
-				/>
-			)}
 
-			<View style={{ paddingTop: 20 }} />
-			{isEditing && (
-                <Button
-                    onPress={() => {
-                        setEditedUser(user); // Reset form changes
-                        setIsEditing(false); // Exit edit mode
-                    }}
-                    text="Cancel"
-                    primaryColor="#fc0303"
-                    textColor="#FFFFFF"
-                    width={150}
-                    fontSize={15}
-                />
-            )}
+			{isEditing ? (
+    			// When editing, show Save + Cancel side by side
+    			<View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
+        			<Button
+            			onPress={handleSave}
+            			text="Save"
+            			primaryColor="#00C851"
+            			textColor="#FFFFFF"
+            			width={150}
+            			fontSize={15}
+        			/>
+        			<Button
+            		onPress={() => {
+                		setEditedUser(user); // Reset form changes
+                		setIsEditing(false); // Exit edit mode
+            		}}
+            		text="Cancel"
+            		primaryColor="#fc0303"
+            		textColor="#FFFFFF"
+            		width={150}
+            		fontSize={15}
+        			/>
+    		</View>
+		) : (
+    		// When not editing, show only Edit
+    		<Button
+        	onPress={() => setIsEditing(true)}
+        	text="Edit"
+        	primaryColor="#DD00FF"
+        	textColor="#FFFFFF"
+        	width={150}
+        	fontSize={15}
+    		/>
+		)}
 
 			<View style={{ paddingBottom: windowHeight / 10 }} />
 		</ScrollView>
