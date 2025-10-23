@@ -1,10 +1,10 @@
 import {Text, View, StyleSheet} from "react-native";
 
 
-const ErrorMessage = (props: {errors: string[], display?: boolean}) => {
+const ErrorMessage = (props: {errors: string[]}) => {
 	return (
 		<View>
-		{ props.display && props.errors.length > 0 &&
+		{ props.errors.length > 0 && props.errors.length > 0 &&
 				<View>
 					{ props.errors.map((error: string, index: number) => (
 						<Text key={index} style={styles.error}>{error}</Text>
