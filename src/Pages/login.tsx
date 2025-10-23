@@ -22,7 +22,7 @@ const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
 			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submitted={submitted}/>
 			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submitted={submitted} hideText={true}/>
 
-			<Button onPress={()=>{props.navigation.push('Home')}} primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Login' fontSize={15}/>
+			<Button onPress={()=>{props.navigation.push('MainTabs')}} primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Login' fontSize={15}/>
 
 			<Notice/>
 
