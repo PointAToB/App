@@ -1,7 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-
 import Home from '../Pages/home'; 
 import Classes from '../Pages/classes';
 import Nutrition from '../Pages/nutrition';
