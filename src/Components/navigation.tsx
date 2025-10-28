@@ -1,7 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-
 import Home from '../Pages/home'; 
 import Classes from '../Pages/classes';
 import Nutrition from '../Pages/nutrition';
@@ -43,8 +42,8 @@ export default function Navigation() {
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Profile" component={Profile} />
       <Tab.Screen name="Classes" component={Classes} />
-	  <Tab.Screen name="Nutrition" component={Nutrition} />
-	  <Tab.Screen name="FAQ" component={FAQ} />
+			<Tab.Screen name="Nutrition" component={Nutrition} />
+			<Tab.Screen name="FAQ" component={FAQ} />
 
     </Tab.Navigator>
   );

@@ -1,5 +1,5 @@
 import { Text, StyleSheet, Pressable, View } from "react-native";
-import Agreement from "./agreement.tsx";
+import Agreement from "./agreement";
 import {useState} from "react";
 
 const Notice = () => {

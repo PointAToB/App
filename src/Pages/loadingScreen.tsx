@@ -1,12 +1,12 @@
-import LinearGradient from "react-native-linear-gradient";
-import Logo from "../Components/logo.tsx";
+import { LinearGradient } from "expo-linear-gradient"
+import Logo from "../Components/logo";
 import { Dimensions } from "react-native";
 
-const LoadingScreen = () => {
+export default function LoadingScreen() {
 	const windowHeight: number = Dimensions.get('window').height;
 
 	return (
-		<LinearGradient
+			<LinearGradient
 			colors={["#DD00FF", "#7650FF"]}
 			start={{ x: 0, y: 0.5 }}
 			end={{ x: 1, y: 0.5 }}
@@ -18,4 +18,3 @@ const LoadingScreen = () => {
 }
 
 
-export default LoadingScreen;

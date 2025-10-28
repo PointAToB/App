@@ -5,25 +5,40 @@ import Notice from "../Components/notice";
 import Button from "../Components/button";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import TextInput from "../Components/textInput";
-import {useState} from "react";
+import { useState } from "react";
 import SectionHeader from "../Components/sectionHeader";
+import login from "../Functions/login";
+import ErrorMessage from "../Components/errorMessage";
 
 const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [errors, setErrors] = useState<string[]>([]);
 	const [submitted, isSubmitted] = useState(false);
 
+	const handleSubmit = async () => {
+		setErrors([]);
+		isSubmitted(true)
+		
+		const res = await login(email, password)
+
+		if(!res?.success) {
+			setErrors([res!.msg]);
+			return;
+		}
+		props.navigation.replace('Main');
+	}
 	return (
 		<View style={styles.main}>
 			<Logo primaryColor={"#DD00FF"} secondaryColor={"#7650FF"}/>
 
 			<SectionHeader header='Login' subHeader='Enter your credentials to stay on track' style={styles.header}/>
 
-			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submitted={submitted}/>
-			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submitted={submitted} hideText={true}/>
+			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submit={submitted}/>
+			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submit={submitted} hideText/>
 
-			<Button onPress={()=>{props.navigation.push('MainTabs')}} primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Login' fontSize={15}/>
-
+			<Button onPress={handleSubmit} primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Login' fontSize={15}/>
+			<ErrorMessage errors={errors}/>
 			<Notice/>
 
 			<LineWithText text='or'/>

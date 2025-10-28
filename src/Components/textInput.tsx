@@ -1,12 +1,20 @@
+import { useRef, useState } from "react";
 import { TextInput as Ti, StyleSheet } from "react-native";
 
-const TextInput = (props: {value: string, onChangeText: (text: string)=>void, placeholder: string, submitted: boolean, hideText?: boolean}) => {
+const TextInput = (props: {value: string, onChangeText: (text: string)=>void, placeholder: string, hideText?: boolean, submit: boolean}) => {
+	// State Options: 
+	// -1: User has not interacted with input 
+	// 0: User left blank
+	// 1: User filled
+	const [state, setState] = useState(-1);
+	const ref = useRef<Ti>(null)
+
 	const style = (condition: string) => {
-		return [styles.textInput, (condition.length === 0 && props.submitted ? styles.EmptyInput : null)]
+		return [styles.textInput, ((condition.length === 0 && props.submit) ? styles.EmptyInput : null)]
 	}
 
 	return (
-		<Ti secureTextEntry={props.hideText} value={props.value} onChangeText={props.onChangeText} placeholder={props.placeholder} style={style(props.value)}/>
+		<Ti ref={ref} onFocus={()=>{setState(0)}} secureTextEntry={props.hideText} value={props.value} onChangeText={props.onChangeText} placeholder={props.placeholder} style={style(props.value)}/>
 	);
 }
 
