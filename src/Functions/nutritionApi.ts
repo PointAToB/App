@@ -1,10 +1,10 @@
 import { api_root_url } from "../Settings/constants";
-import { getToken } from "./keychain";
+import { getToken } from "./keyStore";
 
 const base = api_root_url + "nutrition/";
 
 async function authHeaders() {
-    const access = await getToken("access");
+    const access = await getToken({ token: "access" });
     return { "Content-Type": "application/json", Authorization: `Bearer ${access}` };
   }
 

@@ -11,11 +11,15 @@ export default function NutritionUpdate() {
 
   async function onUpdate() {
     try {
-      const payload: any = {};
+      const add: any = {};
       ["calories","carbs","protein","fiber","fat"].forEach(k => {
-        if (vals[k] !== undefined && vals[k] !== "") payload[k] = Number(vals[k]);
+        if (vals[k] !== undefined && vals[k] !== "") add[k] = Number(vals[k]);
       });
-      await updateNutritionLog(payload);
+      if (Object.keys(add).length === 0) {
+        Alert.alert("Nothing to update", "Enter at least one value.");
+        return;
+      }
+      await updateNutritionLog({ add });
       nav.goBack();
     } catch { Alert.alert("Error", "Failed to update log"); }
   }
