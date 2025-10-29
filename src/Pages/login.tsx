@@ -34,8 +34,15 @@ const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
 
 			<SectionHeader header='Login' subHeader='Enter your credentials to stay on track' style={styles.header}/>
 
+<<<<<<< HEAD
 			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submit={submitted}/>
 			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submit={submitted} hideText/>
+=======
+			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submitted={submitted}/>
+			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submitted={submitted} hideText={true}/>
+
+			<Button onPress={()=>{props.navigation.push('MainTabs')}} primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Login' fontSize={15}/>
+>>>>>>> 3e28cea (WIP on nutrition log)
 
 			<Button onPress={handleSubmit} primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Login' fontSize={15}/>
 			<ErrorMessage errors={errors}/>
