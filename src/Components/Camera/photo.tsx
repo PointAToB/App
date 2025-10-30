@@ -1,15 +1,23 @@
 import { CameraView } from "expo-camera";
 import { CameraComponent } from "./types";
 import {useImperativeHandle, useRef, useState} from "react";
+import authFetch from "../../Functions/Authentication/authFetch";
+import { api_root_url } from "../../Settings/constants";
 
 const Photo: CameraComponent = (props) => {
 	const { cameraType, ref } = props;
   const innerRef = useRef<CameraView>(null);
-	const [photo, setPhoto] = useState<{ uri: string } | undefined>()
 
 	useImperativeHandle(ref, () => ({
 		capture: async () => {
-			 setPhoto(await innerRef.current?.takePictureAsync())
+			 const photo = await innerRef.current?.takePictureAsync({base64: true})
+			 // Send photo to image backend
+			 try {
+				const res = await authFetch(api_root_url + 'image', {
+					method: 'POST',
+					body: photo?.base64
+				})
+			 } catch(e) { console.log(e) }
 		}
 	}));
 
