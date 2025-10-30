@@ -24,7 +24,7 @@ const CreateAccount = (props: {navigation: StackNavigationProp<any>}) => {
 		setErrors([]);
 		isSubmitted(true);
 
-		const res = await createAccount(firstName, lastName, email, password, passwordReEntry)
+		const res = await createAccount(firstName, lastName, email.toLowerCase(), password, passwordReEntry)
 
 		if(!res?.success) {
 			setErrors([res!.msg]);
