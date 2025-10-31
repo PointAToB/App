@@ -6,6 +6,7 @@ import authFetch from "../../Functions/auth";
 const Photo: CameraComponent = (props) => {
 	const { cameraType, ref } = props;
   const innerRef = useRef<CameraView>(null);
+	const [photo, setPhoto] = useState<{ uri: string } | undefined>()
 
 	useImperativeHandle(ref, () => ({
 		capture: async () => {
