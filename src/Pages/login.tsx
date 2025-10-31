@@ -35,7 +35,7 @@ const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
 			<SectionHeader header='Login' subHeader='Enter your credentials to stay on track' style={styles.header}/>
 
 			<TextInput value={email} onChangeText={setEmail} placeholder='Email' submit={submitted}/>
-			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submit={submitted} hideText/>
+			<TextInput value={password} onChangeText={setPassword} placeholder='Password' submit={submitted} hideText={true}/>
 
 			<Button onPress={handleSubmit} primaryColor='#DD00FF' secondaryColor='#7650FF' textColor='#FFFFFF' text='Login' fontSize={15}/>
 			<ErrorMessage errors={errors}/>
