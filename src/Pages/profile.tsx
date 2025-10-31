@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, ScrollView, Dimensions, Platform } from 'react-native';
+import { StyleSheet, View, Text, TextInput, ScrollView, Dimensions, Platform, Switch } from 'react-native';
 import Logo from '../Components/logo';
 import LineWithText from '../Components/lineWithText';
 import Button from '../Components/button';
 import { getToken } from '../Functions/keyStore';
 import { api_root_url } from '../Settings/constants';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useTheme } from '../Components/themeToggle';
 
 const Profile = () => {
     type UserType = {
@@ -16,6 +17,8 @@ const Profile = () => {
         height: number | null;   // integer or null
         birthDate: Date | null;  // Date object or null
     };
+
+  	const { theme, toggleThemeMode, toggleColorTheme, isDarkMode } = useTheme();
 
 	function parseDateString(dateString: string): Date | null {
   		if (!dateString || typeof dateString !== 'string') return null;
@@ -281,203 +284,224 @@ const Profile = () => {
 
 	}
 	return (
-		
-		<ScrollView style={styles.main}>
-			<Logo primaryColor="#DD00FF" secondaryColor="#7650FF" />
-
-			<View style={{ paddingTop: windowHeight / 20 }} />
-
-			<View style={styles.header}>
-				<Text style={[styles.text, { fontWeight: 'bold' }]}>Profile</Text>
-				<Text style={[styles.text, { fontWeight: 'thin' }]}>Your personal information</Text>
-			</View>
-
-			<LineWithText text="about you" />
-
-			<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
-				<Text style={styles.label}>First Name: </Text>
-
-                {errors.firstName && (
-                    <Text style={styles.error}>{errors.firstName}</Text>
-                )}
-
-				{isEditing ? (
-					<TextInput
-						style={styles.input}
-						value={editedUser.firstName}
-						onChangeText={(text) => setEditedUser({ ...editedUser, firstName: text })}
-					/>
+		<View style={{ flex: 1, backgroundColor: theme.background }}>
+			<ScrollView style={[styles.main]}>
+				<Logo primaryColor={theme.primaryColor} secondaryColor={theme.secondaryColor} />
+			
+				<View style={{ paddingTop: windowHeight / 20 }} />
+			
+				<View style={styles.header}>
+					<Text style={[styles.text, { fontWeight: 'bold', color: theme.text }]}>Profile</Text>
+					<Text style={[styles.text, { fontWeight: 'thin', color: theme.text}]}>Your personal information</Text>
+				</View>
+			
+				<LineWithText text="about you" />
+			
+				<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+					<Text style={[ styles.label, { color: theme.text }]}>First Name: </Text>
+			
+					{errors.firstName && (
+						<Text style={styles.error}>{errors.firstName}</Text>
+					)}
+			
+					{isEditing ? (
+						<TextInput
+							style={styles.input}
+							value={editedUser.firstName}
+							onChangeText={(text) => setEditedUser({ ...editedUser, firstName: text })}
+						/>
 				) : (
-					<Text style={styles.value}>{user.firstName}</Text>
-				)}
-			</View>
-
-            <View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
-				<Text style={styles.label}>Last Name: </Text>
-
-                {errors.lastName && (
-                    <Text style={styles.error}>{errors.lastName}</Text>
-                )}
-
-				{isEditing ? (
-					<TextInput
-						style={styles.input}
-						value={editedUser.lastName}
-						onChangeText={(text) => setEditedUser({ ...editedUser, lastName: text })}
-					/>
-				) : (
-					<Text style={styles.value}>{user.lastName}</Text>
-				)}
-			</View>
-
-			<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
-				<Text style={styles.label}>Email: </Text>
-
-                {errors.email && (
-                    <Text style={styles.error}>{errors.email}</Text>
-                )}
-
-				{isEditing ? (
-					<TextInput
-						style={styles.input}
-						value={editedUser.email}
-						onChangeText={(text) => setEditedUser({ ...editedUser, email: text })}
-					/>
-				) : (
-					<Text style={styles.value}>{user.email}</Text>
-				)}
-			</View>
-
-            <View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
-				<Text style={styles.label}>Weight: </Text>
-
-                {errors.weight && (
-                    <Text style={styles.error}>{errors.weight}</Text>
-                )}
-
-				{isEditing ? (
-					<TextInput
-						style={styles.input}
-						value={editedUser.weight !== null ? editedUser.weight.toString() : ''}
-						onChangeText={(text) => {
-                            const num = parseInt(text, 10);
-                            setEditedUser({ ...editedUser, weight: isNaN(num) ? null : num })
-                        }}
-					/>
-				) : (
-					<Text style={styles.value}>{user.weight} lbs</Text>
-				)}
-			</View>
-
-			<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
-				<Text style={styles.label}>Height:</Text>
-
-				{errors.height && <Text style={styles.error}>{errors.height}</Text>}
-
-				{isEditing ? (
-				// Editing mode → two small inputs for feet and inches
-					<>
-					<TextInput
-						style={[styles.input, { width: 50, marginLeft: 10 }]}
-						value={inchesToFeetInches(editedUser.height).feet.toString()}
-						keyboardType="numeric"
-						onChangeText={(text) => {
-						const { inches } = inchesToFeetInches(editedUser.height);
-						const newFeet = parseInt(text, 10) || 0;
-						const total = feetInchesToInches(newFeet.toString(), inches);
-						setEditedUser({ ...editedUser, height: total });
-					}}
-					placeholder="ft"
-					/>
-					<Text style={{ marginHorizontal: 4 }}>′</Text>
-					<TextInput
-						style={[styles.input, { width: 50 }]}
-						value={inchesToFeetInches(editedUser.height).inches.toString()}
-						keyboardType="numeric"
-						onChangeText={(text) => {
-						const { feet } = inchesToFeetInches(editedUser.height);
-						const newInches = parseInt(text, 10) || 0;
-						const total = feetInchesToInches(feet, newInches.toString());
-						setEditedUser({ ...editedUser, height: total });
-						}}
-						placeholder="in"
-					/>
-					<Text style={{ marginLeft: 4 }}>″</Text>
-				</>
-				) : (
-				// Display mode → convert inches to formatted string
-				<Text style={[styles.value, { marginLeft: 10 }]}>
-					{user.height != null
-					? `${Math.floor(user.height / 12)}′ ${user.height % 12}″`
-						: ''}
-				</Text>
-				)}
-			</View>
-
-			<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
-  				<Text style={styles.label}>Date of Birth: </Text>
-
-  				{errors.birthDate && <Text style={styles.error}>{errors.birthDate}</Text>}
-
-  				{isEditing ? (
-    				<>
-        				{showDatePicker && (
-          					<DateTimePicker
-            					value={editedUser.birthDate || new Date(2000, 0, 1)}
-            					mode="date"
-           		 				display="default"
-            					onChange={onChangeDate}
-            					maximumDate={new Date()}
-            					// style={{ flex: 1 }} // optional, but usually modal pickers ignore style
-          					/>
-        				)}
-    			</>
-  				) : (
-    			<Text style={styles.value}>
-      				{user.birthDate ? user.birthDate.toLocaleDateString() : ''}
-    			</Text>
-  				)}
-			</View>
-
-			<View style={{ paddingTop: 30 }} />
-
-			{isEditing ? (
-    			// When editing, show Save + Cancel side by side
-    			<View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
-        			<Button
-            			onPress={handleSave}
-            			text="Save"
-            			primaryColor="#00C851"
-            			textColor="#FFFFFF"
-            			width={150}
-            			fontSize={15}
-        			/>
-        			<Button
-            		onPress={() => {
-                		setEditedUser(user); // Reset form changes
-                		setIsEditing(false); // Exit edit mode
-            		}}
-            		text="Cancel"
-            		primaryColor="#fc0303"
-            		textColor="#FFFFFF"
-            		width={150}
-            		fontSize={15}
-        			/>
-    		</View>
-		) : (
-    		// When not editing, show only Edit
-    		<Button
-        	onPress={() => setIsEditing(true)}
-        	text="Edit"
-        	primaryColor="#DD00FF"
-        	textColor="#FFFFFF"
-        	width={150}
-        	fontSize={15}
-    		/>
-		)}
-
-			<View style={{ paddingBottom: windowHeight / 10 }} />
-		</ScrollView>
+					<Text style={[ styles.value, { color: theme.text }]}>{user.firstName}</Text>
+					)}
+				</View>
+			
+				<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+					<Text style={[ styles.label, { color: theme.text }]}>Last Name: </Text>
+			
+					{errors.lastName && (
+						<Text style={styles.error}>{errors.lastName}</Text>
+					)}
+			
+					{isEditing ? (
+						<TextInput
+							style={styles.input}
+							value={editedUser.lastName}
+							onChangeText={(text) => setEditedUser({ ...editedUser, lastName: text })}
+						/>
+					) : (
+						<Text style={[ styles.value, { color: theme.text }]}>{user.lastName}</Text>
+					)}
+				</View>
+			
+				<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+					<Text style={[ styles.label, {color: theme.text }]}>Email: </Text>
+			
+					{errors.email && (
+						<Text style={styles.error}>{errors.email}</Text>
+					)}
+			
+					{isEditing ? (
+						<TextInput
+							style={styles.input}
+							value={editedUser.email}
+							onChangeText={(text) => setEditedUser({ ...editedUser, email: text })}
+						/>
+					) : (
+						<Text style={[ styles.value, {color: theme.text }]}>{user.email}</Text>
+					)}
+				</View>
+			
+				<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+					<Text style={[ styles.label, { color: theme.text }]}>Weight: </Text>
+			
+					{errors.weight && (
+						<Text style={styles.error}>{errors.weight}</Text>
+					)}
+			
+					{isEditing ? (
+						<TextInput
+							style={styles.input}
+							value={editedUser.weight !== null ? editedUser.weight.toString() : ''}
+							onChangeText={(text) => {
+							const num = parseInt(text, 10);
+							setEditedUser({ ...editedUser, weight: isNaN(num) ? null : num })
+							}}
+						/>
+					) : (
+						<Text style={[ styles.value, { color: theme.text }]}>{user.weight} lbs</Text>
+					)}
+				</View>
+			
+				<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+					<Text style={[ styles.label, { color: theme.text }]}>Height:</Text>
+			
+					{errors.height && <Text style={styles.error}>{errors.height}</Text>}
+			
+					{isEditing ? (
+					// Editing mode → two small inputs for feet and inches
+						<>
+						<TextInput
+							style={[styles.input, { width: 50, marginLeft: 10 }]}
+							value={inchesToFeetInches(editedUser.height).feet.toString()}
+							keyboardType="numeric"
+							onChangeText={(text) => {
+								const { inches } = inchesToFeetInches(editedUser.height);
+								const newFeet = parseInt(text, 10) || 0;
+								const total = feetInchesToInches(newFeet.toString(), inches);
+								setEditedUser({ ...editedUser, height: total });
+							}}
+							placeholder="ft"
+						/>
+						<Text style={{ marginHorizontal: 4 }}>′</Text>
+						<TextInput
+							style={[styles.input, { width: 50 }]}
+							value={inchesToFeetInches(editedUser.height).inches.toString()}
+							keyboardType="numeric"
+							onChangeText={(text) => {
+								const { feet } = inchesToFeetInches(editedUser.height);
+								const newInches = parseInt(text, 10) || 0;
+								const total = feetInchesToInches(feet, newInches.toString());
+								setEditedUser({ ...editedUser, height: total });
+							}}
+							placeholder="in"
+						/>
+						<Text style={{ marginLeft: 4 }}>″</Text>
+						</>
+					) : (
+						// Display mode → convert inches to formatted string
+						<Text style={[styles.value, { marginLeft: 10 }, { color: theme.text }]}>
+							{user.height != null
+							? `${Math.floor(user.height / 12)}′ ${user.height % 12}″`
+							: ''}
+						</Text>
+					)}
+				</View>
+				
+				<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
+					<Text style={[ styles.label, {color: theme.text }]}>Date of Birth: </Text>
+				
+					{errors.birthDate && <Text style={styles.error}>{errors.birthDate}</Text>}
+				
+					{isEditing ? (
+						<>
+						{showDatePicker && (
+							<DateTimePicker
+								value={editedUser.birthDate || new Date(2000, 0, 1)}
+								mode="date"
+								display="default"
+								onChange={onChangeDate}
+								maximumDate={new Date()}
+								// style={{ flex: 1 }} // optional, but usually modal pickers ignore style
+								/>
+						)}
+						</>
+					) : (
+						<Text style={[styles.value, { color: theme.text }]}>
+							{user.birthDate ? user.birthDate.toLocaleDateString() : ''}
+						</Text>
+					)}
+				</View>
+				
+				<View style={{ flex: 1, backgroundColor: theme.background }}>
+					<Text style={{ color: theme.text, fontSize: 18, marginBottom: 10 }}>Theme Settings</Text>
+				
+					<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+						<Text style={{ color: theme.text, marginRight: 10 }}>Dark Mode</Text>
+						<Switch value={isDarkMode} onValueChange={toggleThemeMode} />
+					</View>
+				
+					<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+						<Text style={{ color: theme.text, marginRight: 10 }}>Color Theme</Text>
+						<Button 
+							text="Toggle Theme" 
+							onPress={toggleColorTheme} 
+							primaryColor={theme.primaryColor}
+							textColor="#FFFFFF"
+							width={150}
+							fontSize={15} />
+					</View>
+				</View>
+				
+				<View style={{ paddingTop: 30 }} />
+				
+					{isEditing ? (
+						// When editing, show Save + Cancel side by side
+						<View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
+							<Button
+								onPress={handleSave}
+								text="Save"
+								primaryColor="#00C851"
+								textColor="#FFFFFF"
+								width={150}
+								fontSize={15}
+							/>
+							<Button
+								onPress={() => {
+									setEditedUser(user); // Reset form changes
+									setIsEditing(false); // Exit edit mode
+								}}
+								text="Cancel"
+								primaryColor="#fc0303"
+								textColor="#FFFFFF"
+								width={150}
+								fontSize={15}
+							/>
+						</View>
+					) : (
+						// When not editing, show only Edit
+						<Button
+							onPress={() => setIsEditing(true)}
+							text="Edit"
+							primaryColor={theme.primaryColor}
+							textColor="#FFFFFF"
+							width={150}
+							fontSize={15}
+						/>
+					)}
+				
+				<View style={{ paddingBottom: windowHeight / 10 }} />
+			</ScrollView>
+		</View>
 	);
 };
 
@@ -519,6 +543,25 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 4,
     },
+	  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'flex-start',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '600',
+    marginBottom: 30,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  label1: {
+    fontSize: 18,
+  },
 });
 
 export default Profile;

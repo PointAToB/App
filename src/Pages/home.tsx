@@ -4,14 +4,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import Button from "../Components/button";
 import Camera from "../Components/Camera/camera";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../Components/themeToggle";
 
 const Home = () => {
   const [popupContent, setPopupContent] = useState(false);
   const navigation = useNavigation<any>();
+  const { theme } = useTheme();
 
   // Theme colors
-  const primaryColor = "#DD00FF";
-  const secondaryColor = "#7650FF";
+  const primaryColor = theme.primaryColor;
+  const secondaryColor = theme.secondaryColor;
 
   // Placeholder data
   const activeClasses = [
@@ -27,7 +29,7 @@ const Home = () => {
   const calories = 1825; // placeholder value
 
   return (
-    <View style={styles.container}>
+    <View style={[ styles.container, { backgroundColor: theme.background }]}>
       {/* Open Camera Button */}
       <Button
         onPress={() => setPopupContent(true)}
@@ -42,7 +44,7 @@ const Home = () => {
 
       {/* Active Classes Section */}
       <View style={styles.sectionContainer}>
-        <Text style={styles.sectionHeader}>Active Classes</Text>
+        <Text style={[ styles.sectionHeader, { color: theme.text }]}>Active Classes</Text>
 
         <FlatList
           data={activeClasses.slice(0, 2)}
@@ -74,7 +76,7 @@ const Home = () => {
 
       {/* Recipes Section */}
       <View style={[styles.sectionContainer, { marginTop: 40 }]}>
-        <Text style={styles.sectionHeader}>Recipes</Text>
+        <Text style={[ styles.sectionHeader, { color: theme.text }]}>Recipes</Text>
 
         <FlatList
           data={recipes.slice(0, 2)}
@@ -100,7 +102,7 @@ const Home = () => {
 
       {/* Nutrition Log Section */}
       <View style={[styles.sectionContainer, { marginTop: 40 }]}>
-        <Text style={styles.sectionHeader}>Nutrition Log</Text>
+        <Text style={[ styles.sectionHeader, { color: theme.text }]}>Nutrition Log</Text>
 
         <View style={styles.nutritionCard}>
           <Text style={styles.nutritionText}>Calories:</Text>
@@ -118,7 +120,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "flex-start",
-    backgroundColor: "#fff",
   },
   sectionContainer: {
     marginTop: 40,
@@ -126,7 +127,6 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 15,
   },
   classList: {

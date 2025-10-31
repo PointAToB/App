@@ -3,17 +3,23 @@ import Logo from "../Components/logo";
 import LineWithText from "../Components/lineWithText";
 import Button from "../Components/button";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTheme } from "../Components/themeToggle";
 
 // Starting with this as a baseline, I think we will add more
 // questions and answers as we make more changes and we can
 // get screenshots to better show things 
 const FAQ = (props: { navigation: StackNavigationProp<any> }) => {
 	const windowHeight: number = Dimensions.get('window').height;
+	const { theme } = useTheme();
 
 	const faqs = [
 		{
 			question: "How does the app track my movements?",
 			answer: "We use Vision AI technology to monitor your form in real time and give immediate feedback on your posture and technique."
+		},
+		{
+			question: "How does Vision AI work?",
+			answer: "Our Vision AI uses your device’s camera to analyze your body movements during workouts. It provides real-time feedback to help improve your form, track your reps, and reduce the risk of injury."
 		},
 		{
 			question: "Do I need any special equipment?",
@@ -23,40 +29,50 @@ const FAQ = (props: { navigation: StackNavigationProp<any> }) => {
 			question: "Is my movement data stored?",
 			answer: "No, we respect your privacy. All form feedback is processed in real-time and not stored unless explicitly enabled by you."
 		},
+		{
+			question: "Can I use the app without my camera?",
+			answer: "Yes, you can still follow workouts and log your progress manually. However, enabling the camera unlocks full Vision AI capabilities and personalized feedback."
+		},
+		{
+			question: "How do I update my profile information?",
+			answer: "Go to the Profile page to update your name, age, weight, and height."
+		},
 		// Add more FAQ items here as needed
 	];
 
 	return (
-		<ScrollView style={styles.main}>
-			<Logo primaryColor={"#DD00FF"} secondaryColor={"#7650FF"} />
+		<View style={{ backgroundColor: theme.background }}>
+			<ScrollView style={styles.main}>
+				<Logo primaryColor={ theme.primaryColor } secondaryColor={ theme.secondaryColor } />
 
-			<View style={{ paddingTop: windowHeight / 20 }} />
-			<View style={styles.header}>
-				<Text style={[styles.text, { fontWeight: 'bold' }]}>FAQ</Text>
-				<Text style={[styles.text, { fontWeight: 'thin' }]}>Answers to common questions about our app</Text>
-			</View>
-
-			<LineWithText text="frequently asked" />
-
-			{faqs.map((item, index) => (
-				<View key={index} style={styles.faqItem}>
-					<Text style={[styles.text, styles.question]}>{item.question}</Text>
-					<Text style={[styles.text, styles.answer]}>{item.answer}</Text>
+				<View style={{ paddingTop: windowHeight / 20 }} />
+				<View style={styles.header}>
+					<Text style={[styles.text, { fontWeight: 'bold' }]}>FAQ</Text>
+					<Text style={[styles.text, { fontWeight: 'thin' }]}>Answers to common questions about our app</Text>
 				</View>
-			))}
 
-			<View style={{ paddingTop: windowHeight / 15 }} />
-			<Button
-				onPress={() => props.navigation.goBack()}
-				primaryColor="#000000"
-				textColor="#FFFFFF"
-				text="Back"
-				fontSize={15}
-				width={150}
-			/>
+				<LineWithText text="frequently asked" />
 
-			<View style={{ paddingBottom: windowHeight / 10 }} />
-		</ScrollView>
+				{faqs.map((item, index) => (
+					<View key={index} style={styles.faqItem}>
+						<Text style={[styles.text, styles.question]}>{item.question}</Text>
+						<Text style={[styles.text, styles.answer]}>{item.answer}</Text>
+					</View>
+				))}
+
+				<View style={{ paddingTop: windowHeight / 15 }} />
+				<Button
+					onPress={() => props.navigation.goBack()}
+					primaryColor="#000000"
+					textColor="#FFFFFF"
+					text="Back"
+					fontSize={15}
+					width={150}
+				/>
+
+				<View style={{ paddingBottom: windowHeight / 10 }} />
+			</ScrollView>
+		</View>
 	);
 };
 
