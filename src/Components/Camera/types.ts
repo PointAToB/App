@@ -1,5 +1,6 @@
 import { FC, RefObject } from "react";
 import { CameraType } from "expo-camera";
+import {ViewStyle} from "react-native";
 
 // CameraFunctions
 export type CameraFunctions = {
@@ -15,7 +16,8 @@ export type CameraComponent = FC<{ cameraType: CameraType, ref: RefObject<Camera
 export type CameraViewComponent = {
 	cameraType: CameraType,
 	ref: RefObject<CameraFunctions | null>,
-	Component: CameraComponent
+	Component: CameraComponent,
+	style: ViewStyle
 }
 
 

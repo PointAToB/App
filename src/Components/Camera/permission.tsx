@@ -1,9 +1,11 @@
 import { Alert, Platform } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { request, PERMISSIONS, RESULTS, Permission as Perm} from "react-native-permissions";
+import {useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
 // React native permission request for audio / video
-async function requestNativePermissions() {
+const requestPermissions = async () => {
 	let videoPermission: Perm;
 
 	if (Platform.OS === 'ios') videoPermission = PERMISSIONS.IOS.CAMERA;
@@ -23,51 +25,32 @@ async function requestNativePermissions() {
 	return audioGranted && videoGranted
 }
 
+const permissionHandler = async (setPermissionGranted: (permissionGranted: boolean)=>void) => {
+	const success = await requestPermissions();
+	if(success) setPermissionGranted(true)
+}
 
-// TODO: Remove imports when app is finalized
-import Constants, { ExecutionEnvironment } from "expo-constants";
-import {Camera as expoCamera, PermissionResponse} from "expo-camera";
-
-
-export default function Permission(props: {setPermissionGranted: (permissionGranted: boolean)=>void, permissionGranted: boolean,
-	displayCamera: boolean, isCameraDisplayed: (displayCamera: boolean)=>void}) {
-
+export default function Permission(props: { displayCamera: boolean, toggleCamera: (displayCamera: boolean)=>void }) {
+	const navigation = useNavigation<NativeStackNavigationProp<any>>();
+	const [permissionGranted, setPermissionGranted] = useState(false)
   useEffect(() => {
-		if (!props.permissionGranted && props.displayCamera) {
+		if (!permissionGranted && props.displayCamera) {
 			Alert.alert(
 				"Camera Access",
 				"We need your permission to enable camera access",
 				[
-					{text: "Cancel", onPress: ()=>props.isCameraDisplayed(false), style: "cancel"},
-					{text: "OK", onPress: ()=>{ void permissionHandler(props.setPermissionGranted) }},
+					{text: "Cancel", onPress: ()=>{ props.toggleCamera(false) }, style: "cancel"},
+					{text: "OK", onPress: ()=> { void permissionHandler(setPermissionGranted)}},
 				],
 				{cancelable: true}
 			);
 		}
-	}, [props.permissionGranted, props.displayCamera]);
+		if (permissionGranted && props.displayCamera) {
+			navigation.push('Camera')
+			props.toggleCamera(false)
+		}
+	}, [permissionGranted, props.displayCamera]);
+
+
 	return null;
-}
-
-// TODO: This method handles the permissions of camera between the runtimes of expo go and react native.
-// TODO: When app is finalized simplify permissionHandler function to use react native permissions exclusively.
-async function permissionHandler(setPermissionGranted: (permissionGranted: boolean)=>void) {
-	const runtime = getRuntimeEngine()
-	if(runtime === 'expoGo') {
-		 const videoPermission: PermissionResponse = await expoCamera.requestCameraPermissionsAsync();
-		 const audioPermission: PermissionResponse = await expoCamera.requestMicrophonePermissionsAsync();
-		 if(videoPermission.granted && audioPermission.granted) setPermissionGranted(true);
-	}
-
-	else if(runtime === 'reactNative') {
-		 const res = await requestNativePermissions();
-		 if(res) setPermissionGranted(true)
-	}
-}
-
-// TODO: Once app is finalized this method will not be needed.
-export function getRuntimeEngine() {
-	switch (Constants.executionEnvironment) {
-		case ExecutionEnvironment.StoreClient: return 'expoGo'
-		case ExecutionEnvironment.Bare: return 'reactNative'
-	}
 }

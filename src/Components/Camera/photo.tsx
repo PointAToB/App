@@ -1,6 +1,7 @@
 import { CameraView } from "expo-camera";
 import { CameraComponent } from "./types";
-import {useImperativeHandle, useRef, useState} from "react";
+import { useImperativeHandle, useRef, useState } from "react";
+import auth from "../../Functions/auth";
 
 const Photo: CameraComponent = (props) => {
 	const { cameraType, ref } = props;
@@ -9,7 +10,7 @@ const Photo: CameraComponent = (props) => {
 
 	useImperativeHandle(ref, () => ({
 		capture: async () => {
-			 setPhoto(await innerRef.current?.takePictureAsync())
+			 const photo = await innerRef.current?.takePictureAsync({base64: true});
 		}
 	}));
 

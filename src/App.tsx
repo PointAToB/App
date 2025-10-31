@@ -7,7 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Login from "./Pages/login";
 import CreateAccount from "./Pages/createAccount";
 import Navigation from "./Components/navigation";
-
+import { Camera } from "./Pages/camera"
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -25,6 +25,7 @@ function App() {
 				<Stack.Navigator initialRouteName='Login'>
 					<Stack.Screen options={{headerShown: false}} name='Login' component={Login}/>
 					<Stack.Screen name='Create Account' component={CreateAccount}/>
+					<Stack.Screen options={{headerShown: false}} name='Camera' component={Camera}/>
           <Stack.Screen options={{ headerShown: false }} name='Main' component={Navigation} />
 				</Stack.Navigator>
 			</NavigationContainer>
