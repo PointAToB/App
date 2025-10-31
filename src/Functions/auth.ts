@@ -3,7 +3,7 @@ import { api_root_url } from "../Settings/constants";
 import { getToken, setToken } from "./keyStore";
 
 
-export default async function auth(endpoint: string, options: FetchRequestInit = {method: 'GET'}) {
+export default async function authFetch(endpoint: string, options: FetchRequestInit = {method: 'GET'}) {
 	const updatedHeader = new Headers(options.headers)
 	updatedHeader.append('Authorization', `Bearer ${await tokenHandler()}`)
 	options.headers = updatedHeader
