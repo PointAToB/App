@@ -4,7 +4,7 @@ import { isEmpty } from "./verifyFields";
 
 export default async function login(email: string, password: string): 
 	Promise<{success: boolean, msg: string} | undefined> {
-	const endpoint: string = api_root_url + 'token/pair';
+	const endpoint: string = api_root_url + 'login';
 
 	// Verify fields are well-formed (Non-Empty)
 	if (isEmpty(email, password))
@@ -29,6 +29,9 @@ export default async function login(email: string, password: string):
 
 			case 400:
 				return {success: false, msg: 'The password entered is incorrect'}
+
+			case 404:
+				return {success: false, msg: 'An account with this email does not exist'}
 
 			case 422:
 				return {success: false, msg: 'The email entered is invalid'}
