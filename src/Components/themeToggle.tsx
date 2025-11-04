@@ -8,6 +8,7 @@ type ThemeColors = {
   background: string;
   text: string;
   nav: string;
+  secondaryText: string;
 };
 
 type ThemeContextType = {
@@ -22,7 +23,8 @@ const lightThemeBase: ThemeColors = {
   secondaryColor: "#7650FF",
   background: "#FFFFFF",
   text: "#000000",
-  nav: "#FFFFFF"
+  nav: "#FFFFFF",
+  secondaryText: '#999DA0'
 };
 
 const darkThemeBase: ThemeColors = {
@@ -31,6 +33,7 @@ const darkThemeBase: ThemeColors = {
   background: "#222021",
   text: "#FFFFFF",
   nav: "#48494B",
+  secondaryText: '#999DA0'
 };
 
 const colorThemes = [

@@ -392,7 +392,7 @@ const Profile = () => {
 							}}
 							placeholder="ft"
 						/>
-						<Text style={{ marginHorizontal: 4 }}>′</Text>
+						<Text style={{ marginHorizontal: 4 }}>ft</Text>
 						<TextInput
 							style={[styles.input, { width: 50 }]}
 							value={inchesToFeetInches(editedUser.height).inches.toString()}
@@ -405,7 +405,7 @@ const Profile = () => {
 							}}
 							placeholder="in"
 						/>
-						<Text style={{ marginLeft: 4 }}>″</Text>
+						<Text style={{ marginLeft: 4 }}>in</Text>
 						</>
 					) : (
 						// Display mode → convert inches to formatted string
@@ -417,6 +417,7 @@ const Profile = () => {
 					)}
 				</View>
 				
+				{/* TODO: See if this breaks based on iOS or Android, it's doing weird things on Android but works on iOS */}
 				<View style={[styles.profileField, { flexDirection: 'row', alignItems: 'baseline' }]}>
 					<Text style={[ styles.label, {color: theme.text }]}>Date of Birth: </Text>
 				

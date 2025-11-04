@@ -47,16 +47,16 @@ const FAQ = (props: { navigation: StackNavigationProp<any> }) => {
 
 				<View style={{ paddingTop: windowHeight / 20 }} />
 				<View style={styles.header}>
-					<Text style={[styles.text, { fontWeight: 'bold' }]}>FAQ</Text>
-					<Text style={[styles.text, { fontWeight: 'thin' }]}>Answers to common questions about our app</Text>
+					<Text style={[styles.text, { fontWeight: 'bold' }, { color: theme.text }]}>FAQ</Text>
+					<Text style={[styles.text, { fontWeight: 'thin' }, { color: theme.text }]}>Answers to common questions about our app</Text>
 				</View>
 
 				<LineWithText text="frequently asked" />
 
 				{faqs.map((item, index) => (
 					<View key={index} style={styles.faqItem}>
-						<Text style={[styles.text, styles.question]}>{item.question}</Text>
-						<Text style={[styles.text, styles.answer]}>{item.answer}</Text>
+						<Text style={[styles.text, styles.question, { color: theme.text }]}>{item.question}</Text>
+						<Text style={[styles.text, styles.answer, { color: theme.secondaryText }]}>{item.answer}</Text>
 					</View>
 				))}
 
