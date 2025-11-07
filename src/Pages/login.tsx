@@ -20,7 +20,7 @@ const Login = (props: {navigation: NativeStackNavigationProp<any>}) => {
 		setErrors([]);
 		isSubmitted(true)
 		
-		const res = await login(email, password)
+		const res = await login(email.toLowerCase(), password)
 
 		if(!res?.success) {
 			setErrors([res!.msg]);
