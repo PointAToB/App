@@ -9,6 +9,7 @@ import CreateAccount from "./Pages/createAccount";
 import Home from "./Pages/home";
 import Navigation from "./Components/navigation";
 import WorkoutDetailScreen from "./Pages/WorkoutDetailScreen";
+import WorkoutInterestScreen from "./Pages/WorkoutInterestScreen";
 
 
 function App() {
@@ -27,6 +28,11 @@ function App() {
 				<Stack.Navigator initialRouteName='Login'>
 					<Stack.Screen options={{headerShown: false}} name='Login' component={Login}/>
 					<Stack.Screen name='Create Account' component={CreateAccount}/>
+          <Stack.Screen 
+            options={{ headerShown: false }} 
+            name='WorkoutInterests' 
+            component={WorkoutInterestScreen} 
+          />
           <Stack.Screen options={{ headerShown: false }} name='Home' component={Navigation} />
           <Stack.Screen 
             options={{ headerShown: false }} 

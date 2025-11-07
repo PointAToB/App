@@ -15,8 +15,8 @@ const WorkoutDetailScreen: React.FC = () => {
   };
 
   const handleStartWorkout = () => {
-    // Navigate to workout session or show workout timer
-    console.log('Starting workout:', workout.title);
+    // Navigate to workout session screen
+    (navigation as any).navigate('WorkoutSession', { workout });
   };
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -68,6 +68,12 @@ const WorkoutDetailScreen: React.FC = () => {
                 <Ionicons name="time-outline" size={20} color="#6B7280" />
                 <Text style={styles.infoText}>{workout.duration}</Text>
               </View>
+              {workout.sets && workout.reps && (
+                <View style={styles.infoItem}>
+                  <Ionicons name="repeat-outline" size={20} color="#6B7280" />
+                  <Text style={styles.infoText}>{workout.sets} sets, {workout.reps} reps</Text>
+                </View>
+              )}
               <View style={styles.infoItem}>
                 <Ionicons name="fitness-outline" size={20} color="#6B7280" />
                 <Text style={styles.infoText}>{workout.difficulty}</Text>
@@ -83,7 +89,7 @@ const WorkoutDetailScreen: React.FC = () => {
             {/* Steps */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Workout Steps</Text>
-              {workout.steps.map((step, index) => (
+              {workout.steps.map((step: string, index: number) => (
                 <View key={index} style={styles.stepItem}>
                   <View style={styles.stepNumber}>
                     <Text style={styles.stepNumberText}>{index + 1}</Text>
