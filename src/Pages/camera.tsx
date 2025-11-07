@@ -12,8 +12,9 @@ import Close from "../Components/Camera/close";
 import { CameraType } from "expo-camera";
 import Selector from "../Components/Camera/selector";
 import CameraView from "../Components/Camera/cameraView";
+import Plus from "../Components/Camera/photo_plus";
 
-const options: CameraComponent[] = [Video, Photo, Coach]
+const options: CameraComponent[] = [Video, Photo, Coach, Plus]
 
 export function Camera (props: {navigation: NativeStackNavigationProp<any>}) {
 	const [cameraType, setCameraType] = useState<CameraType>('front');
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
 	},
 	menu: {
 		position: 'absolute',
-		bottom: 0,
+		bottom: 50,
 		left: 0,
 		right: 0,
 		height: 90,

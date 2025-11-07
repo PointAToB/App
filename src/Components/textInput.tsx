@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
 		borderColor: '#828282',
 		borderWidth: 1,
 		borderRadius: 20,
-		marginTop: 10
+		marginTop: 10,
+		color: 'black'
 	},
 	EmptyInput: {
 		borderColor: 'red'

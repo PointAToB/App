@@ -21,7 +21,7 @@ Promise<{success: boolean, msg: string} | undefined>  {
 			body: JSON.stringify({
 				firstName: firstName,
 				lastName: lastName,
-				email: email,
+				email: email.toLowerCase(),
 				password: password
 			})
         });

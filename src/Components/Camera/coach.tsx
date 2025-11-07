@@ -41,7 +41,7 @@ const Coach: CameraComponent = (props) => {
 	}
 
 	return (
-		<RTCView style={{flex: 1}} objectFit={'cover'} streamURL={stream?.toURL()}/>
+		<RTCView mirror style={{flex: 1}} objectFit={'cover'} streamURL={stream?.toURL()}/>
 	);
 }
 
