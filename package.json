@@ -7,7 +7,21 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "codegen": "cd android && gradlew generateCodegenArtifactsFromSchema"
+  },
+  "codegenConfig": {
+    "name": "AppSpec",
+    "type": "components",
+    "jsSrcsDir": "specs",
+    "android": {
+      "javaPackageName": "com.anonymous.cameraview"
+    },
+    "ios": {
+      "componentProvider": {
+        "CameraView": "RCTCameraView"
+      }
+    }
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
