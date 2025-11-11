@@ -3,18 +3,16 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Button from "../Components/button";
 import Permission from "../Components/Camera/permission";
 import { CameraFunctions, CameraComponent } from "../Components/Camera/types";
-import Photo from "../Components/Camera/photo";
-import Video from "../Components/Camera/video";
-import Coach from "../Components/Camera/coach";
 import {useRef, useState} from "react";
 import Toggle from "../Components/Camera/toggle";
 import Close from "../Components/Camera/close";
 import { CameraType } from "expo-camera";
 import Selector from "../Components/Camera/selector";
 import CameraView from "../Components/Camera/cameraView";
-import Plus from "../Components/Camera/photo_plus";
+import { selectable, photo, video, coach } from '../Components/Camera/selectable'
 
-const options: CameraComponent[] = [Video, Photo, Coach, Plus]
+
+const options: selectable[] = [video, photo, coach]
 
 export function Camera (props: {navigation: NativeStackNavigationProp<any>}) {
 	const [cameraType, setCameraType] = useState<CameraType>('front');
@@ -23,9 +21,9 @@ export function Camera (props: {navigation: NativeStackNavigationProp<any>}) {
 
 	return (
 		<View style={styles.main}>
-			<CameraView cameraType={cameraType} ref={ref} Component={options[selected]} style={styles.camera}/>
+			<View style={styles.camera}/>
 			<View style={styles.menu}>
-				<Selector options={options} selected={selected} setSelect={setSelect} onPress={async () => await ref.current!.capture()}/>
+				<Selector options={options} selected={selected} setSelect={setSelect} onPress={()=>console.log('Pressed')}/>
 				<Toggle size={36} cameraType={cameraType} setCameraType={setCameraType} color={'white'} style={{position: 'absolute', right: 0}}/>
 				<Close size={36} onPress={()=>{props.navigation.pop()}} color={'white'} style={{position: 'absolute', left: 0}}/>
 			</View>

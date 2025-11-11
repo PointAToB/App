@@ -1,13 +1,13 @@
 import {FlatList, Text, View, StyleSheet, Dimensions} from "react-native";
 import Capture from "./capture";
-import {CameraComponent} from "./types";
+import { selectable } from './selectable'
 
 const { width: screenWidth } = Dimensions.get('window');
 const ITEM_WIDTH = 100; // Width of each item
 const MARGIN = 36;
 const SPACING = (screenWidth - ITEM_WIDTH) / 2 - MARGIN;
 
-type Props = {options: CameraComponent[], selected: number, setSelect: (index: number)=>void, onPress: ()=>void}
+type Props = {options: selectable[], selected: number, setSelect: (index: number)=>void, onPress: ()=>void}
 
 export default function Selector(props: Props) {
 	const {options, selected, setSelect, onPress} = props;

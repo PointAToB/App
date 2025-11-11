@@ -9,29 +9,23 @@ import CreateAccount from "./Pages/createAccount";
 import Navigation from "./Components/navigation";
 import { Camera } from "./Pages/camera"
 
+import { TestHome } from './Components/testHome';
+
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = false //useColorScheme() === 'dark';
   const Stack = createNativeStackNavigator();
 
   return (
-		<NavigationContainer>
-    <SafeAreaView>
-      <StatusBar
-        translucent={true}
-        hidden={false}
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-      />
-			</SafeAreaView>
-				<Stack.Navigator initialRouteName='Login'>
-					<Stack.Screen options={{headerShown: false}} name='Login' component={Login}/>
-					<Stack.Screen name='Create Account' component={CreateAccount}/>
-					<Stack.Screen options={{headerShown: false}} name='Camera' component={Camera}/>
-          <Stack.Screen options={{ headerShown: false }} name='Main' component={Navigation} />
-				</Stack.Navigator>
-			</NavigationContainer>
+    <NavigationContainer>
+        <SafeAreaView>
+            <StatusBar translucent={true} hidden={false} barStyle={'dark-content'}/>
+		</SafeAreaView>
+	    <Stack.Navigator initialRouteName='TestHome'>
+		    <Stack.Screen options={{headerShown: false}} name='TestHome' component={TestHome}/>
+			<Stack.Screen options={{headerShown: false}} name='Camera' component={Camera}/>
+		</Stack.Navigator>
+	</NavigationContainer>
   );
 }
-
-
 
 export default App;
