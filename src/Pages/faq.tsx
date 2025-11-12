@@ -4,6 +4,7 @@ import LineWithText from "../Components/lineWithText";
 import Button from "../Components/button";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "../Components/themeToggle";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Starting with this as a baseline, I think we will add more
 // questions and answers as we make more changes and we can
@@ -41,38 +42,40 @@ const FAQ = (props: { navigation: StackNavigationProp<any> }) => {
 	];
 
 	return (
-		<View style={{ backgroundColor: theme.background }}>
-			<ScrollView style={styles.main}>
-				<Logo primaryColor={ theme.primaryColor } secondaryColor={ theme.secondaryColor } />
+		<SafeAreaView>
+			<View style={{ backgroundColor: theme.background }}>
+				<ScrollView style={styles.main}>
+					<Logo primaryColor={ theme.primaryColor } secondaryColor={ theme.secondaryColor } />
 
-				<View style={{ paddingTop: windowHeight / 20 }} />
-				<View style={styles.header}>
-					<Text style={[styles.text, { fontWeight: 'bold' }, { color: theme.text }]}>FAQ</Text>
-					<Text style={[styles.text, { fontWeight: 'thin' }, { color: theme.text }]}>Answers to common questions about our app</Text>
-				</View>
-
-				<LineWithText text="frequently asked" />
-
-				{faqs.map((item, index) => (
-					<View key={index} style={styles.faqItem}>
-						<Text style={[styles.text, styles.question, { color: theme.text }]}>{item.question}</Text>
-						<Text style={[styles.text, styles.answer, { color: theme.secondaryText }]}>{item.answer}</Text>
+					<View style={{ paddingTop: windowHeight / 20 }} />
+					<View style={styles.header}>
+						<Text style={[styles.text, { fontWeight: 'bold' }, { color: theme.text }]}>FAQ</Text>
+						<Text style={[styles.text, { fontWeight: 'thin' }, { color: theme.text }]}>Answers to common questions about our app</Text>
 					</View>
-				))}
 
-				<View style={{ paddingTop: windowHeight / 15 }} />
-				<Button
-					onPress={() => props.navigation.goBack()}
-					primaryColor="#000000"
-					textColor="#FFFFFF"
-					text="Back"
-					fontSize={15}
-					width={150}
-				/>
+					<LineWithText text="frequently asked" />
 
-				<View style={{ paddingBottom: windowHeight / 10 }} />
-			</ScrollView>
-		</View>
+					{faqs.map((item, index) => (
+						<View key={index} style={styles.faqItem}>
+							<Text style={[styles.text, styles.question, { color: theme.text }]}>{item.question}</Text>
+							<Text style={[styles.text, styles.answer, { color: theme.secondaryText }]}>{item.answer}</Text>
+						</View>
+					))}
+
+					<View style={{ paddingTop: windowHeight / 15 }} />
+					<Button
+						onPress={() => props.navigation.goBack()}
+						primaryColor="#000000"
+						textColor="#FFFFFF"
+						text="Back"
+						fontSize={15}
+						width={150}
+					/>
+
+					<View style={{ paddingBottom: windowHeight / 10 }} />
+				</ScrollView>
+			</View>
+		</SafeAreaView>
 	);
 };
 

@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import WorkoutCard from '../Components/WorkoutCard';
+import { useTheme } from '../Components/themeToggle';
 
 interface Exercise {
   id: string;
@@ -18,6 +19,7 @@ interface Exercise {
 }
 
 const ExerciseListScreen: React.FC = () => {
+  const { theme } = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
   const { workoutType } = route.params as { workoutType: string };
@@ -120,16 +122,16 @@ const ExerciseListScreen: React.FC = () => {
 
   return (
     <LinearGradient
-      colors={['#F5F5F5', '#E5E5E5']}
+      colors={[theme.background, theme.backgroundSecondary]}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
         {/* Header with back button */}
         <View style={styles.header}>
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#1F2937" />
+            <Ionicons name="arrow-back" size={24} color={ theme.primaryColor } />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{workoutType} Exercises</Text>
+          <Text style={[styles.headerTitle, { color: theme.text }]}>{workoutType} Exercises</Text>
           <View style={styles.placeholder} />
         </View>
         

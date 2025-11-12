@@ -49,7 +49,7 @@ export default function Navigation() {
     >
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Workouts" component={WorkoutStack} />
-      <Tab.Screen name="Classes" component={Classes} />
+      {/* <Tab.Screen name="Classes" component={Classes} /> */}
       <Tab.Screen name="Nutrition" component={Nutrition} />
 	  	<Tab.Screen name="Profile" component={Profile} />
 			<Tab.Screen name="FAQ" component={FAQ} />

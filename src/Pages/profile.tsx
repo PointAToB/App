@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, ScrollView, Dimensions, Platform, Switch } from 'react-native';
+import { StyleSheet, View, Text, TextInput, ScrollView, Dimensions, Platform, Switch, TouchableOpacity } from 'react-native';
 import Logo from '../Components/logo';
 import LineWithText from '../Components/lineWithText';
 import Button from '../Components/button';
@@ -7,6 +7,7 @@ import { getToken } from '../Functions/keyStore';
 import { api_root_url } from '../Settings/constants';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '../Components/themeToggle';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Profile = () => {
     type UserType = {
@@ -180,13 +181,6 @@ const Profile = () => {
   		setHeightInches(inches);
 	}, [editedUser.height]);
 
-	const onChangeDate = (event: any, selectedDate?: Date) => {
-  		setShowDatePicker(Platform.OS === 'ios');  // keep open on iOS until user closes
-  		if (selectedDate) {
-    		setEditedUser({ ...editedUser, birthDate: selectedDate });
-  		}
-	};
-
 	useEffect(() => {
 		fetchUserProfile();
 	}, []);
@@ -284,6 +278,7 @@ const Profile = () => {
 
 	}
 	return (
+		<SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
 		<View style={{ flex: 1, backgroundColor: theme.background }}>
 			<ScrollView style={[styles.main]}>
 				<Logo primaryColor={theme.primaryColor} secondaryColor={theme.secondaryColor} />
@@ -425,84 +420,97 @@ const Profile = () => {
 				
 					{isEditing ? (
 						<>
+							<TouchableOpacity onPress={() => setShowDatePicker(true)}>
+        						<Text style={[styles.value, { color: theme.text }]}>
+          						{editedUser.birthDate
+            						? editedUser.birthDate.toLocaleDateString()
+            						: 'Select Date'}
+        						</Text>
+     						</TouchableOpacity>
 						{showDatePicker && (
 							<DateTimePicker
 								value={editedUser.birthDate || new Date(2000, 0, 1)}
 								mode="date"
-								display="default"
-								onChange={onChangeDate}
-								maximumDate={new Date()}
-								// style={{ flex: 1 }} // optional, but usually modal pickers ignore style
+          						display='default'
+								onChange={(event, selectedDate) => {
+            						if (selectedDate) {
+              							setEditedUser({ ...editedUser, birthDate: selectedDate });
+            						}
+            						// Hide picker on Android after selection
+            						if (Platform.OS === 'android') setShowDatePicker(false);
+          							}}								
+									maximumDate={new Date()}
 								/>
+							)}
+							</>
+						) : (
+							<Text style={[styles.value, { color: theme.text }]}>
+								{user.birthDate ? user.birthDate.toLocaleDateString() : ''}
+							</Text>
 						)}
-						</>
-					) : (
-						<Text style={[styles.value, { color: theme.text }]}>
-							{user.birthDate ? user.birthDate.toLocaleDateString() : ''}
-						</Text>
-					)}
-				</View>
-				
-				<View style={{ flex: 1, backgroundColor: theme.background }}>
-					<Text style={{ color: theme.text, fontSize: 18, marginBottom: 10 }}>Theme Settings</Text>
-				
-					<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-						<Text style={{ color: theme.text, marginRight: 10 }}>Dark Mode</Text>
-						<Switch value={isDarkMode} onValueChange={toggleThemeMode} />
 					</View>
 				
-					<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-						<Text style={{ color: theme.text, marginRight: 10 }}>Color Theme</Text>
-						<Button 
-							text="Toggle Theme" 
-							onPress={toggleColorTheme} 
-							primaryColor={theme.primaryColor}
-							textColor="#FFFFFF"
-							width={150}
-							fontSize={15} />
-					</View>
-				</View>
+					<View style={{ flex: 1, backgroundColor: theme.background }}>
+						<Text style={{ color: theme.text, fontSize: 18, marginBottom: 10 }}>Theme Settings</Text>
 				
-				<View style={{ paddingTop: 30 }} />
-				
-					{isEditing ? (
-						// When editing, show Save + Cancel side by side
-						<View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
-							<Button
-								onPress={handleSave}
-								text="Save"
-								primaryColor="#00C851"
-								textColor="#FFFFFF"
-								width={150}
-								fontSize={15}
-							/>
-							<Button
-								onPress={() => {
-									setEditedUser(user); // Reset form changes
-									setIsEditing(false); // Exit edit mode
-								}}
-								text="Cancel"
-								primaryColor="#fc0303"
-								textColor="#FFFFFF"
-								width={150}
-								fontSize={15}
-							/>
+						<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+							<Text style={{ color: theme.text, marginRight: 10 }}>Dark Mode</Text>
+							<Switch value={isDarkMode} onValueChange={toggleThemeMode} />
 						</View>
-					) : (
-						// When not editing, show only Edit
-						<Button
-							onPress={() => setIsEditing(true)}
-							text="Edit"
-							primaryColor={theme.primaryColor}
-							textColor="#FFFFFF"
-							width={150}
-							fontSize={15}
-						/>
-					)}
 				
-				<View style={{ paddingBottom: windowHeight / 10 }} />
-			</ScrollView>
-		</View>
+						<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+							<Text style={{ color: theme.text, marginRight: 10 }}>Color Theme</Text>
+							<Button 
+								text="Toggle Theme" 
+								onPress={toggleColorTheme} 
+								primaryColor={theme.primaryColor}
+								textColor="#FFFFFF"
+								width={150}
+								fontSize={15} />
+						</View>
+					</View>
+				
+					<View style={{ paddingTop: 30 }} />
+				
+						{isEditing ? (
+							// When editing, show Save + Cancel side by side
+							<View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
+								<Button
+									onPress={handleSave}
+									text="Save"
+									primaryColor="#00C851"
+									textColor="#FFFFFF"
+									width={150}
+									fontSize={15}
+								/>
+								<Button
+									onPress={() => {
+										setEditedUser(user); // Reset form changes
+										setIsEditing(false); // Exit edit mode
+									}}
+									text="Cancel"
+									primaryColor="#fc0303"
+									textColor="#FFFFFF"
+									width={150}
+									fontSize={15}
+								/>
+							</View>
+						) : (
+						// When not editing, show only Edit
+							<Button
+								onPress={() => setIsEditing(true)}
+								text="Edit"
+								primaryColor={theme.primaryColor}
+								textColor="#FFFFFF"
+								width={150}
+								fontSize={15}
+							/>
+						)}
+				
+					<View style={{ paddingBottom: windowHeight / 10 }} />
+				</ScrollView>
+			</View>
+		</SafeAreaView>
 	);
 };
 

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Button from "../Components/button";
 import Camera from "../Components/Camera/camera";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../Components/themeToggle";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Home = () => {
   const [popupContent, setPopupContent] = useState(false);
@@ -29,87 +30,91 @@ const Home = () => {
   const calories = 1825; // placeholder value
 
   return (
-    <View style={[ styles.container, { backgroundColor: theme.background }]}>
-      {/* Open Camera Button */}
-      <Button
-        onPress={() => setPopupContent(true)}
-        primaryColor={primaryColor}
-        secondaryColor={secondaryColor}
-        textColor="#FFFFFF"
-        text="Open Camera"
-        fontSize={15}
-        width={150}
-      />
-      <Camera visible={popupContent} setVisible={setPopupContent} />
-
-      {/* Active Classes Section */}
-      <View style={styles.sectionContainer}>
-        <Text style={[ styles.sectionHeader, { color: theme.text }]}>Active Classes</Text>
-
-        <FlatList
-          data={activeClasses.slice(0, 2)}
-          keyExtractor={(item) => item.id}
-          horizontal={false}
-          numColumns={2}
-          columnWrapperStyle={{ justifyContent: "space-between", marginBottom: 20 }}
-          renderItem={({ item }) => (
-            <LinearGradient
-              colors={[primaryColor, secondaryColor]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.classBox}
-            >
-              <Text style={styles.classTitle}>{item.title}</Text>
-              <Text style={styles.classProgress}>{item.progress}% Complete</Text>
-            </LinearGradient>
-          )}
-          contentContainerStyle={styles.classList}
+    <SafeAreaView style={[ styles.container, { backgroundColor: theme.background}]}>
+      <ScrollView>
+        {/* Open Camera Button */}
+        <Button
+          onPress={() => setPopupContent(true)}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          textColor="#FFFFFF"
+          text="Open Camera"
+          fontSize={15}
+          width={150}
         />
+        <Camera visible={popupContent} setVisible={setPopupContent} />
 
-        <TouchableOpacity
-          style={[styles.seeMoreButton, { backgroundColor: primaryColor }]}
-          onPress={() => navigation.navigate("Classes")}
-        >
-          <Text style={styles.seeMoreText}>See More</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Active Classes Section */}
+        <View style={styles.sectionContainer}>
+          <Text style={[ styles.sectionHeader, { color: theme.text }]}>Active Classes</Text>
 
-      {/* Recipes Section */}
-      <View style={[styles.sectionContainer, { marginTop: 40 }]}>
-        <Text style={[ styles.sectionHeader, { color: theme.text }]}>Recipes</Text>
+          <FlatList
+            data={activeClasses.slice(0, 2)}
+            scrollEnabled={ false }
+            keyExtractor={(item) => item.id}
+            horizontal={false}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: "space-between", marginBottom: 20 }}
+            renderItem={({ item }) => (
+              <LinearGradient
+                colors={[primaryColor, secondaryColor]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.classBox}
+              >
+                <Text style={styles.classTitle}>{item.title}</Text>
+                <Text style={styles.classProgress}>{item.progress}% Complete</Text>
+              </LinearGradient>
+            )}
+            contentContainerStyle={styles.classList}
+          />
 
-        <FlatList
-          data={recipes.slice(0, 2)}
-          keyExtractor={(item) => item.id}
-          horizontal={false}
-          numColumns={2}
-          columnWrapperStyle={{ justifyContent: "space-between", marginBottom: 20 }}
-          renderItem={({ item }) => (
-            <View style={[styles.recipeBox]}>
-              <Text style={styles.recipeTitle}>{item.title}</Text>
-            </View>
-          )}
-          contentContainerStyle={styles.classList}
-        />
-
-        <TouchableOpacity
-          style={[styles.seeMoreButton, { backgroundColor: "#000" }]}
-          onPress={() => navigation.navigate("Nutrition")}
-        >
-          <Text style={styles.seeMoreText}>See More</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Nutrition Log Section */}
-      <View style={[styles.sectionContainer, { marginTop: 40 }]}>
-        <Text style={[ styles.sectionHeader, { color: theme.text }]}>Nutrition Log</Text>
-
-        <View style={styles.nutritionCard}>
-          <Text style={styles.nutritionText}>Calories:</Text>
-          <Text style={styles.nutritionNumber}>{calories}</Text>
+          <TouchableOpacity
+            style={[styles.seeMoreButton, { backgroundColor: primaryColor }]}
+            onPress={() => navigation.navigate("Classes")}
+          >
+            <Text style={styles.seeMoreText}>See More</Text>
+          </TouchableOpacity>
         </View>
-      </View>
-    </View>
+
+        {/* Recipes Section */}
+        <View style={[styles.sectionContainer, { marginTop: 40 }]}>
+          <Text style={[ styles.sectionHeader, { color: theme.text }]}>Recipes</Text>
+
+          <FlatList
+            data={recipes.slice(0, 2)}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={ false }
+            horizontal={false}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: "space-between", marginBottom: 20 }}
+            renderItem={({ item }) => (
+              <View style={[styles.recipeBox]}>
+                <Text style={styles.recipeTitle}>{item.title}</Text>
+              </View>
+            )}
+            contentContainerStyle={styles.classList}
+          />
+
+          <TouchableOpacity
+            style={[styles.seeMoreButton, { backgroundColor: "#000" }]}
+            onPress={() => navigation.navigate("Nutrition")}
+          >
+            <Text style={styles.seeMoreText}>See More</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Nutrition Log Section */}
+        <View style={[styles.sectionContainer, { marginTop: 40 }]}>
+          <Text style={[ styles.sectionHeader, { color: theme.text }]}>Nutrition Log</Text>
+
+          <View style={styles.nutritionCard}>
+            <Text style={styles.nutritionText}>Calories:</Text>
+            <Text style={styles.nutritionNumber}>{calories}</Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

@@ -6,6 +6,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../Components/themeToggle';
 
 interface Exercise {
   id: string;
@@ -22,6 +23,7 @@ const WorkoutSessionScreen: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { workout } = route.params as { workout: Exercise };
+  const { theme } = useTheme();
   
   const [currentSet, setCurrentSet] = useState(1);
   const [currentRep, setCurrentRep] = useState(1);
@@ -316,7 +318,7 @@ const WorkoutSessionScreen: React.FC = () => {
                     onPress={() => setShowCamera(true)}
                   >
                     <LinearGradient
-                      colors={['#FF6B35', '#FF4500']}
+                      colors={[theme.primaryColor, theme.secondaryColor]}
                       style={styles.cameraGradientButton}
                     >
                       <Text style={styles.cameraButtonText}>Enable Camera</Text>
