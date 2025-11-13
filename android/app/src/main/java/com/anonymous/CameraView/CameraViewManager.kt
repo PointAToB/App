@@ -6,6 +6,8 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.bridge.ReactApplicationContext
 
+//ReactApplicationContext
+
 @ReactModule(name = CameraViewManager.REACT_CLASS)
 class CameraViewManager(context: ReactApplicationContext) : SimpleViewManager<CameraView>() {
     override fun getName(): String = REACT_CLASS
@@ -13,6 +15,7 @@ class CameraViewManager(context: ReactApplicationContext) : SimpleViewManager<Ca
     override fun createViewInstance(context: ThemedReactContext): CameraView {
         return CameraView(context)
     }
+
 
 
     companion object {

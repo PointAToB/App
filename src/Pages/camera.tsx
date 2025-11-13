@@ -8,9 +8,9 @@ import Toggle from "../Components/Camera/toggle";
 import Close from "../Components/Camera/close";
 import { CameraType } from "expo-camera";
 import Selector from "../Components/Camera/selector";
-import CameraView from "../Components/Camera/cameraView";
 import { selectable, photo, video, coach } from '../Components/Camera/selectable'
 
+import CameraView from '../../specs/CameraViewNativeComponent'
 
 const options: selectable[] = [video, photo, coach]
 
@@ -21,7 +21,10 @@ export function Camera (props: {navigation: NativeStackNavigationProp<any>}) {
 
 	return (
 		<View style={styles.main}>
-			<View style={styles.camera}/>
+			<View style={styles.camera}>
+			    <CameraView style={{flex: 1}}/>
+			</View>
+
 			<View style={styles.menu}>
 				<Selector options={options} selected={selected} setSelect={setSelect} onPress={()=>console.log('Pressed')}/>
 				<Toggle size={36} cameraType={cameraType} setCameraType={setCameraType} color={'white'} style={{position: 'absolute', right: 0}}/>
@@ -48,10 +51,10 @@ const styles = StyleSheet.create({
 	},
 	camera: {
 		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 90,
+        bottom: 90,
+        left: 0,
+        right: 0,
+        top: 0,
 	},
 	menu: {
 		position: 'absolute',
