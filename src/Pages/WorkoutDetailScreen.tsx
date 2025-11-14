@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Ima
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import Logo from '../Components/logo';
 
 const WorkoutDetailScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -42,7 +43,9 @@ const WorkoutDetailScreen: React.FC = () => {
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="#1F2937" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Workout Details</Text>
+          <View style={styles.logoContainer}>
+            <Logo primaryColor="#DD00FF" secondaryColor="#7650FF" scale={0.7} />
+          </View>
           <View style={styles.placeholder} />
         </View>
 
@@ -138,10 +141,10 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1F2937',
+  logoContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   placeholder: {
     width: 40,

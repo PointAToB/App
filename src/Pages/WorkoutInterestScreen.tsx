@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import Logo from '../Components/logo';
 
 const WorkoutInterestScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -35,10 +36,9 @@ const WorkoutInterestScreen: React.FC = () => {
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Header */}
-          <Text style={styles.appTitle}>
-            THE{' '}
-            <Text style={styles.fitnessApp}>Fitness App</Text>
-          </Text>
+          <View style={styles.logoContainer}>
+            <Logo primaryColor="#DD00FF" secondaryColor="#7650FF" />
+          </View>
 
           {/* Instructions */}
           <View style={styles.instructionContainer}>
@@ -113,16 +113,10 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 40,
   },
-  appTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#000000',
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 60,
-  },
-  fitnessApp: {
-    fontStyle: 'italic',
-    fontWeight: 'normal',
   },
   instructionContainer: {
     marginBottom: 40,
