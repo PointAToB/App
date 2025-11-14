@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Image, Dimensions, Alert, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Image, Dimensions, Alert, Modal, Vibration, Platform } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Audio } from 'expo-av';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import Logo from '../Components/logo';
 
 interface Exercise {
   id: string;
@@ -44,32 +46,115 @@ const WorkoutSessionScreen: React.FC = () => {
   const breakIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const cameraRef = useRef<any>(null);
   
+  // Play sound effect
+  const playSound = async () => {
+    if (!soundEnabled) return;
+    
+    try {
+      // Set audio mode for better compatibility
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: false,
+        shouldDuckAndroid: true,
+      });
+      
+      // Use a simple beep sound
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: 'https://assets.mixkit.co/active_storage/sfx/766/766-preview.mp3' },
+        { shouldPlay: false, volume: 0.8, isLooping: false }
+      );
+      
+      // Play the sound
+      await sound.playAsync();
+      
+      // Stop after 0.5 seconds for a shorter beep
+      setTimeout(async () => {
+        try {
+          const status = await sound.getStatusAsync();
+          if (status.isLoaded && status.isPlaying) {
+            await sound.stopAsync();
+          }
+        } catch (e) {
+          // Ignore errors
+        }
+      }, 500);
+      
+      // Clean up after sound finishes
+      sound.setOnPlaybackStatusUpdate((status: any) => {
+        if (status.didJustFinish) {
+          sound.unloadAsync().catch(() => {});
+        }
+      });
+      
+      // Safety cleanup after 2 seconds
+      setTimeout(async () => {
+        try {
+          const status = await sound.getStatusAsync();
+          if (status.isLoaded) {
+            await sound.stopAsync();
+            await sound.unloadAsync();
+          }
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+      }, 2000);
+      
+    } catch (error) {
+      // If sound fails, at least vibration will work
+      console.log('Sound playback error:', error);
+    }
+  };
+  
+  // Trigger vibration
+  const triggerVibration = () => {
+    if (!vibrationEnabled) return;
+    
+    if (Platform.OS === 'ios') {
+      // iOS vibration pattern
+      Vibration.vibrate([0, 400, 100, 400]);
+    } else {
+      // Android vibration pattern
+      Vibration.vibrate([0, 500, 200, 500]);
+    }
+  };
+  
   useEffect(() => {
     if (isBreak && !isPaused) {
       breakIntervalRef.current = setInterval(() => {
         setBreakTime((prev) => {
           if (prev <= 1) {
+            // Timer reached 0 - play sound and vibration
+            playSound();
+            triggerVibration();
+            
             setIsBreak(false);
-            setBreakTime(30);
+            setBreakTime(breakDuration);
             if (currentRep < totalReps) {
               setCurrentRep(currentRep + 1);
             } else if (currentSet < totalSets) {
               setCurrentSet(currentSet + 1);
               setCurrentRep(1);
             }
-            return 30;
+            return breakDuration;
           }
           return prev - 1;
         });
       }, 1000);
+    } else {
+      // Clear interval when break is paused or stopped
+      if (breakIntervalRef.current) {
+        clearInterval(breakIntervalRef.current);
+        breakIntervalRef.current = null;
+      }
     }
     
     return () => {
       if (breakIntervalRef.current) {
         clearInterval(breakIntervalRef.current);
+        breakIntervalRef.current = null;
       }
     };
-  }, [isBreak, isPaused, currentRep, currentSet, totalReps, totalSets]);
+  }, [isBreak, isPaused, currentRep, currentSet, totalReps, totalSets, soundEnabled, vibrationEnabled, breakDuration]);
 
   // Reset camera ready state when camera is disabled
   useEffect(() => {
@@ -85,7 +170,7 @@ const WorkoutSessionScreen: React.FC = () => {
   
   const handleEndBreak = () => {
     setIsBreak(false);
-    setBreakTime(30);
+    setBreakTime(breakDuration);
   };
   
   const handleNextExercise = () => {
@@ -127,7 +212,9 @@ const WorkoutSessionScreen: React.FC = () => {
             <TouchableOpacity onPress={handleBack} style={styles.backButton}>
               <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
             </TouchableOpacity>
-            <Text style={styles.appTitle}>THE Fitness App</Text>
+            <View style={styles.logoContainer}>
+              <Logo primaryColor="#DD00FF" secondaryColor="#7650FF" scale={0.7} />
+            </View>
             <View style={styles.placeholder} />
           </View>
 
@@ -515,11 +602,30 @@ const WorkoutSessionScreen: React.FC = () => {
                           text: 'Reset',
                           style: 'destructive',
                           onPress: () => {
+                            // Clear any running break timer first
+                            if (breakIntervalRef.current) {
+                              clearInterval(breakIntervalRef.current);
+                              breakIntervalRef.current = null;
+                            }
+                            
+                            // Reset all workout state to beginning
+                            setIsBreak(false);
+                            setIsPaused(false);
+                            
+                            // Reset break duration to default (30s)
+                            setBreakDuration(30);
+                            setBreakTime(30);
+                            
+                            // Reset workout progress
                             setCurrentSet(1);
                             setCurrentRep(1);
-                            setIsBreak(false);
-                            setBreakTime(breakDuration);
-                            setIsPaused(false);
+                            
+                            // Reset camera state
+                            setShowCamera(false);
+                            setCameraReady(false);
+                            setCameraFacing('front');
+                            
+                            // Close settings modal
                             setShowSettings(false);
                           }
                         }
@@ -562,12 +668,10 @@ const styles = StyleSheet.create({
     padding: 8,
     width: 40,
   },
-  appTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+  logoContainer: {
     flex: 1,
-    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   placeholder: {
     width: 40,
