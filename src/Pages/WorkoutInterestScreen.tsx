@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../Components/themeToggle';
 
 const WorkoutInterestScreen: React.FC = () => {
+  const { theme } = useTheme();
   const navigation = useNavigation();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
@@ -29,21 +31,21 @@ const WorkoutInterestScreen: React.FC = () => {
 
   return (
     <LinearGradient
-      colors={['#FFFFFF', '#F5F5F5']}
+      colors={[theme.background, theme.backgroundSecondary]}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Header */}
-          <Text style={styles.appTitle}>
+          <Text style={[styles.appTitle, { color: theme.text }]}>
             THE{' '}
             <Text style={styles.fitnessApp}>Fitness App</Text>
           </Text>
 
           {/* Instructions */}
           <View style={styles.instructionContainer}>
-            <Text style={styles.instructionTitle}>Select Your Interests</Text>
-            <Text style={styles.instructionSubtitle}>
+            <Text style={[styles.instructionTitle, { color: theme.text }]}>Select Your Interests</Text>
+            <Text style={[styles.instructionSubtitle, { color: theme.secondaryText }]}>
               This helps us tailor your experience
             </Text>
           </View>
@@ -57,12 +59,12 @@ const WorkoutInterestScreen: React.FC = () => {
                   key={index}
                   style={[
                     styles.interestButton,
-                    isSelected && styles.interestButtonSelected
+                    isSelected && styles.interestButtonSelected,
                   ]}
                   onPress={() => toggleInterest(interest)}
                 >
                   <LinearGradient
-                    colors={isSelected ? ['#DD00FF', '#7650FF'] : ['#000000', '#000000']}
+                    colors={isSelected ? [theme.primaryColor, theme.secondaryColor] : [theme.button, theme.button]}
                     style={styles.interestGradient}
                   >
                     <Text style={[
@@ -84,7 +86,7 @@ const WorkoutInterestScreen: React.FC = () => {
               onPress={handleFinish}
             >
               <LinearGradient
-                colors={['#FF6B35', '#FF4500']}
+                colors={[theme.primaryColor, theme.secondaryColor]}
                 style={styles.finishGradient}
               >
                 <Text style={styles.finishText}>Finish</Text>

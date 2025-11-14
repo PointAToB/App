@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import WorkoutCard from '../Components/WorkoutCard';
+import { useTheme } from '../Components/themeToggle';
 
 interface Workout {
   id: string;
@@ -16,6 +17,7 @@ interface Workout {
 
 const WorkoutScreen: React.FC = () => {
   const navigation = useNavigation();
+  const { theme } = useTheme();
   // Workout types - categories to choose from
   const workouts: Workout[] = [
     {
@@ -79,13 +81,13 @@ const WorkoutScreen: React.FC = () => {
 
   return (
     <LinearGradient
-      colors={['#F5F5F5', '#E5E5E5']}
+      colors={[theme.background, theme.backgroundSecondary]}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>💪 Workouts</Text>
-          <Text style={styles.subheading}>Select Your Interests</Text>
+          <Text style={[styles.headerTitle, { color: theme.text }]}>Workouts</Text>
+          <Text style={[styles.subheading, { color: theme.secondaryText }]}>Select Your Interests</Text>
         </View>
         
         <ScrollView 

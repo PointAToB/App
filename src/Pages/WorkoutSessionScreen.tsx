@@ -6,6 +6,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../Components/themeToggle';
 
 interface Exercise {
   id: string;
@@ -22,6 +23,7 @@ const WorkoutSessionScreen: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { workout } = route.params as { workout: Exercise };
+  const { theme } = useTheme();
   
   const [currentSet, setCurrentSet] = useState(1);
   const [currentRep, setCurrentRep] = useState(1);
@@ -316,7 +318,7 @@ const WorkoutSessionScreen: React.FC = () => {
                     onPress={() => setShowCamera(true)}
                   >
                     <LinearGradient
-                      colors={['#FF6B35', '#FF4500']}
+                      colors={[theme.primaryColor, theme.secondaryColor]}
                       style={styles.cameraGradientButton}
                     >
                       <Text style={styles.cameraButtonText}>Enable Camera</Text>
@@ -415,7 +417,8 @@ const WorkoutSessionScreen: React.FC = () => {
                       onPress={() => setBreakDuration(duration)}
                       style={[
                         styles.durationButton,
-                        breakDuration === duration && styles.durationButtonActive
+                        breakDuration === duration && styles.durationButtonActive,
+                        { backgroundColor: theme.primaryColor}
                       ]}
                     >
                       <Text style={[
@@ -443,7 +446,8 @@ const WorkoutSessionScreen: React.FC = () => {
                     }}
                     style={[
                       styles.facingButton,
-                      cameraFacing === 'front' && styles.facingButtonActive
+                      cameraFacing === 'front' && styles.facingButtonActive,
+                      { backgroundColor: theme.primaryColor }
                     ]}
                   >
                     <Ionicons 
@@ -496,13 +500,13 @@ const WorkoutSessionScreen: React.FC = () => {
                     onPress={() => setSoundEnabled(!soundEnabled)}
                     style={[
                       styles.toggle,
-                      soundEnabled && styles.toggleActive
+                      soundEnabled && styles.toggleActive,
+                      { backgroundColor: theme.primaryColor }
                     ]}
                   >
                     <View style={[
                       styles.toggleThumb,
-                      soundEnabled && styles.toggleThumbActive
-                    ]} />
+                      soundEnabled && styles.toggleThumbActive                    ]} />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -518,7 +522,8 @@ const WorkoutSessionScreen: React.FC = () => {
                     onPress={() => setVibrationEnabled(!vibrationEnabled)}
                     style={[
                       styles.toggle,
-                      vibrationEnabled && styles.toggleActive
+                      vibrationEnabled && styles.toggleActive,
+                      { backgroundColor: theme. primaryColor }
                     ]}
                   >
                     <View style={[
