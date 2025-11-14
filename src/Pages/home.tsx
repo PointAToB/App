@@ -71,7 +71,7 @@ const Home = () => {
 
           <TouchableOpacity
             style={[styles.seeMoreButton, { backgroundColor: primaryColor }]}
-            onPress={() => navigation.navigate("Classes")}
+            onPress={() => navigation.navigate("Workouts")}
           >
             <Text style={styles.seeMoreText}>See More</Text>
           </TouchableOpacity>

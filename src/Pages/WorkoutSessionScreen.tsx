@@ -417,7 +417,8 @@ const WorkoutSessionScreen: React.FC = () => {
                       onPress={() => setBreakDuration(duration)}
                       style={[
                         styles.durationButton,
-                        breakDuration === duration && styles.durationButtonActive
+                        breakDuration === duration && styles.durationButtonActive,
+                        { backgroundColor: theme.primaryColor}
                       ]}
                     >
                       <Text style={[
@@ -445,7 +446,8 @@ const WorkoutSessionScreen: React.FC = () => {
                     }}
                     style={[
                       styles.facingButton,
-                      cameraFacing === 'front' && styles.facingButtonActive
+                      cameraFacing === 'front' && styles.facingButtonActive,
+                      { backgroundColor: theme.primaryColor }
                     ]}
                   >
                     <Ionicons 
@@ -498,13 +500,13 @@ const WorkoutSessionScreen: React.FC = () => {
                     onPress={() => setSoundEnabled(!soundEnabled)}
                     style={[
                       styles.toggle,
-                      soundEnabled && styles.toggleActive
+                      soundEnabled && styles.toggleActive,
+                      { backgroundColor: theme.primaryColor }
                     ]}
                   >
                     <View style={[
                       styles.toggleThumb,
-                      soundEnabled && styles.toggleThumbActive
-                    ]} />
+                      soundEnabled && styles.toggleThumbActive                    ]} />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -520,7 +522,8 @@ const WorkoutSessionScreen: React.FC = () => {
                     onPress={() => setVibrationEnabled(!vibrationEnabled)}
                     style={[
                       styles.toggle,
-                      vibrationEnabled && styles.toggleActive
+                      vibrationEnabled && styles.toggleActive,
+                      { backgroundColor: theme. primaryColor }
                     ]}
                   >
                     <View style={[
