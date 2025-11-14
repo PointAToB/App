@@ -36,9 +36,3 @@ export async function tokenHandler() {
 	return null
 }
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> 824f3c72eaedb623cc83c87b64b3570a7c0e4017
