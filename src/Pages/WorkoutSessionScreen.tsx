@@ -29,7 +29,6 @@ const WorkoutSessionScreen: React.FC = () => {
   const [breakTime, setBreakTime] = useState(30);
   const [isPaused, setIsPaused] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
   const [showSettings, setShowSettings] = useState(false);
@@ -76,7 +75,6 @@ const WorkoutSessionScreen: React.FC = () => {
   useEffect(() => {
     if (!showCamera) {
       setCameraReady(false);
-      setIsRecording(false);
     }
   }, [showCamera]);
   
@@ -117,60 +115,6 @@ const WorkoutSessionScreen: React.FC = () => {
     navigation.goBack();
   };
 
-  const handleStartRecording = async () => {
-    if (!cameraRef.current || !cameraReady) {
-      console.log('Camera is not ready yet. Please wait...');
-      return;
-    }
-
-    // Check if recordAsync method exists
-    if (!cameraRef.current.recordAsync || typeof cameraRef.current.recordAsync !== 'function') {
-      console.log('Video recording not available on this device/version');
-      alert('Video recording is not available. Camera works for pose detection.');
-      return;
-    }
-
-    try {
-      setIsRecording(true);
-      
-      // Wait a moment for camera to stabilize
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Try to start recording
-      const recordingPromise = cameraRef.current.recordAsync({
-        quality: '720p',
-        maxDuration: 300,
-      });
-      
-      recordingPromise.then((recording: any) => {
-        setIsRecording(false);
-        console.log('Recording saved:', recording.uri);
-        alert(`Recording saved: ${recording.uri}`);
-      }).catch((error: any) => {
-        console.log('Recording error:', error);
-        setIsRecording(false);
-        // Show user-friendly message
-        alert('Recording is not available right now. Camera works for pose detection.');
-      });
-    } catch (error: any) {
-      console.log('Start recording error:', error);
-      setIsRecording(false);
-      alert('Recording feature is not available. Camera preview works for pose detection.');
-    }
-  };
-
-  const handleStopRecording = async () => {
-    if (cameraRef.current && isRecording) {
-      try {
-        await cameraRef.current.stopRecording();
-        setIsRecording(false);
-      } catch (error) {
-        console.log('Stop recording error:', error);
-        setIsRecording(false);
-      }
-    }
-  };
-
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -209,17 +153,26 @@ const WorkoutSessionScreen: React.FC = () => {
                 <TouchableOpacity 
                   style={styles.endBreakButton}
                   onPress={handleEndBreak}
+                  activeOpacity={0.8}
                 >
-                  <Text style={styles.buttonText}>End Break</Text>
+                  <LinearGradient
+                    colors={['#DD00FF', '#7650FF']}
+                    style={styles.endBreakGradient}
+                  >
+                    <Ionicons name="play" size={20} color="#FFFFFF" style={styles.buttonIcon} />
+                    <Text style={styles.buttonText}>End Break</Text>
+                  </LinearGradient>
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.quitButton}
                   onPress={handleQuit}
+                  activeOpacity={0.8}
                 >
                   <LinearGradient
-                    colors={['#FF6B35', '#FF4500']}
+                    colors={['#FF6B6B', '#FF4444']}
                     style={styles.gradientButton}
                   >
+                    <Ionicons name="exit-outline" size={20} color="#FFFFFF" style={styles.buttonIcon} />
                     <Text style={styles.quitButtonText}>Quit</Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -246,18 +199,11 @@ const WorkoutSessionScreen: React.FC = () => {
                         style={styles.cameraView} 
                         facing={cameraFacing}
                         onCameraReady={() => {
-                          // Camera preview is ready - mark as ready for pose detection
-                          // Camera preview works immediately for pose detection
+                          // Camera preview is ready for pose detection
                           setCameraReady(true);
                           console.log('Camera is ready for pose detection');
                         }}
                       />
-                      {isRecording && (
-                        <View style={styles.recordingIndicator}>
-                          <View style={styles.recordingDot} />
-                          <Text style={styles.recordingText}>Recording...</Text>
-                        </View>
-                      )}
                       {!cameraReady && (
                         <View style={styles.cameraLoadingContainer}>
                           <Text style={styles.cameraLoadingText}>Camera loading...</Text>
@@ -273,7 +219,32 @@ const WorkoutSessionScreen: React.FC = () => {
                     </View>
                   )
                 ) : (
-                  <Image source={{ uri: (workout as any).image }} style={styles.exerciseImage} />
+                  <View style={styles.cameraPlaceholder}>
+                    <LinearGradient
+                      colors={['rgba(221, 0, 255, 0.15)', 'rgba(118, 80, 255, 0.15)']}
+                      style={styles.placeholderGradient}
+                    >
+                      <View style={styles.placeholderIconContainer}>
+                        <View style={styles.placeholderIconCircle}>
+                          <Ionicons name="camera-outline" size={64} color="#DD00FF" />
+                        </View>
+                      </View>
+                      <Text style={styles.placeholderTitle}>Enable Camera</Text>
+                      <Text style={styles.placeholderSubtitle}>
+                        Track your form with real-time pose detection
+                      </Text>
+                      <View style={styles.placeholderFeatures}>
+                        <View style={styles.placeholderFeature}>
+                          <Ionicons name="checkmark-circle" size={20} color="#DD00FF" />
+                          <Text style={styles.placeholderFeatureText}>Form correction</Text>
+                        </View>
+                        <View style={styles.placeholderFeature}>
+                          <Ionicons name="checkmark-circle" size={20} color="#DD00FF" />
+                          <Text style={styles.placeholderFeatureText}>Progress tracking</Text>
+                        </View>
+                      </View>
+                    </LinearGradient>
+                  </View>
                 )}
               </View>
               
@@ -285,26 +256,44 @@ const WorkoutSessionScreen: React.FC = () => {
               </View>
               
               <View style={styles.currentProgressContainer}>
-                <Text style={styles.currentProgress}>
-                  Set {currentSet} of {totalSets} • Rep {currentRep} of {totalReps}
-                </Text>
+                <View style={styles.progressBadge}>
+                  <Text style={styles.progressLabel}>Set {currentSet} of {totalSets}</Text>
+                </View>
+                <View style={styles.progressBadge}>
+                  <Text style={styles.progressLabel}>Rep {currentRep} of {totalReps}</Text>
+                </View>
               </View>
               
               {/* Navigation and Break Button Row */}
               <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.navButton} onPress={handlePreviousExercise}>
-                  <Text style={styles.navButtonSymbol}>{'<<'}</Text>
+                <TouchableOpacity 
+                  style={styles.navButton} 
+                  onPress={handlePreviousExercise}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 
                 <TouchableOpacity 
                   style={styles.startBreakButton}
                   onPress={handleStartBreak}
+                  activeOpacity={0.8}
                 >
-                  <Text style={styles.startBreakText}>Start Break</Text>
+                  <LinearGradient
+                    colors={['#DD00FF', '#7650FF']}
+                    style={styles.startBreakGradient}
+                  >
+                    <Ionicons name="pause" size={20} color="#FFFFFF" style={styles.buttonIcon} />
+                    <Text style={styles.startBreakText}>Start Break</Text>
+                  </LinearGradient>
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.navButton} onPress={handleNextExercise}>
-                  <Text style={styles.navButtonSymbol}>{'>>'}</Text>
+                <TouchableOpacity 
+                  style={styles.navButton} 
+                  onPress={handleNextExercise}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
               </View>
               
@@ -314,11 +303,13 @@ const WorkoutSessionScreen: React.FC = () => {
                   <TouchableOpacity 
                     style={styles.cameraButton}
                     onPress={() => setShowCamera(true)}
+                    activeOpacity={0.8}
                   >
                     <LinearGradient
-                      colors={['#FF6B35', '#FF4500']}
+                      colors={['#DD00FF', '#7650FF']}
                       style={styles.cameraGradientButton}
                     >
+                      <Ionicons name="camera" size={20} color="#FFFFFF" style={styles.buttonIcon} />
                       <Text style={styles.cameraButtonText}>Enable Camera</Text>
                     </LinearGradient>
                   </TouchableOpacity>
@@ -326,9 +317,9 @@ const WorkoutSessionScreen: React.FC = () => {
                   <TouchableOpacity 
                     style={styles.settingsButton}
                     onPress={() => setShowSettings(true)}
+                    activeOpacity={0.8}
                   >
-                    <Ionicons name="settings-outline" size={20} color="#1A1A1A" />
-                    <Text style={styles.settingsButtonText}>Settings</Text>
+                    <Ionicons name="settings-outline" size={22} color="#FFFFFF" />
                   </TouchableOpacity>
                 </View>
               )}
@@ -336,45 +327,27 @@ const WorkoutSessionScreen: React.FC = () => {
               {/* Camera Controls (when camera is enabled) */}
               {showCamera && (
                 <View style={styles.bottomButtons}>
-                  <TouchableOpacity 
-                    style={[styles.recordButton, !cameraReady && styles.recordButtonDisabled]}
-                    onPress={isRecording ? handleStopRecording : handleStartRecording}
-                    disabled={!cameraReady && !isRecording}
-                  >
-                    {isRecording ? (
-                      <LinearGradient
-                        colors={['#FF0000', '#CC0000']}
-                        style={styles.recordGradientButton}
-                      >
-                        <Ionicons name="stop" size={20} color="#FFFFFF" />
-                        <Text style={styles.recordButtonText}>Stop Recording</Text>
-                      </LinearGradient>
-                    ) : !cameraReady ? (
-                      <View style={styles.recordButtonDisabledGradient}>
-                        <Ionicons name="videocam" size={20} color="#CCCCCC" />
-                        <Text style={styles.recordButtonDisabledText}>Initializing...</Text>
-                      </View>
-                    ) : (
-                      <LinearGradient
-                        colors={['#FF6B35', '#FF4500']}
-                        style={styles.recordGradientButton}
-                      >
-                        <Ionicons name="videocam" size={20} color="#FFFFFF" />
-                        <Text style={styles.recordButtonText}>Start Recording</Text>
-                      </LinearGradient>
-                    )}
-                  </TouchableOpacity>
+                  {!cameraReady && (
+                    <View style={styles.cameraStatusContainer}>
+                      <Text style={styles.cameraStatusText}>Camera initializing...</Text>
+                    </View>
+                  )}
+                  {cameraReady && (
+                    <View style={styles.cameraStatusContainer}>
+                      <Ionicons name="checkmark-circle" size={20} color="#DD00FF" />
+                      <Text style={styles.cameraStatusTextActive}>Camera ready for pose detection</Text>
+                    </View>
+                  )}
                   
                   <TouchableOpacity 
                     style={styles.disableCameraButton}
                     onPress={() => {
-                      if (isRecording) {
-                        handleStopRecording();
-                      }
                       setShowCamera(false);
                       setCameraReady(false);
                     }}
+                    activeOpacity={0.8}
                   >
+                    <Ionicons name="close-circle" size={20} color="#FFFFFF" style={styles.buttonIcon} />
                     <Text style={styles.disableCameraButtonText}>Disable Camera</Text>
                   </TouchableOpacity>
                 </View>
@@ -656,23 +629,33 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   exerciseName: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 34,
+    fontWeight: '800',
     color: '#FFFFFF',
-    marginBottom: 8,
+    marginBottom: 6,
+    letterSpacing: 0.5,
   },
   setInfo: {
-    fontSize: 18,
+    fontSize: 17,
     color: '#CCCCCC',
-    marginBottom: 16,
+    marginBottom: 20,
+    fontWeight: '500',
   },
   visualContainer: {
-    height: 220,
+    height: 240,
     backgroundColor: '#000000',
-    borderRadius: 16,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   visualContainerLarge: {
     height: SCREEN_HEIGHT * 0.55,
@@ -684,6 +667,67 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     resizeMode: 'cover',
   },
+  cameraPlaceholder: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  placeholderGradient: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  placeholderIconContainer: {
+    marginBottom: 20,
+  },
+  placeholderIconCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(221, 0, 255, 0.2)',
+    borderWidth: 3,
+    borderColor: 'rgba(221, 0, 255, 0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#DD00FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+  },
+  placeholderTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginBottom: 8,
+    letterSpacing: 0.5,
+  },
+  placeholderSubtitle: {
+    fontSize: 15,
+    color: '#CCCCCC',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 22,
+    paddingHorizontal: 20,
+  },
+  placeholderFeatures: {
+    width: '100%',
+    gap: 12,
+  },
+  placeholderFeature: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  placeholderFeatureText: {
+    fontSize: 15,
+    color: '#E0E0E0',
+    fontWeight: '600',
+  },
   cameraView: {
     width: '100%',
     height: '100%',
@@ -693,29 +737,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'relative',
-  },
-  recordingIndicator: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  recordingDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#FF0000',
-  },
-  recordingText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
   },
   permissionContainer: {
     width: '100%',
@@ -756,25 +777,46 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   infoSection: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    padding: 18,
+    borderRadius: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   infoTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 19,
+    fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: 8,
+    marginBottom: 12,
+    letterSpacing: 0.3,
   },
   infoStep: {
-    fontSize: 14,
-    color: '#CCCCCC',
-    marginBottom: 4,
+    fontSize: 15,
+    color: '#E0E0E0',
+    marginBottom: 6,
+    lineHeight: 22,
   },
   currentProgressContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
+    gap: 12,
+    marginBottom: 24,
+  },
+  progressBadge: {
+    backgroundColor: 'rgba(221, 0, 255, 0.2)',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(221, 0, 255, 0.4)',
+  },
+  progressLabel: {
+    fontSize: 15,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   currentProgress: {
     fontSize: 16,
@@ -785,21 +827,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    gap: 16,
+    marginTop: 20,
+    paddingHorizontal: 20,
   },
   buttonRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    gap: 12,
+    marginBottom: 16,
+    paddingHorizontal: 4,
   },
   navButton: {
-    width: 48,
-    height: 48,
+    width: 56,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   navButtonSymbol: {
     color: '#FFFFFF',
@@ -808,107 +861,145 @@ const styles = StyleSheet.create({
   },
   startBreakButton: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginHorizontal: 4,
+    elevation: 6,
+    shadowColor: '#DD00FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+  },
+  startBreakGradient: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    marginHorizontal: 8,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10,
   },
   startBreakText: {
-    color: '#1A1A1A',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   endBreakButton: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 12,
-    paddingHorizontal: 36,
-    borderRadius: 12,
+    flex: 1,
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 6,
+    shadowColor: '#DD00FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+  },
+  endBreakGradient: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    marginBottom: 12,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10,
   },
   buttonText: {
-    color: '#1A1A1A',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   quitButton: {
-    borderRadius: 12,
+    flex: 1,
+    borderRadius: 16,
     overflow: 'hidden',
+    elevation: 6,
+    shadowColor: '#FF6B6B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
   gradientButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 36,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10,
   },
   quitButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   bottomButtons: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
+    marginTop: 8,
   },
   cameraButton: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
+    elevation: 6,
+    shadowColor: '#DD00FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
   },
   cameraGradientButton: {
-    paddingVertical: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10,
   },
   cameraButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
-  recordButton: {
+  cameraStatusContainer: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 12,
-    overflow: 'hidden',
-    marginRight: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  recordButtonDisabled: {
-    opacity: 0.5,
-  },
-  recordButtonDisabledGradient: {
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    gap: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  recordButtonDisabledText: {
+  cameraStatusText: {
+    fontSize: 15,
     color: '#CCCCCC',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
-  recordGradientButton: {
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    gap: 8,
-  },
-  recordButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
+  cameraStatusTextActive: {
+    fontSize: 15,
+    color: '#DD00FF',
+    fontWeight: '700',
   },
   settingsButton: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 12,
+    width: 56,
+    height: 56,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row',
-    gap: 8,
-    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   settingsButtonText: {
     color: '#1A1A1A',
@@ -917,15 +1008,29 @@ const styles = StyleSheet.create({
   },
   disableCameraButton: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    borderRadius: 12,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   disableCameraButtonText: {
-    color: '#1A1A1A',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  buttonIcon: {
+    marginRight: 0,
   },
   // Settings Modal Styles
   modalOverlay: {
