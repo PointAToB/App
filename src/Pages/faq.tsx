@@ -42,7 +42,7 @@ const FAQ = (props: { navigation: StackNavigationProp<any> }) => {
 	];
 
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={{ backgroundColor: theme.background }}>
 			<View style={{ backgroundColor: theme.background }}>
 				<ScrollView style={styles.main}>
 					<Logo primaryColor={ theme.primaryColor } secondaryColor={ theme.secondaryColor } />
