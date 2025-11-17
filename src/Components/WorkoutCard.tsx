@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Animated } from 'react-native';
+import { useTheme } from './themeToggle';
 
 interface WorkoutCardProps {
   title: string;
@@ -11,6 +12,7 @@ interface WorkoutCardProps {
 
 const WorkoutCard: React.FC<WorkoutCardProps> = ({ title, duration, difficulty, image, onPress }) => {
   const scaleValue = new Animated.Value(1);
+  const { theme } = useTheme();
 
   const handlePressIn = () => {
     Animated.spring(scaleValue, {

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import WorkoutCard from '../Components/WorkoutCard';
+import { useTheme } from '../Components/themeToggle';
 
 interface Workout {
   id: string;
@@ -16,40 +17,77 @@ interface Workout {
 
 const WorkoutScreen: React.FC = () => {
   const navigation = useNavigation();
-  // Single cardio workout
+  const { theme } = useTheme();
+  // Workout types - categories to choose from
   const workouts: Workout[] = [
     {
       id: '1',
-      title: 'Morning Cardio Blast',
-      duration: '20 min',
+      title: 'Cardio',
+      duration: 'Various',
       difficulty: 'Beginner',
       image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
-      description: 'Start your day with energy! A perfect morning routine to get your blood flowing.',
+      description: 'Get your heart pumping with high-energy cardio workouts!',
       steps: [
         '5 min warm-up walk',
-        '3 min jumping jacks',
-        '2 min high knees',
-        '3 min mountain climbers',
-        '2 min burpees',
-        '5 min cool-down walk'
+        '30 min cardio session',
+        '5 min cool-down'
       ]
     },
-   
+    {
+      id: '2',
+      title: 'Strength Training',
+      duration: 'Various',
+      difficulty: 'Intermediate',
+      image: 'https://images.unsplash.com/photo-1534258936925-c58bed479fcb?w=400&h=300&fit=crop',
+      description: 'Build muscle and strength with progressive resistance training.',
+      steps: [
+        '10 min warm-up',
+        'Strength exercises',
+        '10 min cool-down'
+      ]
+    },
+    {
+      id: '3',
+      title: 'Yoga',
+      duration: 'Various',
+      difficulty: 'Beginner',
+      image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=300&fit=crop',
+      description: 'Find balance and flexibility through mindful movement.',
+      steps: [
+        'Meditation',
+        'Yoga poses',
+        'Relaxation'
+      ]
+    },
+    {
+      id: '4',
+      title: 'HIIT',
+      duration: 'Various',
+      difficulty: 'Advanced',
+      image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&h=300&fit=crop',
+      description: 'High-intensity interval training for maximum calorie burn.',
+      steps: [
+        '5 min warm-up',
+        'HIIT intervals',
+        '5 min cool-down'
+      ]
+    },
   ];
 
   const handleWorkoutPress = (workout: Workout) => {
-    navigation.navigate('WorkoutDetail' as never, { workout } as never);
+    // Navigate to exercise list for this workout type
+    (navigation as any).navigate('ExerciseList', { workoutType: workout.title });
   };
 
   return (
     <LinearGradient
-      colors={['#F5F5F5', '#E5E5E5']}
+      colors={[theme.background, theme.backgroundSecondary]}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Workouts</Text>
-          <Text style={styles.subheading}>Choose a workout to start your session</Text>
+          <Text style={[styles.headerTitle, { color: theme.text }]}>Workouts</Text>
+          <Text style={[styles.subheading, { color: theme.secondaryText }]}>Select Your Interests</Text>
         </View>
         
         <ScrollView 

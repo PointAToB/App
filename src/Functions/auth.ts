@@ -1,12 +1,19 @@
-import {api_root_url} from "../../Settings/constants";
-import {fetch} from "expo/fetch";
-import {getToken, setToken} from "../keyStore";
-import {jsx} from "react/jsx-runtime";
+import { fetch, FetchRequestInit } from "expo/fetch";
+import {api_root_url} from "../Settings/constants";
+import {getToken, setToken} from "./keyStore";
+
+export async function authFetch(endpoint: string, options: FetchRequestInit = {method: 'GET'}) {
+	const updatedHeader = new Headers(options.headers)
+	updatedHeader.append('Authorization', `Bearer ${await tokenHandler()}`)
+	options.headers = updatedHeader
+
+	return await fetch(api_root_url + endpoint, options)
+}
 
 // Used for getting the access token from expo secure store
 // If expired use refresh token to acquire new access token
 // If refresh also expired return null
-export default async function tokenHandler() {
+export async function tokenHandler() {
 	// Verify access token is not expired
 	const accessToken = await getToken({token: 'access'})
 	let res = await  fetch(api_root_url + 'token/verify', {method: 'POST', body: JSON.stringify({
@@ -28,3 +35,4 @@ export default async function tokenHandler() {
 
 	return null
 }
+

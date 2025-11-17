@@ -4,8 +4,10 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Ima
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useTheme } from '../Components/themeToggle';
 
 const WorkoutDetailScreen: React.FC = () => {
+  const { theme } = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
   const { workout } = route.params as { workout: any };
@@ -15,8 +17,8 @@ const WorkoutDetailScreen: React.FC = () => {
   };
 
   const handleStartWorkout = () => {
-    // Navigate to workout session or show workout timer
-    console.log('Starting workout:', workout.title);
+    // Navigate to workout session screen
+    (navigation as any).navigate('WorkoutSession', { workout });
   };
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -33,16 +35,16 @@ const WorkoutDetailScreen: React.FC = () => {
 
   return (
     <LinearGradient
-      colors={['#F5F5F5', '#E5E5E5']}
+      colors={[theme.background, theme.backgroundSecondary]}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
         {/* Header with back button */}
         <View style={styles.header}>
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#1F2937" />
+            <Ionicons name="arrow-back" size={24} color={ theme.primaryColor } />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Workout Details</Text>
+          <Text style={[styles.headerTitle, { color: theme.text }]}>Workout Details</Text>
           <View style={styles.placeholder} />
         </View>
 
@@ -61,13 +63,19 @@ const WorkoutDetailScreen: React.FC = () => {
 
           {/* Workout Info */}
           <View style={styles.content}>
-            <Text style={styles.title}>{workout.title}</Text>
+            <Text style={[styles.title, { color: theme.text }]}>{workout.title}</Text>
             
             <View style={styles.infoRow}>
               <View style={styles.infoItem}>
                 <Ionicons name="time-outline" size={20} color="#6B7280" />
                 <Text style={styles.infoText}>{workout.duration}</Text>
               </View>
+              {workout.sets && workout.reps && (
+                <View style={styles.infoItem}>
+                  <Ionicons name="repeat-outline" size={20} color="#6B7280" />
+                  <Text style={styles.infoText}>{workout.sets} sets, {workout.reps} reps</Text>
+                </View>
+              )}
               <View style={styles.infoItem}>
                 <Ionicons name="fitness-outline" size={20} color="#6B7280" />
                 <Text style={styles.infoText}>{workout.difficulty}</Text>
@@ -76,16 +84,16 @@ const WorkoutDetailScreen: React.FC = () => {
 
             {/* Description */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>About This Workout</Text>
-              <Text style={styles.description}>{workout.description}</Text>
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>About This Workout</Text>
+              <Text style={[styles.description, { color: theme.secondaryText }]}>{workout.description}</Text>
             </View>
 
             {/* Steps */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Workout Steps</Text>
-              {workout.steps.map((step, index) => (
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>Workout Steps</Text>
+              {workout.steps.map((step: string, index: number) => (
                 <View key={index} style={styles.stepItem}>
-                  <View style={styles.stepNumber}>
+                  <View style={[styles.stepNumber, { backgroundColor: theme.primaryColor }]}>
                     <Text style={styles.stepNumberText}>{index + 1}</Text>
                   </View>
                   <Text style={styles.stepText}>{step}</Text>
@@ -99,7 +107,7 @@ const WorkoutDetailScreen: React.FC = () => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.startButton} onPress={handleStartWorkout}>
             <LinearGradient
-              colors={['#DD00FF', '#7650FF']}
+              colors={[theme.primaryColor, theme.secondaryColor]}
               style={styles.buttonGradient}
               start={{ x: 0, y: 0.5 }}
               end={{ x: 1, y: 0.5 }}
