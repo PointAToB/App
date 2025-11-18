@@ -1,0 +1,1 @@
+{"libraryName":"","modules":{"RnPotatoView":{"type":"Component","components":{"RnPotatoView":{"extendsProps":[{"type":"ReactNativeBuiltInType","knownTypeName":"ReactNativeCoreViewProps"}],"events":[],"props":[{"name":"color","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation","default":null}}],"commands":[]}}}}}

@@ -1,0 +1,21 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.rnpotato" >
+4
+5    <uses-sdk android:minSdkVersion="24" />
+6
+7    <uses-feature
+7-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:2:5-83
+8        android:name="android.hardware.camera"
+8-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:2:19-57
+9        android:required="true" />
+9-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:2:58-81
+10
+11    <uses-permission android:name="android.permission.CAMERA" />
+11-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:3:5-64
+11-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:3:22-62
+12    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+12-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:4:5-70
+12-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:4:22-68
+13
+14</manifest>
