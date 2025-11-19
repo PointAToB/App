@@ -1,0 +1,3 @@
+int id container 0x0
+int id previewView 0x0
+int layout camera_ui 0x0

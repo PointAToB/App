@@ -1,2 +1,5 @@
 R_DEF: Internal format may change without notice
 local
+id container
+id previewView
+layout camera_ui

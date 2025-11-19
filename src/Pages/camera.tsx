@@ -9,7 +9,7 @@ import Close from "../Components/Camera/close";
 import { CameraType } from "expo-camera";
 import Selector from "../Components/Camera/selector";
 import { selectable, photo, video, coach } from '../Components/Camera/selectable'
-
+import { RnPotatoView } from 'rn-potato'
 
 const options: selectable[] = [video, photo, coach]
 
@@ -21,7 +21,7 @@ export function Camera (props: {navigation: NativeStackNavigationProp<any>}) {
 	return (
 		<View style={styles.main}>
 			<View style={styles.camera}>
-
+                <RnPotatoView style={{flex: 1}}/>
 			</View>
 
 			<View style={styles.menu}>

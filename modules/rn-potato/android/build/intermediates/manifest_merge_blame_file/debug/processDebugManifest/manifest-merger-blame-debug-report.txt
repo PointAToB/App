@@ -18,4 +18,15 @@
 12-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:4:5-70
 12-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:4:22-68
 13
-14</manifest>
+14    <application android:hardwareAccelerated="true" >
+14-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:6:5-9:19
+14-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:6:18-52
+15        <activity
+15-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:7:9-8:50
+16            android:name="com.rnpotato.RnPotatoView"
+16-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:7:19-47
+17            android:hardwareAccelerated="true" />
+17-->C:\Users\ajone\Projects\capstone\App\modules\rn-potato\android\src\main\AndroidManifest.xml:8:13-47
+18    </application>
+19
+20</manifest>
