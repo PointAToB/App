@@ -3,11 +3,13 @@ import { View, TextInput, Text, Alert, ScrollView, Pressable } from "react-nativ
 import { updateNutritionLog, resetNutritionLog } from "../Functions/nutritionApi";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../Components/themeToggle";
 
 export default function NutritionUpdate() {
   const nav = useNavigation<any>();
   const inputRefs = useRef<{[k:string]: string}>({});
   const [dummy, setDummy] = useState(0); // only for forcing re-render if needed
+  const { theme } = useTheme();
 
   const set = (k:string) => (t:string) => {
     inputRefs.current[k] = t; // update ref, no re-render
@@ -50,9 +52,9 @@ export default function NutritionUpdate() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={[{ flex: 1 }, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={{ padding:20 }} keyboardShouldPersistTaps="handled">
-        <Text style={{ fontSize:24, fontWeight:"800", marginBottom:12 }}>Update Log</Text>
+        <Text style={{ fontSize:24, fontWeight:"800", marginBottom:12, color: theme.text }}>Update Log</Text>
         <View style={{ backgroundColor:"#fff", borderRadius:16, padding:16, borderWidth:1, borderColor:"#eee" }}>
           <Field label="Calories" keyName="calories" />
           <Field label="Carbohydrates" keyName="carbs" />
@@ -60,7 +62,7 @@ export default function NutritionUpdate() {
           <Field label="Fibers" keyName="fiber" />
           <Field label="Fats" keyName="fat" />
         </View>
-        <Pressable onPress={onUpdate} style={{ marginTop:20, padding:14, borderRadius:24, backgroundColor:"#FF7A00", alignItems:"center" }}>
+        <Pressable onPress={onUpdate} style={{ marginTop:20, padding:14, borderRadius:24, backgroundColor:theme.primaryColor, alignItems:"center" }}>
           <Text style={{ color:"#fff", fontWeight:"700" }}>Update</Text>
         </Pressable>
         <Pressable onPress={onReset} style={{ marginTop:12, padding:12, borderRadius:16, backgroundColor:"#111", alignItems:"center" }}>

@@ -17,21 +17,21 @@ export default function Recipe() {
   if (!recipe) return <View style={{ flex:1, justifyContent:"center", alignItems:"center" }}><ActivityIndicator/></View>;
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: theme.background }}>
       <View style={{ backgroundColor: theme.background }}> 
         <ScrollView contentContainerStyle={{ padding:20 }}>
           <Text style={{ color: theme.primaryColor, fontWeight:"800", marginBottom:6 }}>Breakfast</Text>
-          <Text style={{ fontSize:28, fontWeight:"900" }}>{recipe.title}</Text>
-          <Text style={{ fontWeight:"700", marginTop:12 }}>{recipe.subtitle}</Text>
+          <Text style={{ fontSize:28, fontWeight:"900", color: theme.text }}>{recipe.title}</Text>
+          <Text style={{ fontWeight:"700", marginTop:12, color: theme.secondaryText }}>{recipe.subtitle}</Text>
 
-          <Text style={{ fontWeight:"800", marginTop:20 }}>Ingredients:</Text>
+          <Text style={{ fontWeight:"800", marginTop:20, color: theme.text }}>Ingredients:</Text>
             {recipe.ingredients.map((it:string, i:number) => (
-            <Text key={i} style={{ marginTop:4 }}>• {it}</Text>
+            <Text key={i} style={{ marginTop:4, color: theme.text }}>• {it}</Text>
           ))}
 
-          <Text style={{ fontWeight:"800", marginTop:20 }}>Steps:</Text>
+          <Text style={{ fontWeight:"800", marginTop:20, color: theme.text }}>Steps:</Text>
             {recipe.steps.map((s:string, i:number) => (
-           <Text key={i} style={{ marginTop:6 }}>{i+1}. {s}</Text>
+           <Text key={i} style={{ marginTop:6, color: theme.text }}>{i+1}. {s}</Text>
           ))}
 
           <Pressable onPress={() => nav.goBack()} style={{ marginTop:24, padding:14, borderRadius:24, backgroundColor: theme.primaryColor, alignItems:"center" }}>

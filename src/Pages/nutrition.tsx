@@ -5,12 +5,14 @@ import RecipeCard from "../Components/RecipeCard";
 import { fetchNutritionLog, fetchRecipes } from "../Functions/nutritionApi";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../Components/themeToggle";
 
 export default function Nutrition() {
   const nav = useNavigation<any>();
   const [log, setLog] = useState<any>(null);
   const [recipes, setRecipes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
 
   console.log("Nutrition component rendered");
 
@@ -33,9 +35,9 @@ export default function Nutrition() {
   if (loading || !log) return <View style={{ flex:1, justifyContent:"center", alignItems:"center" }}><ActivityIndicator/></View>;
 
   return (
-    <SafeAreaView>
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
-        <Text style={{ fontSize: 24, fontWeight: "800", marginBottom: 12 }}>Nutrition Log</Text>
+    <SafeAreaView style={{ backgroundColor: theme.background }}>
+      <ScrollView contentContainerStyle={{ padding: 20 }} style={{ backgroundColor: theme.background }}>
+        <Text style={{ fontSize: 24, fontWeight: "800", marginBottom: 12, color: theme.text }}>Nutrition Log</Text>
 
         <View style={{ backgroundColor: "#fff", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#eee" }}>
           <MacroRow label="Calories"    current={log.calories.current} goal={log.calories.goal} />
@@ -48,12 +50,12 @@ export default function Nutrition() {
         <Pressable
           onPress={() => nav.navigate('NutritionUpdate')}
           style={{ alignSelf:"center", marginTop: 16, paddingVertical:12, paddingHorizontal:24, borderRadius:24,
-                 backgroundColor:"#FF7A00" }}
+                 backgroundColor: theme.primaryColor }}
         >
           <Text style={{ color:"#fff", fontWeight:"700" }}>+</Text>
         </Pressable>
 
-        <Text style={{ marginTop: 24, marginBottom: 12, fontWeight: "700" }}>Recipes We Recommend</Text>
+        <Text style={{ marginTop: 24, marginBottom: 12, fontWeight: "700", color: theme.text }}>Recipes We Recommend</Text>
         {recipes[0] && (
           <RecipeCard
             title={recipes[0].title}
