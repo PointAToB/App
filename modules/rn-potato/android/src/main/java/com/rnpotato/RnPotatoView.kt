@@ -9,86 +9,49 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import com.google.common.util.concurrent.ListenableFuture
 import androidx.camera.core.Preview
 import androidx.camera.core.CameraSelector
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
 import android.view.LayoutInflater
-import java.util.concurrent.TimeUnit
+//
+import androidx.camera.view.LifecycleCameraController
+import androidx.lifecycle.LifecycleOwner
+import com.facebook.react.uimanager.ThemedReactContext
+import android.util.Size
+import androidx.camera.view.CameraController
 import androidx.camera.view.PreviewView
-import androidx.camera.core.AspectRatio
 
 
 class RnPotatoView : FrameLayout {
-  constructor(context: Context) : super(context) { configureComponent() }
-  constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) { configureComponent() }
-  constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) { configureComponent() }
+  constructor(context: ThemedReactContext) : super(context) { configureComponent() }
+  constructor(context: ThemedReactContext, attrs: AttributeSet?) : super(context, attrs) { configureComponent() }
+  constructor(context: ThemedReactContext, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) { configureComponent() }
 
-  private var owner = Owner()
-  private lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
   private lateinit var binding : CameraUiBinding
-  private var isMounted : Boolean = false
-  private lateinit var preview: Preview
+  private val controller = LifecycleCameraController(context)
 
-  private fun configureComponent() {
-    Log.e("Watermelon", "Started")
-    cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+  fun configureComponent() {
+    controller.previewTargetSize = CameraController.OutputSize(Size(1920, 1080))
     binding = CameraUiBinding.inflate(LayoutInflater.from(context), this, true)
-    owner.create()
-
-    binding.previewView.post {
-      preview = Preview.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3).build()
-      preview.setSurfaceProvider(binding.previewView.getSurfaceProvider())
-    }
   }
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
 
-    // If the component has already been mounted, prevents mounting again, unless new instance.
-    if (isMounted) return
+    val activity = (context as ThemedReactContext).currentActivity
+    if (activity is LifecycleOwner) {
 
-    isMounted = true
+      binding.previewView.scaleType = PreviewView.ScaleType.FILL_CENTER
+      binding.previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+      binding.previewView.setController(controller)
 
-    camera({provider ->
-        provider.unbindAll()
-        var cameraSelector: CameraSelector =
-          CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
-        provider.bindToLifecycle(owner, cameraSelector, preview)
-      owner.start()
-        owner.resume()
-    })
+      controller.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+      controller.bindToLifecycle(activity)
+      Log.i("watermelon", "runs") //1600x1200
+    }
   }
 
   override fun onDetachedFromWindow() {
     super.onDetachedFromWindow()
-    camera({provider -> provider.unbindAll() })
-    isMounted = false
-    owner.pause()
-    owner.stop()
+    controller.unbind()
   }
 
-  private fun camera(func: (provider: ProcessCameraProvider) -> Unit) {
-    cameraProviderFuture.addListener(Runnable {
-      try {
-        val provider = cameraProviderFuture.get(5, TimeUnit.SECONDS)
-        func(provider)
-      } catch (e: Exception) { Log.e("RnPotatoView", "Camera provider unavailable")}
-    }, ContextCompat.getMainExecutor(context))
-  }
+
 }
-
-class Owner : LifecycleOwner {
-  private val lifecycleRegistry = LifecycleRegistry(this)
-
-  override val lifecycle: Lifecycle
-    get() = lifecycleRegistry
-
-  fun create() { lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE) }
-  fun start() { lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START) }
-  fun resume() { lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
-  fun pause() { lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
-  fun stop() { lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP) }
-  fun destroy() { lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY) }
-}
-
