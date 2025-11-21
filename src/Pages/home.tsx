@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Button from "../Components/button";
@@ -6,31 +6,60 @@ import Camera from "../Components/Camera/camera";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../Components/themeToggle";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { fetchNutritionLog, fetchRecipes } from "../Functions/nutritionApi";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
+
 
 const Home = () => {
   const [popupContent, setPopupContent] = useState(false);
   const navigation = useNavigation<any>();
   const { theme } = useTheme();
 
-  // Theme colors
   const primaryColor = theme.primaryColor;
   const secondaryColor = theme.secondaryColor;
 
-  // Placeholder data
   const activeClasses = [
     { id: "1", title: "Morning Yoga", progress: 72 },
     { id: "2", title: "HIIT Workout", progress: 45 },
   ];
 
-  const recipes = [
-    { id: "1", title: "Protein Pancakes" },
-    { id: "2", title: "Avocado Smoothie" },
-  ];
+  const [nutritionLog, setNutritionLog] = useState<any>(null);
+  const [recipesData, setRecipesData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const calories = 1825; // placeholder value
+  // Function to load both log and recipes
+  const loadHomeData = async () => {
+    try {
+      const [log, recipeList] = await Promise.all([fetchNutritionLog(), fetchRecipes()]);
+      setNutritionLog(log);
+      setRecipesData(recipeList);
+    } catch (err) {
+      console.error("Failed to load home data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial load
+  useEffect(() => {
+    loadHomeData();
+  }, []);
+
+  // Refetch whenever Home screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadHomeData();
+    }, [])
+  );
+
+  // Callback to allow Nutrition page to update Home instantly
+  const handleUpdateLog = (updatedLog: any) => {
+    setNutritionLog(updatedLog);
+  };
 
   return (
-    <SafeAreaView style={[ styles.container, { backgroundColor: theme.background}]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView>
         {/* Open Camera Button */}
         <Button
@@ -44,13 +73,12 @@ const Home = () => {
         />
         <Camera visible={popupContent} setVisible={setPopupContent} />
 
-        {/* Active Classes Section */}
+        {/* Active Classes */}
         <View style={styles.sectionContainer}>
-          <Text style={[ styles.sectionHeader, { color: theme.text }]}>Active Classes</Text>
-
+          <Text style={[styles.sectionHeader, { color: theme.text }]}>Active Classes</Text>
           <FlatList
             data={activeClasses.slice(0, 2)}
-            scrollEnabled={ false }
+            scrollEnabled={false}
             keyExtractor={(item) => item.id}
             horizontal={false}
             numColumns={2}
@@ -68,7 +96,6 @@ const Home = () => {
             )}
             contentContainerStyle={styles.classList}
           />
-
           <TouchableOpacity
             style={[styles.seeMoreButton, { backgroundColor: primaryColor }]}
             onPress={() => navigation.navigate("Workouts")}
@@ -77,40 +104,46 @@ const Home = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Recipes Section */}
+        {/* Recipes */}
         <View style={[styles.sectionContainer, { marginTop: 40 }]}>
-          <Text style={[ styles.sectionHeader, { color: theme.text }]}>Recipes</Text>
-
+          <Text style={[styles.sectionHeader, { color: theme.text }]}>Recipes</Text>
           <FlatList
-            data={recipes.slice(0, 2)}
+            data={recipesData.slice(0, 2)}
             keyExtractor={(item) => item.id}
-            scrollEnabled={ false }
+            scrollEnabled={false}
             horizontal={false}
             numColumns={2}
             columnWrapperStyle={{ justifyContent: "space-between", marginBottom: 20 }}
             renderItem={({ item }) => (
-              <View style={[styles.recipeBox]}>
+              <TouchableOpacity
+                style={[styles.recipeBox]}
+                onPress={() =>
+                  navigation.navigate("Nutrition", {
+                    screen: "Recipe",
+                    params: { id: item.id },
+                  })
+                }
+              >
                 <Text style={styles.recipeTitle}>{item.title}</Text>
-              </View>
+              </TouchableOpacity>
             )}
-            contentContainerStyle={styles.classList}
           />
-
           <TouchableOpacity
             style={[styles.seeMoreButton, { backgroundColor: "#000" }]}
-            onPress={() => navigation.navigate("Nutrition")}
+            onPress={() => navigation.navigate("Nutrition", { screen: "NutritionMain" })}
           >
             <Text style={styles.seeMoreText}>See More</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Nutrition Log Section */}
+        {/* Nutrition Log */}
         <View style={[styles.sectionContainer, { marginTop: 40 }]}>
-          <Text style={[ styles.sectionHeader, { color: theme.text }]}>Nutrition Log</Text>
-
+          <Text style={[styles.sectionHeader, { color: theme.text }]}>Nutrition Log</Text>
           <View style={styles.nutritionCard}>
             <Text style={styles.nutritionText}>Calories:</Text>
-            <Text style={styles.nutritionNumber}>{calories}</Text>
+            <Text style={styles.nutritionNumber}>
+              {nutritionLog?.calories?.current ?? 0}
+            </Text>
           </View>
         </View>
       </ScrollView>

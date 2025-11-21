@@ -38,11 +38,19 @@ const FAQ = (props: { navigation: StackNavigationProp<any> }) => {
 			question: "How do I update my profile information?",
 			answer: "Go to the Profile page to update your name, age, weight, and height."
 		},
+		{
+			question: "Can I switch between light and dark mode?",
+			answer: "Yes! You can toggle between light/dark themes and color accents in your profile settings."
+		},
+		{
+			question: "How does the nutrition log work?",
+			answer: "You can manually add meals, log calories, and track daily intake. The app displays your total calories consumed for the day and compares it to your goals."
+		},
 		// Add more FAQ items here as needed
 	];
 
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={{ backgroundColor: theme.background }}>
 			<View style={{ backgroundColor: theme.background }}>
 				<ScrollView style={styles.main}>
 					<Logo primaryColor={ theme.primaryColor } secondaryColor={ theme.secondaryColor } />

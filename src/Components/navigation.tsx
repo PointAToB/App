@@ -8,6 +8,7 @@ import FAQ from '../Pages/faq';
 import Profile from '../Pages/profile';
 import { useTheme } from './themeToggle';
 import WorkoutStack from '../Components/WorkoutStack';
+import NutritionStack from './NutritionStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -49,10 +50,9 @@ export default function Navigation() {
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Workouts" component={WorkoutStack} />
       {/* <Tab.Screen name="Classes" component={Classes} /> */}
-      <Tab.Screen name="Nutrition" component={Nutrition} />
+      <Tab.Screen name="Nutrition" component={NutritionStack} />
 	  	<Tab.Screen name="Profile" component={Profile} />
 			<Tab.Screen name="FAQ" component={FAQ} />
-
 
     </Tab.Navigator>
   );
