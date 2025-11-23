@@ -1,57 +1,98 @@
 package com.rnpotato
 
-import android.content.Context
-import android.util.AttributeSet
 import android.widget.FrameLayout
-import android.util.Log
-import com.rnpotato.databinding.CameraUiBinding
+//import com.rnpotato.databinding.CameraUiBinding
+import android.widget.LinearLayout
 import androidx.camera.lifecycle.ProcessCameraProvider
-import com.google.common.util.concurrent.ListenableFuture
-import androidx.camera.core.Preview
-import androidx.camera.core.CameraSelector
-import android.view.LayoutInflater
-//
-import androidx.camera.view.LifecycleCameraController
-import androidx.lifecycle.LifecycleOwner
-import com.facebook.react.uimanager.ThemedReactContext
-import android.util.Size
-import androidx.camera.view.CameraController
 import androidx.camera.view.PreviewView
+import com.facebook.react.uimanager.ThemedReactContext
+import android.util.Log
+import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.camera.core.*
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LifecycleOwner
+import android.view.View.OnAttachStateChangeListener
+import android.view.View
+
+class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
+  //private var binding : CameraUiBinding
+  private var viewFinder: PreviewView = PreviewView(context)
+  private var cameraProvider: ProcessCameraProvider? = null
+  private var lensType = CameraSelector.LENS_FACING_BACK
 
 
-class RnPotatoView : FrameLayout {
-  constructor(context: ThemedReactContext) : super(context) { configureComponent() }
-  constructor(context: ThemedReactContext, attrs: AttributeSet?) : super(context, attrs) { configureComponent() }
-  constructor(context: ThemedReactContext, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) { configureComponent() }
+  init {
+    viewFinder.layoutParams = LinearLayout.LayoutParams(
+      LayoutParams.MATCH_PARENT,
+      LayoutParams.MATCH_PARENT
+    )
 
-  private lateinit var binding : CameraUiBinding
-  private val controller = LifecycleCameraController(context)
+    addView(viewFinder)
+  }
 
-  fun configureComponent() {
-    controller.previewTargetSize = CameraController.OutputSize(Size(1920, 1080))
-    binding = CameraUiBinding.inflate(LayoutInflater.from(context), this, true)
+  private fun startCamera() {
+    Log.i(TAG, "Camera Started")
+    val cameraRes = ProcessCameraProvider.getInstance(getActivity())
+
+    cameraRes.addListener(Runnable {
+      cameraProvider = cameraRes.get()
+
+      val cameraSelector = CameraSelector.Builder().requireLensFacing(lensType).build()
+      val width = viewFinder.getWidth()
+      val height = viewFinder.getHeight()
+
+      Log.i(TAG, "Preview: width-$width height-$height")
+
+      var preview = Preview.Builder().setTargetAspectRatio(aspectRatio(width, height)).build()
+
+      try {
+        preview?.setSurfaceProvider(viewFinder.surfaceProvider)
+
+        cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraSelector, preview)
+      } catch(exc: Exception) {
+        Log.e(TAG, "Use case binding failed", exc)
+      }
+
+
+    }, ContextCompat.getMainExecutor(getActivity()))
+  }
+
+  private fun aspectRatio(width: Int, height: Int): Int {
+    val previewRatio = max(width, height).toDouble() / min(width, height)
+    if (abs(previewRatio - (4.0 / 3.0)) <= abs(previewRatio - (16.0 / 9.0))) {
+      return AspectRatio.RATIO_4_3
+    }
+    return AspectRatio.RATIO_16_9
   }
 
   override fun onAttachedToWindow() {
-    super.onAttachedToWindow()
+      super.onAttachedToWindow()
 
-    val activity = (context as ThemedReactContext).currentActivity
-    if (activity is LifecycleOwner) {
+      viewFinder.addOnAttachStateChangeListener(object: OnAttachStateChangeListener {
+        override fun onViewAttachedToWindow(v: View) {
+          Log.i(TAG, "PreviewView attached, starting camera")
+          startCamera()
+          Log.i(TAG, "PreviewView isAttachedToWindow=${viewFinder.isAttachedToWindow}")
+        }
+        override fun onViewDetachedFromWindow(v: View) {}
+      })
+  }
 
-      binding.previewView.scaleType = PreviewView.ScaleType.FILL_CENTER
-      binding.previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-      binding.previewView.setController(controller)
-
-      controller.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-      controller.bindToLifecycle(activity)
-      Log.i("watermelon", "runs") //1600x1200
+    override fun onDetachedFromWindow() {
+      super.onDetachedFromWindow()
+      cameraProvider?.unbindAll()
     }
+
+    private fun getActivity(): Activity {
+      return cxt.currentActivity!!
+    }
+
+  companion object {
+    private val TAG = "RnPotatoView"
   }
-
-  override fun onDetachedFromWindow() {
-    super.onDetachedFromWindow()
-    controller.unbind()
-  }
-
-
 }
