@@ -1,96 +1,118 @@
 package com.rnpotato
 
 import android.widget.FrameLayout
-//import com.rnpotato.databinding.CameraUiBinding
-import android.widget.LinearLayout
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import com.facebook.react.uimanager.ThemedReactContext
 import android.util.Log
 import android.app.Activity
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.camera.core.*
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-import androidx.core.app.ActivityCompat
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.Preview
+import androidx.camera.core.UseCase
 import androidx.lifecycle.LifecycleOwner
-import android.view.View.OnAttachStateChangeListener
 import android.view.View
+import android.view.ViewGroup
+import androidx.camera.core.ImageCapture
+
 
 class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
-  //private var binding : CameraUiBinding
-  private var viewFinder: PreviewView = PreviewView(context)
-  private var cameraProvider: ProcessCameraProvider? = null
-  private var lensType = CameraSelector.LENS_FACING_BACK
-
-
-  init {
-    viewFinder.layoutParams = LinearLayout.LayoutParams(
+  private var cameraView: PreviewView = PreviewView(cxt).apply {
+    layoutParams = FrameLayout.LayoutParams(
       LayoutParams.MATCH_PARENT,
       LayoutParams.MATCH_PARENT
     )
-
-    addView(viewFinder)
   }
 
-  private fun startCamera() {
-    Log.i(TAG, "Camera Started")
-    val cameraRes = ProcessCameraProvider.getInstance(getActivity())
+  // Camera Use Cases
+  private val preview = Preview.Builder().build()
+  private val imageCapture = ImageCapture.Builder().build()
+  //private val videoCapture =
+  //private val liveCapture =
 
-    cameraRes.addListener(Runnable {
-      cameraProvider = cameraRes.get()
+  private var cameraProvider: ProcessCameraProvider? = null
+  private var useCase: UseCase? = null
+  var cameraLens: CameraSelector = lensSelector(CameraSelector.LENS_FACING_BACK)
+    set(value) {
+      cameraProvider?.unbindAll()
+      field = value
+      bind()
+    }
+  var captureMode = "image" // Default value
+    set(value) {
+      cameraProvider?.unbindAll()
 
-      val cameraSelector = CameraSelector.Builder().requireLensFacing(lensType).build()
-      val width = viewFinder.getWidth()
-      val height = viewFinder.getHeight()
-
-      Log.i(TAG, "Preview: width-$width height-$height")
-
-      var preview = Preview.Builder().setTargetAspectRatio(aspectRatio(width, height)).build()
-
-      try {
-        preview?.setSurfaceProvider(viewFinder.surfaceProvider)
-
-        cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraSelector, preview)
-      } catch(exc: Exception) {
-        Log.e(TAG, "Use case binding failed", exc)
+      when(value) {
+        "image" -> useCase = imageCapture
+        "video" -> useCase = null
+        "live" -> useCase = null
       }
 
-
-    }, ContextCompat.getMainExecutor(getActivity()))
-  }
-
-  private fun aspectRatio(width: Int, height: Int): Int {
-    val previewRatio = max(width, height).toDouble() / min(width, height)
-    if (abs(previewRatio - (4.0 / 3.0)) <= abs(previewRatio - (16.0 / 9.0))) {
-      return AspectRatio.RATIO_4_3
+      bind()
     }
-    return AspectRatio.RATIO_16_9
+
+  init {
+    installHierarchyFitter(cameraView)
+    addView(cameraView)
   }
 
   override fun onAttachedToWindow() {
-      super.onAttachedToWindow()
-
-      viewFinder.addOnAttachStateChangeListener(object: OnAttachStateChangeListener {
-        override fun onViewAttachedToWindow(v: View) {
-          Log.i(TAG, "PreviewView attached, starting camera")
-          startCamera()
-          Log.i(TAG, "PreviewView isAttachedToWindow=${viewFinder.isAttachedToWindow}")
-        }
-        override fun onViewDetachedFromWindow(v: View) {}
-      })
+    super.onAttachedToWindow()
+    cameraView.post { startCamera() }
   }
 
-    override fun onDetachedFromWindow() {
-      super.onDetachedFromWindow()
-      cameraProvider?.unbindAll()
-    }
+  override fun onDetachedFromWindow() {
+    super.onDetachedFromWindow()
+    cameraProvider?.unbindAll()
+  }
 
-    private fun getActivity(): Activity {
-      return cxt.currentActivity!!
+  private fun startCamera() {
+    val cameraRes = ProcessCameraProvider.getInstance(getActivity())
+    cameraRes.addListener(Runnable {
+      cameraProvider = cameraRes.get()
+      bind()
+    }, ContextCompat.getMainExecutor(getActivity()))
+  }
+
+  fun bind() {
+    try {
+      if(useCase == null) cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview)
+      else cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview, useCase)
+
+      preview.setSurfaceProvider(cameraView.surfaceProvider)
+    } catch(exc: Exception) {
+      Log.e(TAG, "UseCase binding failed", exc)
     }
+  }
+
+
+  fun capture() {
+    Log.i(TAG, "Capturing as $captureMode")
+  }
+
+  fun lensSelector(lens: Int): CameraSelector {
+    return CameraSelector.Builder().requireLensFacing(lens).build()
+  }
+
+  private fun getActivity(): Activity {
+    return cxt.currentActivity!!
+  }
+
+  private fun installHierarchyFitter(view: ViewGroup) {
+    if (context is ThemedReactContext) { // only react-native setup
+      view.setOnHierarchyChangeListener(object : OnHierarchyChangeListener {
+        override fun onChildViewRemoved(parent: View?, child: View?) = Unit
+        override fun onChildViewAdded(parent: View?, child: View?) {
+          parent?.measure(
+            MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
+          )
+          parent?.layout(0, 0, parent.measuredWidth, parent.measuredHeight)
+        }
+      })
+    }
+  }
+
 
   companion object {
     private val TAG = "RnPotatoView"

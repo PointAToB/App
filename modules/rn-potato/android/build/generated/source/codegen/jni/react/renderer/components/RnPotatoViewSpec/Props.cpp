@@ -19,7 +19,8 @@ RnPotatoViewProps::RnPotatoViewProps(
     const RnPotatoViewProps &sourceProps,
     const RawProps &rawProps): ViewProps(context, sourceProps, rawProps),
 
-    color(convertRawProp(context, rawProps, "color", sourceProps.color, {})) {}
+    captureMode(convertRawProp(context, rawProps, "captureMode", sourceProps.captureMode, {})),
+    cameraLens(convertRawProp(context, rawProps, "cameraLens", sourceProps.cameraLens, {})) {}
     
 #ifdef RN_SERIALIZABLE_STATE
 ComponentName RnPotatoViewProps::getDiffPropsImplementationTarget() const {
@@ -37,8 +38,12 @@ folly::dynamic RnPotatoViewProps::getDiffProps(
   }
   folly::dynamic result = HostPlatformViewProps::getDiffProps(prevProps);
   
-  if (color != oldProps->color) {
-    result["color"] = color;
+  if (captureMode != oldProps->captureMode) {
+    result["captureMode"] = captureMode;
+  }
+    
+  if (cameraLens != oldProps->cameraLens) {
+    result["cameraLens"] = cameraLens;
   }
   return result;
 }

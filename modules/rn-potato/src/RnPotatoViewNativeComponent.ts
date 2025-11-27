@@ -1,7 +1,9 @@
 import { codegenNativeComponent, type ViewProps } from 'react-native';
 
+
 interface NativeProps extends ViewProps {
-  color?: string;
+  captureMode: string,
+  cameraLens: string
 }
 
 export default codegenNativeComponent<NativeProps>('RnPotatoView');

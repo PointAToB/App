@@ -21,7 +21,8 @@ class RnPotatoViewProps final : public ViewProps {
 
 #pragma mark - Props
 
-  std::string color{};
+  std::string captureMode{};
+  std::string cameraLens{};
 
   #ifdef RN_SERIALIZABLE_STATE
   ComponentName getDiffPropsImplementationTarget() const override;

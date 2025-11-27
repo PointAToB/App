@@ -6,7 +6,6 @@ import { CameraFunctions, CameraComponent } from "../Components/Camera/types";
 import {useRef, useState} from "react";
 import Toggle from "../Components/Camera/toggle";
 import Close from "../Components/Camera/close";
-import { CameraType } from "expo-camera";
 import Selector from "../Components/Camera/selector";
 import { selectable, photo, video, coach } from '../Components/Camera/selectable'
 import { RnPotatoView } from 'rn-potato'
@@ -14,14 +13,14 @@ import { RnPotatoView } from 'rn-potato'
 const options: selectable[] = [video, photo, coach]
 
 export function Camera (props: {navigation: NativeStackNavigationProp<any>}) {
-	const [cameraType, setCameraType] = useState<CameraType>('front');
+	const [cameraType, setCameraType] = useState('front');
 	const [selected, setSelect] = useState(1)
 	const ref = useRef<CameraFunctions>(null)
 
 	return (
 		<View style={styles.main}>
 			<View style={styles.camera}>
-                <RnPotatoView style={{flex: 1}}/>
+        <RnPotatoView captureType={'image'} cameraLens={cameraType} style={{flex: 1}}/>
 			</View>
 
 			<View style={styles.menu}>

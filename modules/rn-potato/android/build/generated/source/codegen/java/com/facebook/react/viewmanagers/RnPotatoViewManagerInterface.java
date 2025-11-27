@@ -14,5 +14,6 @@ import androidx.annotation.Nullable;
 import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 
 public interface RnPotatoViewManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
-  void setColor(T view, @Nullable String value);
+  void setCaptureMode(T view, @Nullable String value);
+  void setCameraLens(T view, @Nullable String value);
 }

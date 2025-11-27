@@ -22,8 +22,11 @@ public class RnPotatoViewManagerDelegate<T extends View, U extends BaseViewManag
   @Override
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
-      case "color":
-        mViewManager.setColor(view, value == null ? null : (String) value);
+      case "captureMode":
+        mViewManager.setCaptureMode(view, value == null ? null : (String) value);
+        break;
+      case "cameraLens":
+        mViewManager.setCameraLens(view, value == null ? null : (String) value);
         break;
       default:
         super.setProperty(view, propName, value);
