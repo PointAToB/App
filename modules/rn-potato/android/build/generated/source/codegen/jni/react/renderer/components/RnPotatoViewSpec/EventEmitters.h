@@ -17,7 +17,9 @@ class RnPotatoViewEventEmitter : public ViewEventEmitter {
  public:
   using ViewEventEmitter::ViewEventEmitter;
 
-  
-  
+  struct OnCapture {
+      bool success;
+    };
+  void onCapture(OnCapture value) const;
 };
 } // namespace facebook::react

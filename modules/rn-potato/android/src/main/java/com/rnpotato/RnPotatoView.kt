@@ -15,41 +15,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.camera.core.ImageCapture
 
-
 class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
+  private val preview = Preview.Builder().build()
+  private var cameraProvider: ProcessCameraProvider? = null
+  private var useCaseMgr = UseCaseMgr(cxt, this)
+  private lateinit var cameraLens: CameraSelector
+
   private var cameraView: PreviewView = PreviewView(cxt).apply {
     layoutParams = FrameLayout.LayoutParams(
       LayoutParams.MATCH_PARENT,
       LayoutParams.MATCH_PARENT
     )
   }
-
-  // Camera Use Cases
-  private val preview = Preview.Builder().build()
-  private val imageCapture = ImageCapture.Builder().build()
-  //private val videoCapture =
-  //private val liveCapture =
-
-  private var cameraProvider: ProcessCameraProvider? = null
-  private var useCase: UseCase? = null
-  var cameraLens: CameraSelector = lensSelector(CameraSelector.LENS_FACING_BACK)
-    set(value) {
-      cameraProvider?.unbindAll()
-      field = value
-      bind()
-    }
-  var captureMode = "image" // Default value
-    set(value) {
-      cameraProvider?.unbindAll()
-
-      when(value) {
-        "image" -> useCase = imageCapture
-        "video" -> useCase = null
-        "live" -> useCase = null
-      }
-
-      bind()
-    }
 
   init {
     installHierarchyFitter(cameraView)
@@ -66,6 +43,24 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
     cameraProvider?.unbindAll()
   }
 
+  fun setCaptureMode(value: String) {
+    cameraProvider?.unbindAll()
+    useCaseMgr.setUseCase(value)
+    bind()
+  }
+
+  fun setCameraLens(value: String) {
+    cameraProvider?.unbindAll()
+    val lens = when(value) {
+      "front" -> CameraSelector.LENS_FACING_FRONT
+      else -> CameraSelector.LENS_FACING_BACK
+    }
+    cameraLens = CameraSelector.Builder().requireLensFacing(lens).build()
+    bind()
+  }
+
+  fun capture() { useCaseMgr.capture() }
+
   private fun startCamera() {
     val cameraRes = ProcessCameraProvider.getInstance(getActivity())
     cameraRes.addListener(Runnable {
@@ -76,22 +71,13 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
 
   fun bind() {
     try {
-      if(useCase == null) cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview)
-      else cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview, useCase)
+      if(useCaseMgr.useCase == null) cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview)
+      else cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview, useCaseMgr.useCase)
 
       preview.setSurfaceProvider(cameraView.surfaceProvider)
     } catch(exc: Exception) {
       Log.e(TAG, "UseCase binding failed", exc)
     }
-  }
-
-
-  fun capture() {
-    Log.i(TAG, "Capturing as $captureMode")
-  }
-
-  fun lensSelector(lens: Int): CameraSelector {
-    return CameraSelector.Builder().requireLensFacing(lens).build()
   }
 
   private fun getActivity(): Activity {
@@ -112,7 +98,6 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
       })
     }
   }
-
 
   companion object {
     private val TAG = "RnPotatoView"

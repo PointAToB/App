@@ -9,9 +9,6 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RnPotatoViewManagerInterface
 import com.facebook.react.viewmanagers.RnPotatoViewManagerDelegate
 
-import androidx.camera.core.CameraSelector
-import android.util.Log
-
 @ReactModule(name = RnPotatoViewManager.NAME)
 class RnPotatoViewManager : SimpleViewManager<RnPotatoView>(),
   RnPotatoViewManagerInterface<RnPotatoView> {
@@ -33,22 +30,20 @@ class RnPotatoViewManager : SimpleViewManager<RnPotatoView>(),
     return RnPotatoView(context)
   }
 
+  override fun capture(view: RnPotatoView) {
+    view?.capture()
+  }
+
   @ReactProp(name = "captureMode")
   override fun setCaptureMode(view: RnPotatoView, value: String?) {
     if(value == null) throw IllegalArgumentException("captureMode is required and cannot be null | undefined")
-    view?.captureMode = value
+    view?.setCaptureMode(value)
   }
 
   @ReactProp(name = "cameraLens")
   override fun setCameraLens(view: RnPotatoView, value: String?) {
     if(value == null) throw IllegalArgumentException("cameraLens is required and is either front | back")
-    Log.i(NAME, "Called")
-    view?.cameraLens = view.lensSelector(
-      when(value) {
-        "front" -> CameraSelector.LENS_FACING_FRONT
-        else -> CameraSelector.LENS_FACING_BACK
-      }
-    )
+    view?.setCameraLens(value)
   }
 
   companion object {

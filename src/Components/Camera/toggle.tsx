@@ -5,7 +5,7 @@ export default function Toggle(props: {size: number, cameraType: string, setCame
 	const toggle = () => props.setCameraType(props.cameraType === 'back' ? 'front' : 'back')
 	return (
 		<Pressable onPress={toggle} style={[props.style, {width: props.size, height: props.size}]}>
-			<Icon name='sync-circle' size={props.size} color={props.color}/>
+			<Icon name='sync-circle' size={props.size} color={props.style.color}/>
 		</Pressable>
 	);
 }

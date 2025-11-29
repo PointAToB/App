@@ -13,4 +13,12 @@
 
 namespace facebook::react {
 
+void RnPotatoViewEventEmitter::onCapture(OnCapture event) const {
+  dispatchEvent("capture", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "success", event.success);
+    return payload;
+  });
+}
+
 } // namespace facebook::react

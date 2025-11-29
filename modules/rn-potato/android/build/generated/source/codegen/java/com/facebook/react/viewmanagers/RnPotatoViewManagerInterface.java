@@ -16,4 +16,5 @@ import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
 public interface RnPotatoViewManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
   void setCaptureMode(T view, @Nullable String value);
   void setCameraLens(T view, @Nullable String value);
+  void capture(T view);
 }

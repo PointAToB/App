@@ -1,12 +1,18 @@
 import { View, Pressable, StyleSheet } from "react-native";
 import React, { ComponentType } from "react";
-import { selectable } from './selectable'
+import { Option } from './captureOptions'
 
+type Props = {
+  option: Option,
+  size: number,
+  onPress: ()=>void
+}
 
-const Capture = (props: {component: selectable, size: number, onPress?: ()=>void}) => {
+const Capture = (props: Props) => {
+  const {option, size, onPress} = props
 	return (
-		<Pressable onPress={props.onPress} style={{width: props.size, height: props.size, borderRadius: (props.size/2), alignItems: 'center', marginTop: 10, backgroundColor: 'white'}}>
-			<View style={[styles.innerCircle, {backgroundColor: props.component.captureColor, width: (props.size - 4), height: (props.size - 4), borderRadius: (props.size - 4)/2, borderWidth: 2, borderStyle: 'solid', borderColor: 'black'}]}/>
+		<Pressable onPress={onPress} style={{width: size, height: size, borderRadius: (size/2), alignItems: 'center', marginTop: 10, backgroundColor: 'white'}}>
+			<View style={[styles.innerCircle, {backgroundColor: option.captureColor, width: (size - 4), height: (size - 4), borderRadius: (size - 4)/2, borderWidth: 2, borderStyle: 'solid', borderColor: 'black'}]}/>
 		</Pressable>
 	);
 }

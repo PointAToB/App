@@ -11,6 +11,7 @@ package com.facebook.react.viewmanagers;
 
 import android.view.View;
 import androidx.annotation.Nullable;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.LayoutShadowNode;
@@ -30,6 +31,15 @@ public class RnPotatoViewManagerDelegate<T extends View, U extends BaseViewManag
         break;
       default:
         super.setProperty(view, propName, value);
+    }
+  }
+
+  @Override
+  public void receiveCommand(T view, String commandName, ReadableArray args) {
+    switch (commandName) {
+      case "capture":
+        mViewManager.capture(view);
+        break;
     }
   }
 }

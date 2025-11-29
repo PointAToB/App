@@ -2,32 +2,35 @@ import { View, StyleSheet } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Button from "../Components/button";
 import Permission from "../Components/Camera/permission";
-import { CameraFunctions, CameraComponent } from "../Components/Camera/types";
-import {useRef, useState} from "react";
+import { useState } from "react";
 import Toggle from "../Components/Camera/toggle";
 import Close from "../Components/Camera/close";
 import Selector from "../Components/Camera/selector";
-import { selectable, photo, video, coach } from '../Components/Camera/selectable'
-import { RnPotatoView } from 'rn-potato'
+import { Options } from '../Components/Camera/captureOptions'
+import { CameraView, CameraRef, CameraLens, CameraMode } from '../Components/Camera/cameraView'
 
-const options: selectable[] = [video, photo, coach]
 
 export function Camera (props: {navigation: NativeStackNavigationProp<any>}) {
-	const [cameraType, setCameraType] = useState('front');
+	const [cameraLens, setCameraLens] = useState('back');
 	const [selected, setSelect] = useState(1)
-	const ref = useRef<CameraFunctions>(null)
+	const proposing = false
 
 	return (
 		<View style={styles.main}>
-			<View style={styles.camera}>
-        <RnPotatoView captureType={'image'} cameraLens={cameraType} style={{flex: 1}}/>
-			</View>
+       <CameraView mode={'image'} lens={cameraLens} style={styles.camera}/>
 
-			<View style={styles.menu}>
-				<Selector options={options} selected={selected} setSelect={setSelect} onPress={()=>console.log('Pressed')}/>
-				<Toggle size={36} cameraType={cameraType} setCameraType={setCameraType} color={'white'} style={{position: 'absolute', right: 0}}/>
-				<Close size={36} onPress={()=>{props.navigation.pop()}} color={'white'} style={{position: 'absolute', left: 0}}/>
-			</View>
+       <View style={styles.menu}>
+         <View style={(!proposing ? {flex: 1} : {display: 'none'})}>
+           <Selector options={Options} selected={selected} setSelect={setSelect} onPress={()=>console.log('Pressed')}/>
+           <Toggle size={36} cameraType={cameraLens} setCameraType={setCameraLens} style={{position: 'absolute', right: 0, color: 'white'}}/>
+           <Close size={36} onPress={()=>{props.navigation.pop()}} style={{position: 'absolute', left: 0, color: 'white'}}/>
+         </View>
+
+         <View style={(proposing ? {flex: 1, flexDirection: 'row', justifyContent: 'center', gap: '25'} : {display: 'none'})}>
+           <Button onPress={ ()=>console.log("Process") } primaryColor='#00C851' textColor='#FFFFFF' text='Process' fontSize={15} width={150}/>
+           <Button onPress={ ()=>console.log("Retake") } primaryColor='#fc0303' textColor='#FFFFFF' text='Retake' fontSize={15} width={150}/>
+         </View>
+       </View>
 		</View>
 	);
 }
@@ -41,6 +44,7 @@ export function OpenCamera() {
 		</View>
 	);
 }
+
 
 const styles = StyleSheet.create({
 	main: {
