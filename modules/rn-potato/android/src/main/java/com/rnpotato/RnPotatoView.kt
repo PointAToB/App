@@ -13,14 +13,17 @@ import androidx.camera.core.UseCase
 import androidx.lifecycle.LifecycleOwner
 import android.view.View
 import android.view.ViewGroup
-import androidx.camera.core.ImageCapture
+import android.widget.ImageView
 
 class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
   private val preview = Preview.Builder().build()
   private var cameraProvider: ProcessCameraProvider? = null
-  private var useCaseMgr = UseCaseMgr(cxt, this)
   private lateinit var cameraLens: CameraSelector
+  private var useCase: UseCase? = null
 
+  // Setup Views
+  private var imageView = Image(cxt)
+  private var videoView = Video(cxt)
   private var cameraView: PreviewView = PreviewView(cxt).apply {
     layoutParams = FrameLayout.LayoutParams(
       LayoutParams.MATCH_PARENT,
@@ -28,9 +31,10 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
     )
   }
 
+
   init {
     installHierarchyFitter(cameraView)
-    addView(cameraView)
+    addView(imageView.view)
   }
 
   override fun onAttachedToWindow() {
@@ -45,7 +49,7 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
 
   fun setCaptureMode(value: String) {
     cameraProvider?.unbindAll()
-    useCaseMgr.setUseCase(value)
+
     bind()
   }
 
@@ -59,7 +63,7 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
     bind()
   }
 
-  fun capture() { useCaseMgr.capture() }
+  fun capture() = Unit
 
   private fun startCamera() {
     val cameraRes = ProcessCameraProvider.getInstance(getActivity())
@@ -71,8 +75,7 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
 
   fun bind() {
     try {
-      if(useCaseMgr.useCase == null) cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview)
-      else cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview, useCaseMgr.useCase)
+      cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview, useCase)
 
       preview.setSurfaceProvider(cameraView.surfaceProvider)
     } catch(exc: Exception) {
