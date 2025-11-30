@@ -3,26 +3,28 @@ package com.rnpotato
 import com.facebook.react.uimanager.ThemedReactContext
 import androidx.camera.core.UseCase
 import android.widget.FrameLayout
+import android.util.Log
 
-class UseCaseMgr(private val cxt: ThemedReactContext, private val parent: FrameLayout) {
+class UseCaseMgr(private val cxt: ThemedReactContext, private val parent: RnPotatoView) {
     private val image: Image = Image(cxt, parent)
     private val video: Video = Video(cxt, parent)
     private val live: Live = Live(cxt, parent)
     var useCase: UseCase? = null
 
     fun capture() {
-        when(useCase) {
-            image.useCase -> image.capture()
-            video.useCase -> video.capture()
-            live.useCase -> live.capture()
-        }
+      //clear()
+      when(useCase) {
+        image.useCase -> image.capture()
+        video.useCase -> video.capture()
+        live.useCase -> live.capture()
+      }
     }
 
   fun setUseCase(name: String?) {
-    useCase = when(name) {
-      "image" -> image.useCase
-      "video" -> video.useCase
-      else -> live.useCase
+    this.useCase = when(name) {
+      "image" -> image.useCase as UseCase
+      "video" -> video.useCase as UseCase
+      else -> live.useCase as UseCase
     }
   }
 
@@ -37,6 +39,10 @@ class UseCaseMgr(private val cxt: ThemedReactContext, private val parent: FrameL
     val childCount = parent.getChildCount()
     if (childCount == 1) return
     parent.removeViews(1, childCount - 1)
+  }
+
+  companion object {
+    const val TAG = "RnPotatoView"
   }
 }
 

@@ -17,4 +17,5 @@ public interface RnPotatoViewManagerInterface<T extends View> extends ViewManage
   void setCaptureMode(T view, @Nullable String value);
   void setCameraLens(T view, @Nullable String value);
   void capture(T view);
+  void propose(T view, boolean accepted);
 }

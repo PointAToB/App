@@ -24,11 +24,14 @@ class RnPotatoViewD(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
       LayoutParams.MATCH_PARENT,
       LayoutParams.MATCH_PARENT
     )
+    implementationMode = PreviewView.ImplementationMode.COMPATIBLE
   }
 
   init {
     installHierarchyFitter(cameraView)
     addView(cameraView)
+
+    Log.i(com.rnpotato.Image.Companion.TAG, "parent=${this} : id=${this.id}")
   }
 
   override fun onAttachedToWindow() {
@@ -42,23 +45,19 @@ class RnPotatoViewD(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
   }
 
   fun setCaptureMode(value: String) {
-    bind {
-      val mode = when(value) {
-        "image" ->
-        "video" ->
-        else ->
-      }
-    }
+    cameraProvider?.unbindAll()
+    useCaseMgr.setUseCase(value)
+    bind()
   }
 
   fun setCameraLens(value: String) {
-    bind {
-      val lens = when (value) {
-        "front" -> CameraSelector.LENS_FACING_FRONT
-        else -> CameraSelector.LENS_FACING_BACK
-      }
-      cameraLens = CameraSelector.Builder().requireLensFacing(lens).build()
+    cameraProvider?.unbindAll()
+    val lens = when(value) {
+      "front" -> CameraSelector.LENS_FACING_FRONT
+      else -> CameraSelector.LENS_FACING_BACK
     }
+    cameraLens = CameraSelector.Builder().requireLensFacing(lens).build()
+    bind()
   }
 
   fun capture() { useCaseMgr.capture(); Log.i(TAG, "Child Count: ${this.getChildCount()}") }
@@ -81,15 +80,17 @@ class RnPotatoViewD(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
     }, ContextCompat.getMainExecutor(getActivity()))
   }
 
-  fun bind(func: () -> Unit) {
-    cameraProvider?.unbindAll()
-    func()
+  fun bind() {
     try {
-      cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, *useCases.toTypedArray())
+      if(useCaseMgr.useCase == null) cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview)
+      else cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview, useCaseMgr.useCase)
+
       preview.setSurfaceProvider(cameraView.surfaceProvider)
     } catch(exc: Exception) { Log.e(TAG, "UseCase binding failed", exc) }
   }
-  private fun getActivity(): Activity { return cxt.currentActivity!! }
+  private fun getActivity(): Activity {
+    return cxt.currentActivity!!
+  }
   private fun installHierarchyFitter(view: ViewGroup) {
     view.setOnHierarchyChangeListener(object : OnHierarchyChangeListener {
       override fun onChildViewRemoved(parent: View?, child: View?) = Unit

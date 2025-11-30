@@ -8,6 +8,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RnPotatoViewManagerInterface
 import com.facebook.react.viewmanagers.RnPotatoViewManagerDelegate
+import android.util.Log
 
 @ReactModule(name = RnPotatoViewManager.NAME)
 class RnPotatoViewManager : SimpleViewManager<RnPotatoView>(),
@@ -30,9 +31,8 @@ class RnPotatoViewManager : SimpleViewManager<RnPotatoView>(),
     return RnPotatoView(context)
   }
 
-  override fun capture(view: RnPotatoView) {
-    view?.capture()
-  }
+  override fun capture(view: RnPotatoView) { view?.capture() }
+  override fun propose(view: RnPotatoView, accepted: Boolean) { view?.propose(accepted)}
 
   @ReactProp(name = "captureMode")
   override fun setCaptureMode(view: RnPotatoView, value: String?) {
