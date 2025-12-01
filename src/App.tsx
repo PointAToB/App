@@ -8,6 +8,8 @@ import Login from "./Pages/login";
 import CreateAccount from "./Pages/createAccount";
 import Home from "./Pages/home";
 import Navigation from "./Components/navigation";
+import NutritionUpdate from "./Pages/nutritionUpdate";
+import Recipe from "./Pages/recipe";
 import WorkoutDetailScreen from "./Pages/WorkoutDetailScreen";
 import WorkoutInterestScreen from "./Pages/WorkoutInterestScreen";
 
@@ -40,6 +42,8 @@ function AppContent() {
             component={WorkoutDetailScreen}
           />
           <Stack.Screen options={{ headerShown: false }} name='Main' component={Navigation} />
+          <Stack.Screen options={{ title: 'Update Log' }} name='NutritionUpdate' component={NutritionUpdate} />
+          <Stack.Screen options={{ title: 'Recipe' }} name='Recipe' component={Recipe} />
 				</Stack.Navigator>
 			</NavigationContainer>
   );
