@@ -26,6 +26,17 @@ import android.widget.ImageView
 // Live
 import androidx.camera.core.ImageAnalysis
 
+class UseCaseManager(cxt: ReactThemedContext) {
+  var current: View? = null
+
+  init {
+    private val image = Image(cxt)
+    private val video = Video(cxt)
+  }
+}
+
+
+
 @ExperimentalZeroShutterLag
 class Image(private val cxt: ThemedReactContext) {
   private val loc = File(cxt.filesDir, "tmp_image.jpg")
@@ -44,6 +55,7 @@ class Image(private val cxt: ThemedReactContext) {
       override fun onError(exception: ImageCaptureException) { Log.e("CameraX", "Image capture failed: ${exception.message}", exception) }
     })
   }
+
   fun display() { view.setImageURI(Uri.fromFile(loc)) }
 }
 
@@ -69,5 +81,6 @@ class Video(private val cxt: ThemedReactContext) {
       }
     }
   }
+
   fun display() { view.setVideoURI(Uri.fromFile(loc)) }
 }
