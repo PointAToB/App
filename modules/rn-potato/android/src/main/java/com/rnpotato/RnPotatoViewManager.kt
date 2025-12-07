@@ -34,6 +34,10 @@ class RnPotatoViewManager : SimpleViewManager<RnPotatoView>(),
     view?.capture()
   }
 
+  override fun propose(view: RnPotatoView, accepted: Boolean) {
+    view?.propose(accepted)
+  }
+
   @ReactProp(name = "captureMode")
   override fun setCaptureMode(view: RnPotatoView, value: String?) {
     if(value == null) throw IllegalArgumentException("captureMode is required and cannot be null | undefined")
@@ -44,6 +48,13 @@ class RnPotatoViewManager : SimpleViewManager<RnPotatoView>(),
   override fun setCameraLens(view: RnPotatoView, value: String?) {
     if(value == null) throw IllegalArgumentException("cameraLens is required and is either front | back")
     view?.setCameraLens(value)
+  }
+
+  override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {
+    return mapOf(
+      "onCapture" to mapOf("phasedRegistrationNames" to mapOf("bubbled" to "onCapture")),
+      "onPropose" to mapOf("phasedRegistrationNames" to mapOf("bubbled" to "onPropose"))
+      )
   }
 
   companion object {

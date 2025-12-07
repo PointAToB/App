@@ -21,4 +21,13 @@ void RnPotatoViewEventEmitter::onCapture(OnCapture event) const {
   });
 }
 
+
+void RnPotatoViewEventEmitter::onPropose(OnPropose event) const {
+  dispatchEvent("propose", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "success", event.success);
+    return payload;
+  });
+}
+
 } // namespace facebook::react

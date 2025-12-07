@@ -40,6 +40,9 @@ public class RnPotatoViewManagerDelegate<T extends View, U extends BaseViewManag
       case "capture":
         mViewManager.capture(view);
         break;
+      case "propose":
+        mViewManager.propose(view, args.getBoolean(0));
+        break;
     }
   }
 }

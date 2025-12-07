@@ -14,16 +14,18 @@ import androidx.lifecycle.LifecycleOwner
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+// Will See
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.events.Event
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.WritableMap
+
 
 class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
   private val preview = Preview.Builder().build()
   private var cameraProvider: ProcessCameraProvider? = null
   private lateinit var cameraLens: CameraSelector
-  private var useCase: UseCase? = null
-
-  // Setup Views
-  private var imageView = Image(cxt)
-  private var videoView = Video(cxt)
+  private var mediaMgr: MediaMgr
   private var cameraView: PreviewView = PreviewView(cxt).apply {
     layoutParams = FrameLayout.LayoutParams(
       LayoutParams.MATCH_PARENT,
@@ -34,7 +36,8 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
 
   init {
     installHierarchyFitter(cameraView)
-    addView(imageView.view)
+    addView(cameraView)
+    mediaMgr = MediaMgr(cxt, this)
   }
 
   override fun onAttachedToWindow() {
@@ -49,7 +52,7 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
 
   fun setCaptureMode(value: String) {
     cameraProvider?.unbindAll()
-
+    mediaMgr.mode = value
     bind()
   }
 
@@ -63,7 +66,13 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
     bind()
   }
 
-  fun capture() = Unit
+  fun capture() {
+    Log.i(TAG, "Capture Method Called: ${mediaMgr.mode}")
+    mediaMgr.capture()
+    emitOnPropose(true) // Param: isSuccess
+  }
+
+  fun propose(accepted: Boolean) = Unit
 
   private fun startCamera() {
     val cameraRes = ProcessCameraProvider.getInstance(getActivity())
@@ -75,12 +84,40 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
 
   fun bind() {
     try {
-      cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview, useCase)
+      cameraProvider?.bindToLifecycle(getActivity() as LifecycleOwner, cameraLens, preview, *mediaMgr.getUseCases())
 
       preview.setSurfaceProvider(cameraView.surfaceProvider)
     } catch(exc: Exception) {
       Log.e(TAG, "UseCase binding failed", exc)
     }
+  }
+
+  private fun emitOnCapture(isSuccess: Boolean) {
+    val surfaceId = UIManagerHelper.getSurfaceId(cxt)
+    val eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(cxt, id)
+    val payload = Arguments.createMap().apply { putBoolean("success", isSuccess) }
+    val event = onCaptureEvent(surfaceId, id, payload)
+
+    eventDispatcher?.dispatchEvent(event)
+  }
+
+  inner class onCaptureEvent(surfaceId: Int, viewId: Int, private val payload: WritableMap): Event<onCaptureEvent>(surfaceId, viewId) {
+    override fun getEventName() = "onCapture"
+    override fun getEventData() = payload
+  }
+
+  private fun emitOnPropose(isSuccess: Boolean) {
+    val surfaceId = UIManagerHelper.getSurfaceId(cxt)
+    val eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(cxt, id)
+    val payload = Arguments.createMap().apply { putBoolean("success", isSuccess) }
+    val event = onProposeEvent(surfaceId, id, payload)
+
+    eventDispatcher?.dispatchEvent(event)
+  }
+
+  inner class onProposeEvent(surfaceId: Int, viewId: Int, private val payload: WritableMap): Event<onCaptureEvent>(surfaceId, viewId) {
+    override fun getEventName() = "onPropose"
+    override fun getEventData() = payload
   }
 
   private fun getActivity(): Activity {
