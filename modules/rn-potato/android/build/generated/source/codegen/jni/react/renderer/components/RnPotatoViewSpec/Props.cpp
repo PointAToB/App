@@ -14,6 +14,35 @@
 
 namespace facebook::react {
 
+MediaViewProps::MediaViewProps(
+    const PropsParserContext &context,
+    const MediaViewProps &sourceProps,
+    const RawProps &rawProps): ViewProps(context, sourceProps, rawProps),
+
+    mode(convertRawProp(context, rawProps, "mode", sourceProps.mode, {})) {}
+    
+#ifdef RN_SERIALIZABLE_STATE
+ComponentName MediaViewProps::getDiffPropsImplementationTarget() const {
+  return "MediaView";
+}
+
+folly::dynamic MediaViewProps::getDiffProps(
+    const Props* prevProps) const {
+  static const auto defaultProps = MediaViewProps();
+  const MediaViewProps* oldProps = prevProps == nullptr
+      ? &defaultProps
+      : static_cast<const MediaViewProps*>(prevProps);
+  if (this == oldProps) {
+    return folly::dynamic::object();
+  }
+  folly::dynamic result = HostPlatformViewProps::getDiffProps(prevProps);
+  
+  if (mode != oldProps->mode) {
+    result["mode"] = mode;
+  }
+  return result;
+}
+#endif
 RnPotatoViewProps::RnPotatoViewProps(
     const PropsParserContext &context,
     const RnPotatoViewProps &sourceProps,

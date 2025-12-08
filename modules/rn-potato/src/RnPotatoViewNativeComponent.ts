@@ -14,7 +14,7 @@ interface NativeCommands {
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['capture', 'propose']
+  supportedCommands: ['capture', 'propose'],
 });
 
 export default codegenNativeComponent<NativeProps>('RnPotatoView');

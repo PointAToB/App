@@ -14,6 +14,22 @@
 
 namespace facebook::react {
 
+class MediaViewProps final : public ViewProps {
+ public:
+  MediaViewProps() = default;
+  MediaViewProps(const PropsParserContext& context, const MediaViewProps &sourceProps, const RawProps &rawProps);
+
+#pragma mark - Props
+
+  std::string mode{};
+
+  #ifdef RN_SERIALIZABLE_STATE
+  ComponentName getDiffPropsImplementationTarget() const override;
+
+  folly::dynamic getDiffProps(const Props* prevProps) const override;
+  #endif
+};
+
 class RnPotatoViewProps final : public ViewProps {
  public:
   RnPotatoViewProps() = default;

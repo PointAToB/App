@@ -10,6 +10,7 @@ class RnPotatoViewPackage : ReactPackage {
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
     val viewManagers: MutableList<ViewManager<*, *>> = ArrayList()
     viewManagers.add(RnPotatoViewManager())
+    viewManagers.add(MediaViewManager())
     return viewManagers
   }
 

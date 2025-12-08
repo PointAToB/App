@@ -13,7 +13,7 @@ import androidx.camera.core.UseCase
 import androidx.lifecycle.LifecycleOwner
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+//import android.widget.ImageView
 // Will See
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
@@ -67,12 +67,17 @@ class RnPotatoView(private val cxt: ThemedReactContext) : FrameLayout(cxt) {
   }
 
   fun capture() {
-    Log.i(TAG, "Capture Method Called: ${mediaMgr.mode}")
+    Log.i(TAG, "Capture Method Called --Mode: ${mediaMgr.mode}")
     mediaMgr.capture()
-    emitOnPropose(true) // Param: isSuccess
+    emitOnCapture(true)
   }
 
-  fun propose(accepted: Boolean) = Unit
+  fun propose(accepted: Boolean) {
+    Log.i(TAG, "Propose Method Called --Accepted: ${accepted}")
+    mediaMgr.clear()
+    if(!accepted) mediaMgr.cleanUp()
+    emitOnPropose(true)
+  }
 
   private fun startCamera() {
     val cameraRes = ProcessCameraProvider.getInstance(getActivity())

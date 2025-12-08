@@ -10,8 +10,7 @@ import com.facebook.react.viewmanagers.RnPotatoViewManagerInterface
 import com.facebook.react.viewmanagers.RnPotatoViewManagerDelegate
 
 @ReactModule(name = RnPotatoViewManager.NAME)
-class RnPotatoViewManager : SimpleViewManager<RnPotatoView>(),
-  RnPotatoViewManagerInterface<RnPotatoView> {
+class RnPotatoViewManager : SimpleViewManager<RnPotatoView>(), RnPotatoViewManagerInterface<RnPotatoView> {
   private val mDelegate: ViewManagerDelegate<RnPotatoView>
 
   init {

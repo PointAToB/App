@@ -18,6 +18,17 @@
 
 namespace facebook::react {
 
+JSI_EXPORT extern const char MediaViewComponentName[];
+
+/*
+ * `ShadowNode` for <MediaView> component.
+ */
+using MediaViewShadowNode = ConcreteViewShadowNode<
+    MediaViewComponentName,
+    MediaViewProps,
+    MediaViewEventEmitter,
+    MediaViewState>;
+
 JSI_EXPORT extern const char RnPotatoViewComponentName[];
 
 /*

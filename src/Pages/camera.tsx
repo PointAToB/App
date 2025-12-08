@@ -8,31 +8,37 @@ import Close from "../Components/Camera/close";
 import Selector from "../Components/Camera/selector";
 import { Options } from '../Components/Camera/captureOptions'
 import { CameraView, CameraRef, CameraLens, CameraMode } from 'rn-potato'
+import Summary from '../Components/Camera/workoutSummary'
 
 export function Camera (props: {navigation: NativeStackNavigationProp<any>}) {
 	const [cameraLens, setCameraLens] = useState<CameraLens>('back');
 	const [selected, setSelect] = useState(1)
-	const proposing = false
-  const cameraRef = useRef<CameraRef>(null)
+	const [propose, setPropose] = useState(false)
+	const [summary, setSummary] = useState(false)
+	const cameraRef = useRef<CameraRef>(null)
 
 	return (
-		<View style={styles.main}>
-       <CameraView ref={cameraRef} mode={Options[selected].runningMode} lens={cameraLens} style={styles.camera}/>
+    <View>
+       <Summary summary={summary} setSummary={setSummary} mode={Options[selected].runningMode}/>
 
-       <View style={styles.menu}>
-         <View style={(!proposing ? {flex: 1} : {display: 'none'})}>
-           <Selector options={Options} selected={selected} setSelect={setSelect} onPress={()=>cameraRef.current.capture()}/>
-           <Toggle size={36} cameraType={cameraLens} setCameraType={setCameraLens} style={{position: 'absolute', right: 0, color: 'white'}}/>
-           <Close size={36} onPress={()=>{props.navigation.pop()}} style={{position: 'absolute', left: 0, color: 'white'}}/>
-         </View>
+       <View style={styles.main}>
+         <CameraView ref={cameraRef} onCapture={()=>setPropose(true)} onPropose={()=>setPropose(false)} mode={Options[selected].runningMode} lens={cameraLens} style={styles.camera}/>
 
-         <View style={(proposing ? {flex: 1, flexDirection: 'row', justifyContent: 'center', gap: '25'} : {display: 'none'})}>
-           <Button onPress={ ()=>cameraRef.current.propose(true) } primaryColor='#00C851' textColor='#FFFFFF' text='Process' fontSize={15} width={150}/>
-           <Button onPress={ ()=>{ cameraRef.current.propose(false) } } primaryColor='#fc0303' textColor='#FFFFFF' text='Retake' fontSize={15} width={150}/>
+         <View style={styles.menu}>
+           <View style={(!propose ? {flex: 1} : {display: 'none'})}>
+             <Selector options={Options} selected={selected} setSelect={setSelect} onPress={()=>cameraRef.current.capture()}/>
+             <Toggle size={36} cameraType={cameraLens} setCameraType={setCameraLens} style={{position: 'absolute', right: 0, color: 'white'}}/>
+             <Close size={36} onPress={()=>{props.navigation.pop()}} style={{position: 'absolute', left: 0, color: 'white'}}/>
+           </View>
+
+           <View style={(propose ? {flex: 1, flexDirection: 'row', justifyContent: 'center', gap: '25'} : {display: 'none'})}>
+             <Button onPress={ ()=>{cameraRef.current.propose(true); setSummary(true) }} primaryColor='#00C851' textColor='#FFFFFF' text='Process' fontSize={15} width={150}/>
+             <Button onPress={ ()=>{ cameraRef.current.propose(false) } } primaryColor='#fc0303' textColor='#FFFFFF' text='Retake' fontSize={15} width={150}/>
+           </View>
          </View>
        </View>
-		</View>
-	);
+    </View>
+	)
 }
 
 export function OpenCamera() {

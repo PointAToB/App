@@ -16,6 +16,7 @@ namespace facebook::react {
 
 void RnPotatoViewSpec_registerComponentDescriptorsFromCodegen(
   std::shared_ptr<const ComponentDescriptorProviderRegistry> registry) {
+registry->add(concreteComponentDescriptorProvider<MediaViewComponentDescriptor>());
 registry->add(concreteComponentDescriptorProvider<RnPotatoViewComponentDescriptor>());
 }
 

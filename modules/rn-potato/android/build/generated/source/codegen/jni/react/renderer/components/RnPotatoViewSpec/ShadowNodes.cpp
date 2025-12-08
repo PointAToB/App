@@ -12,6 +12,7 @@
 
 namespace facebook::react {
 
+extern const char MediaViewComponentName[] = "MediaView";
 extern const char RnPotatoViewComponentName[] = "RnPotatoView";
 
 } // namespace facebook::react

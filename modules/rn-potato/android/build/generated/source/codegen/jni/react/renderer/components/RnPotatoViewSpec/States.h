@@ -15,6 +15,8 @@
 
 namespace facebook::react {
 
+using MediaViewState = StateData;
+
 using RnPotatoViewState = StateData;
 
 } // namespace facebook::react

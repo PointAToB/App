@@ -16,6 +16,7 @@
 
 namespace facebook::react {
 
+using MediaViewComponentDescriptor = ConcreteComponentDescriptor<MediaViewShadowNode>;
 using RnPotatoViewComponentDescriptor = ConcreteComponentDescriptor<RnPotatoViewShadowNode>;
 
 void RnPotatoViewSpec_registerComponentDescriptorsFromCodegen(

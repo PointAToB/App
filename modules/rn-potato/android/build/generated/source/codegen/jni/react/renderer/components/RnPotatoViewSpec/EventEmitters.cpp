@@ -13,6 +13,7 @@
 
 namespace facebook::react {
 
+
 void RnPotatoViewEventEmitter::onCapture(OnCapture event) const {
   dispatchEvent("capture", [event=std::move(event)](jsi::Runtime &runtime) {
     auto payload = jsi::Object(runtime);

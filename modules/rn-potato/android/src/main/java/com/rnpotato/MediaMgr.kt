@@ -44,12 +44,22 @@ class MediaMgr(private val cxt: ThemedReactContext, private var parent: FrameLay
     }
   }
 
-  fun getUseCases(): Array<UseCase> {
+  fun clear() {
     when(mode) {
-      "image" -> {
-        useCases.clear()
-        useCases.add(image.case)
-      }
+      "image" -> image.clear()
+    }
+  }
+
+  fun cleanUp() {
+    when(mode) {
+      "image" -> image.cleanUp()
+    }
+  }
+
+  fun getUseCases(): Array<UseCase> {
+    useCases.clear()
+    when(mode) {
+      "image" -> useCases.add(image.case)
     }
     return useCases.toTypedArray()
   }
@@ -83,5 +93,8 @@ class Image(private val cxt: ThemedReactContext) {
       }
     })
   }
+  // Clears the image
+  fun clear() { view.setImageURI(null) }
+  // Deletes the image from the filesystem
+  fun cleanUp() { if(loc.exists()) loc.delete() }
 }
-
